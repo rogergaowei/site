@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Site Admin | Roger Gao Wei</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="/admin/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">Roger Gao Wei</a>
+      <nav aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/game/">Game</a>
+      </nav>
+    </header>
+
+    <main class="admin">
+      <section class="intro">
+        <p class="eyebrow">Admin</p>
+        <h1>Blog publishing controls.</h1>
+        <p>This page is the entry point for adding Google Docs and rebuilding the blog index through GitHub Actions.</p>
+      </section>
+
+      <section class="panel">
+        <div>
+          <h2>Add a Google Doc</h2>
+          <p>Adds a Google Doc URL to the site source and creates a draft placeholder in the blog index. Full content import still needs the Google API sync step.</p>
+        </div>
+        <a class="button" href="https://github.com/rogergaowei/site/actions/workflows/blog-admin.yml" target="_blank" rel="noreferrer">Open Workflow</a>
+      </section>
+
+      <section class="panel">
+        <div>
+          <h2>Refresh Blog Index</h2>
+          <p>Rebuilds <code>/blog/</code> from <code>blog/content/posts.json</code> and deploys through Cloudflare after the commit lands.</p>
+        </div>
+        <a class="button secondary" href="https://github.com/rogergaowei/site/actions/workflows/blog-admin.yml" target="_blank" rel="noreferrer">Run Refresh</a>
+      </section>
+
+      <section class="notes">
+        <h2>Current MVP Limits</h2>
+        <ul>
+          <li>Login should be enforced with Cloudflare Access on <code>/admin/*</code>.</li>
+          <li>Adding a doc creates a draft entry; full Google Doc HTML/image import is the next backend step.</li>
+          <li>Do not put GitHub or Google tokens into this browser page.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
