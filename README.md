@@ -8,8 +8,9 @@ Static personal site for `rogergaowei.com`.
 - `/blog/` is the blog.
 - `/blog/posts/` contains generated blog post pages.
 - `/blog/assets/` contains blog images.
+- `/game/` is the archived current game page from `game.rogergaowei.com`.
 
-Future sections such as `/game/`, `/projects/`, and `/photos/` can live in this same repository.
+Future sections such as `/projects/` and `/photos/` can live in this same repository.
 
 ## Add a Google Doc post
 

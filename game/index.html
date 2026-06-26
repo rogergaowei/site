@@ -1,0 +1,2074 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retro Corner Catch</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f8f1d8;
+      --muted: #c9bd97;
+      --panel: #18262b;
+      --line: #5c6b54;
+      --accent: #f2c84b;
+      --red: #ef6655;
+      --green: #56c271;
+      --blue: #65a8ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 28px 28px,
+        #11191c;
+      color: var(--ink);
+      font-family: "Courier New", "Microsoft YaHei", monospace;
+      letter-spacing: 0;
+    }
+
+    .shell {
+      width: min(1080px, calc(100vw - 24px));
+      display: grid;
+      gap: 12px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 34px);
+      line-height: 1.08;
+      text-shadow: 3px 3px 0 #000;
+    }
+
+    .hud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .game-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .game-tabs button {
+      min-height: 34px;
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    .game-tabs button.active {
+      border-color: var(--accent);
+      background: #2c3429;
+      color: #fff6cd;
+    }
+
+    .badge,
+    button {
+      min-height: 38px;
+      border: 3px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      box-shadow: 4px 4px 0 #050808;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 6px 12px;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    button:hover {
+      transform: translate(1px, 1px);
+      box-shadow: 3px 3px 0 #050808;
+      border-color: var(--accent);
+    }
+
+    .game-wrap {
+      position: relative;
+      border: 4px solid #718161;
+      background: #101719;
+      box-shadow: 8px 8px 0 #050808;
+      aspect-ratio: 16 / 9;
+      min-height: 300px;
+      max-height: calc(100vh - 132px);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      background: #172326;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(8, 12, 13, .74);
+      text-align: center;
+    }
+
+    .overlay[hidden] {
+      display: none;
+    }
+
+    .message {
+      width: min(560px, 92%);
+    }
+
+    .message h2 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 5vw, 54px);
+      line-height: 1;
+      text-shadow: 4px 4px 0 #000;
+    }
+
+    .message p {
+      margin: 8px 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0 18px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .legend span {
+      border: 2px solid #415052;
+      background: #11191c;
+      padding: 5px 8px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .mobile-pad {
+      display: none;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(2, 46px);
+      gap: 8px;
+      justify-content: center;
+      touch-action: none;
+    }
+
+    .mobile-pad button {
+      min-height: 46px;
+      padding: 0;
+    }
+
+    .mobile-pad .up {
+      grid-column: 2;
+    }
+
+    .mobile-pad .left {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .mobile-pad .down {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .mobile-pad .right {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        overflow: auto;
+        padding: 12px 0;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .hud {
+        justify-content: flex-start;
+      }
+
+      .game-wrap {
+        min-height: auto;
+        max-height: none;
+      }
+
+      .footer {
+        flex-direction: column;
+      }
+
+      .mobile-pad {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="topbar" aria-label="Game information">
+      <h1>Retro Corner Catch</h1>
+      <div class="hud">
+        <span class="badge">Score <strong id="score">0</strong></span>
+        <span class="badge">Hearts <strong id="lives">3</strong></span>
+        <span class="badge">Level <strong id="level">1</strong></span>
+        <button id="pauseBtn" type="button">Pause</button>
+        <button id="restartBtn" type="button">Restart</button>
+      </div>
+    </section>
+
+    <nav class="game-tabs" aria-label="Game selector">
+      <button class="active" data-game="corner" type="button">Corner Catch</button>
+      <button data-game="castleDefense" type="button">Castle Defense</button>
+      <button data-game="tvBreakout" type="button">TV Breakout</button>
+      <button data-game="civilization" type="button">Civilization</button>
+    </nav>
+
+    <section class="game-wrap" aria-label="Game screen">
+      <canvas id="game" width="960" height="540"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="message">
+          <h2 id="overlayTitle">Ready?</h2>
+          <p id="overlayText">Move with the arrow keys. Catch retro treasures, dodge the little chasers, and grab labeled power-ups. Security orbs spawn CPU players that collect items, chase power-ups for their own buffs, and can spawn more CPU players.</p>
+          <div class="legend" aria-label="Item guide">
+            <span>Coin +10</span>
+            <span>Retro item +20 to +40</span>
+            <span>Good buffs are labeled</span>
+            <span>Half Heart heals +0.5</span>
+            <span>Security Orb spawns 1 CPU player</span>
+            <span>Vulnerable: -2 hearts</span>
+          </div>
+          <button id="startBtn" type="button">Start Game</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div>Use arrow keys or WASD. Move into falling items to pick them up.</div>
+      <div class="mobile-pad" aria-label="Touch direction pad">
+        <button class="up" data-key="ArrowUp" type="button">â</button>
+        <button class="left" data-key="ArrowLeft" type="button">â</button>
+        <button class="down" data-key="ArrowDown" type="button">â</button>
+        <button class="right" data-key="ArrowRight" type="button">â</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const levelEl = document.getElementById("level");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlayTitle");
+    const overlayText = document.getElementById("overlayText");
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const gameTabs = document.querySelectorAll("[data-game]");
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const keys = new Set();
+    const palette = {
+      cream: "#f8f1d8",
+      yellow: "#f2c84b",
+      red: "#ef6655",
+      green: "#56c271",
+      blue: "#65a8ff",
+      pink: "#f08ac0",
+      dark: "#101719",
+      floor: "#1d3031"
+    };
+
+    let state;
+    let currentGame = "corner";
+    let miniState = null;
+    let lastTime = 0;
+    let animationId = 0;
+
+    const games = {
+      corner: {
+        title: "Retro Corner Catch",
+        ready: "Ready?",
+        text: "Move with the arrow keys. Catch retro treasures, dodge the little chasers, and grab labeled power-ups. Security orbs spawn CPU players that collect items, chase power-ups for their own buffs, and can spawn more CPU players.",
+        legend: ["Coin +10", "Retro item +20 to +40", "Good buffs are labeled", "Half Heart heals +0.5", "Security Orb spawns 1 CPU player", "Vulnerable: -2 hearts"]
+      },
+      castleDefense: {
+        title: "Castle Defense",
+        ready: "Hold The Gate",
+        text: "Move along the battlements with arrow keys or WASD. Hold Space or Enter to fire stones. Cannons and CPU defenders help protect the gate, and supply crates can repair or reinforce the wall.",
+        legend: ["Space/Enter fires", "Cannons auto-fire", "CPUs patrol and shoot", "Supply crates reinforce", "Gate hit: -1 heart", "Bosses split when hit"]
+      },
+      tvBreakout: {
+        title: "TV Breakout",
+        ready: "Tune The TV",
+        text: "Move the paddle with arrow keys or WASD. Bounce the signal ball into the pixel bricks. Clear the wall before the ball drains your hearts.",
+        legend: ["Brick +10", "Gold brick +25", "Blue brick widens paddle", "Red brick speeds ball", "Miss ball: -1 heart", "Clear wall for bonus"]
+      },
+      civilization: {
+        title: "Pocket Civilization",
+        ready: "Found A Town",
+        text: "Move the cursor with arrow keys or WASD. Press Space to choose a building, Enter to build. Balance farms, houses, barracks, and walls while raiders attack your town center.",
+        legend: ["Space changes build", "Enter builds", "Farm: food", "House: population", "Barracks: soldiers", "Walls slow raiders"]
+      }
+    };
+
+    function freshState() {
+      return {
+        running: false,
+        paused: false,
+        over: false,
+        score: 0,
+        lives: 3,
+        level: 1,
+        time: 0,
+        spawnTimer: 0,
+        hitFlash: 0,
+        player: {
+          x: W / 2,
+          y: H - 82,
+          w: 38,
+          h: 44,
+          speed: 255,
+          shield: 0,
+          haste: 0,
+          slow: 0,
+          vulnerable: 0,
+          magnet: 0,
+          doubleScore: 0,
+          freeze: 0,
+          tiny: 0
+        },
+        drops: [],
+        enemies: [],
+        securityUnits: [],
+        pops: []
+      };
+    }
+
+    state = freshState();
+
+    const itemTypes = [
+      { name: "Coin", score: 10, color: palette.yellow, draw: drawCoin },
+      { name: "Cassette", score: 25, color: palette.blue, draw: drawTape },
+      { name: "Snack", score: 20, color: palette.red, draw: drawSnack },
+      { name: "Console", score: 35, color: palette.cream, draw: drawConsole },
+      { name: "TV", score: 40, color: palette.green, draw: drawTv }
+    ];
+
+    const powerTypes = [
+      { name: "Soda Shield", label: "SHIELD", power: "shield", color: palette.green, draw: drawSoda, w: 30, h: 36 },
+      { name: "Roller Skates", label: "SPEED", power: "haste", color: palette.blue, draw: drawSkates, w: 36, h: 28 },
+      { name: "Sticky Candy", label: "SLOW", power: "slow", color: palette.pink, draw: drawStickyCandy, w: 32, h: 32 },
+      { name: "Homework", label: "FRAGILE", power: "vulnerable", color: palette.red, draw: drawNotebook, w: 36, h: 30 },
+      { name: "Haw Flake", label: "+0.5 HP", power: "heal", color: palette.yellow, draw: drawHawthorn, w: 32, h: 32 },
+      { name: "Magnet", label: "MAGNET", power: "magnet", color: palette.red, draw: drawMagnet, w: 34, h: 34 },
+      { name: "Score Tape", label: "2X SCORE", power: "doubleScore", color: palette.yellow, draw: drawDoubleScore, w: 36, h: 30 },
+      { name: "Freeze Pop", label: "FREEZE", power: "freeze", color: palette.blue, draw: drawFreezePop, w: 28, h: 38 },
+      { name: "Pocket Charm", label: "TINY", power: "tiny", color: palette.cream, draw: drawTinyCharm, w: 30, h: 34 },
+      { name: "Security Orb", label: "SECURITY", power: "security", color: palette.green, draw: drawSecurityOrb, w: 34, h: 34 }
+    ];
+
+    const shieldPower = powerTypes.find(power => power.power === "shield");
+    const nonShieldPowers = powerTypes.filter(power => power.power !== "shield");
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function rectsTouch(a, b) {
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    function startGame() {
+      if (currentGame !== "corner") {
+        startMiniGame();
+        return;
+      }
+      state = freshState();
+      state.running = true;
+      state.paused = false;
+      overlay.hidden = true;
+      pauseBtn.textContent = "Pause";
+      updateHud();
+      lastTime = performance.now();
+      cancelAnimationFrame(animationId);
+      animationId = requestAnimationFrame(loop);
+    }
+
+    function endGame() {
+      state.running = false;
+      state.over = true;
+      overlayTitle.textContent = "Game Over";
+      overlayText.textContent = `Final score: ${state.score}. One more run for the retro shelf?`;
+      startBtn.textContent = "Play Again";
+      overlay.hidden = false;
+    }
+
+    function togglePause() {
+      if (!state.running || state.over) return;
+      state.paused = !state.paused;
+      pauseBtn.textContent = state.paused ? "Resume" : "Pause";
+      if (state.paused) {
+        keys.clear();
+      } else {
+        lastTime = performance.now();
+      }
+    }
+
+    function updateHud() {
+      const source = currentGame === "corner" ? state : miniState || state;
+      scoreEl.textContent = source.score;
+      livesEl.textContent = formatLives(source.lives);
+      levelEl.textContent = source.level;
+    }
+
+    function formatLives(lives) {
+      return Number.isInteger(lives) ? String(lives) : lives.toFixed(1);
+    }
+
+    function switchGame(gameId) {
+      if (!games[gameId]) return;
+      currentGame = gameId;
+      state = freshState();
+      miniState = null;
+      keys.clear();
+      pauseBtn.textContent = "Pause";
+      document.querySelector("h1").textContent = games[gameId].title;
+      overlayTitle.textContent = games[gameId].ready;
+      overlayText.textContent = games[gameId].text;
+      startBtn.textContent = "Start Game";
+      overlay.hidden = false;
+      document.querySelector(".legend").innerHTML = games[gameId].legend.map(item => `<span>${item}</span>`).join("");
+      gameTabs.forEach(button => button.classList.toggle("active", button.dataset.game === gameId));
+      updateHud();
+      drawGamePreview();
+    }
+
+    function drawGamePreview() {
+      ctx.clearRect(0, 0, W, H);
+      if (currentGame === "corner") {
+        draw();
+      } else if (currentGame === "castleDefense") {
+        drawCastleDefensePreview();
+      } else if (currentGame === "civilization") {
+        drawCivilizationPreview();
+      } else {
+        miniState = createTvBreakoutState(false);
+        drawTvBreakout();
+        miniState = null;
+      }
+    }
+
+    function loop(now) {
+      const dt = Math.min((now - lastTime) / 1000, 0.033);
+      lastTime = now;
+      if (state.running && !state.paused) {
+        if (currentGame === "corner") {
+          update(dt);
+        } else {
+          updateMiniGame(dt);
+        }
+      }
+      if (currentGame === "corner") {
+        draw();
+      } else {
+        drawMiniGame();
+      }
+      animationId = requestAnimationFrame(loop);
+    }
+
+    function update(dt) {
+      state.time += dt;
+      state.hitFlash = Math.max(0, state.hitFlash - dt);
+      state.player.shield = Math.max(0, state.player.shield - dt);
+      state.player.haste = Math.max(0, state.player.haste - dt);
+      state.player.slow = Math.max(0, state.player.slow - dt);
+      state.player.vulnerable = Math.max(0, state.player.vulnerable - dt);
+      state.player.magnet = Math.max(0, state.player.magnet - dt);
+      state.player.doubleScore = Math.max(0, state.player.doubleScore - dt);
+      state.player.freeze = Math.max(0, state.player.freeze - dt);
+      state.player.tiny = Math.max(0, state.player.tiny - dt);
+      state.level = 1 + Math.floor(state.score / 250);
+
+      const p = state.player;
+      const speedMultiplier = (p.haste > 0 ? 1.45 : 1) * (p.slow > 0 ? 0.62 : 1);
+      const vx = (keys.has("ArrowRight") || keys.has("KeyD") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("KeyA") ? 1 : 0);
+      const vy = (keys.has("ArrowDown") || keys.has("KeyS") ? 1 : 0) - (keys.has("ArrowUp") || keys.has("KeyW") ? 1 : 0);
+      const len = Math.hypot(vx, vy) || 1;
+      p.x = Math.max(24, Math.min(W - p.w - 24, p.x + vx / len * p.speed * speedMultiplier * dt));
+      p.y = Math.max(76, Math.min(H - p.h - 24, p.y + vy / len * p.speed * speedMultiplier * dt));
+
+      state.spawnTimer -= dt;
+      if (state.spawnTimer <= 0) spawnEvent();
+
+      for (const drop of state.drops) {
+        if (!drop.power && p.magnet > 0) {
+          const dx = p.x + p.w / 2 - (drop.x + drop.w / 2);
+          const dy = p.y + p.h / 2 - (drop.y + drop.h / 2);
+          const d = Math.hypot(dx, dy) || 1;
+          if (d < 190) {
+            drop.x += dx / d * 185 * dt;
+            drop.y += dy / d * 185 * dt;
+          }
+        }
+        drop.y += drop.speed * dt;
+        drop.spin += dt * 6;
+        if (rectsTouch(p, drop)) collect(drop);
+      }
+      state.drops = state.drops.filter(drop => !drop.dead && drop.y < H + 50);
+
+      for (const unit of state.securityUnits) {
+        updateSecurityUnit(unit, dt);
+      }
+      state.securityUnits = state.securityUnits.filter(unit => !unit.dead && unit.life > 0);
+
+      for (const enemy of state.enemies) {
+        const dx = p.x + p.w / 2 - enemy.x;
+        const dy = p.y + p.h / 2 - enemy.y;
+        const d = Math.hypot(dx, dy) || 1;
+        const enemySpeed = state.player.freeze > 0 ? enemy.speed * 0.28 : enemy.speed;
+        enemy.x += dx / d * enemySpeed * dt;
+        enemy.y += dy / d * enemySpeed * dt;
+        enemy.wobble += dt * 8;
+        if (rectsTouch(playerDamageBox(), { x: enemy.x - 16, y: enemy.y - 16, w: 32, h: 32 })) bumpEnemy(enemy);
+      }
+      state.enemies = state.enemies.filter(enemy => !enemy.dead && enemy.y < H + 80);
+
+      for (const pop of state.pops) {
+        pop.y -= 28 * dt;
+        pop.life -= dt;
+      }
+      state.pops = state.pops.filter(pop => pop.life > 0);
+      updateHud();
+    }
+
+    function spawnEvent() {
+      const roll = Math.random();
+      if (roll < 0.5) {
+        spawnPower();
+      } else if (roll < 0.75) {
+        spawnEnemy();
+      } else {
+        spawnDrop();
+      }
+      state.spawnTimer = Math.max(0.3, rand(0.48, 0.82) - state.level * 0.025);
+    }
+
+    function spawnDrop() {
+      const levelBoost = Math.min(state.level * 10, 90);
+      const item = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+      state.drops.push({
+        ...item,
+        x: rand(36, W - 68),
+        y: -34,
+        w: 32,
+        h: 32,
+        speed: rand(82, 142) + levelBoost,
+        spin: rand(0, Math.PI)
+      });
+    }
+
+    function spawnPower() {
+      const power = Math.random() < 0.5
+        ? shieldPower
+        : nonShieldPowers[Math.floor(Math.random() * nonShieldPowers.length)];
+      state.drops.push({
+        ...power,
+        score: 0,
+        x: rand(52, W - 100),
+        y: -34,
+        speed: rand(92, 132),
+        spin: 0
+      });
+    }
+
+    function spawnEnemy() {
+      state.enemies.push({
+        x: rand(40, W - 40),
+        y: -24,
+        speed: rand(54, 78) + state.level * 8,
+        wobble: 0
+      });
+    }
+
+    function collect(drop) {
+      drop.dead = true;
+      if (drop.power) {
+        applyPower(drop, state.player, "player");
+        return;
+      }
+      const gained = state.player.doubleScore > 0 ? drop.score * 2 : drop.score;
+      state.score += gained;
+      state.pops.push({ text: `+${gained}`, x: drop.x, y: drop.y, color: drop.color, life: .7 });
+    }
+
+    function applyPower(drop, actor, actorType) {
+      const isCpu = actorType === "cpu";
+      if (isCpu && shouldCpuPassPowerToPlayer(drop, actor)) {
+        applyPower(drop, state.player, "player");
+        state.pops.push({ text: "Passed to Player", x: drop.x, y: drop.y + 18, color: palette.cream, life: .9 });
+        return;
+      }
+
+      if (drop.power === "shield") {
+        actor.shield = 5.5;
+        state.pops.push({ text: "Shield!", x: drop.x, y: drop.y, color: palette.green, life: .9 });
+      } else if (drop.power === "haste") {
+        actor.haste = 5.5;
+        actor.slow = 0;
+        state.pops.push({ text: "Speed!", x: drop.x, y: drop.y, color: palette.blue, life: .9 });
+      } else if (drop.power === "slow") {
+        actor.slow = 4.5;
+        actor.haste = 0;
+        state.pops.push({ text: "Slowed...", x: drop.x, y: drop.y, color: palette.pink, life: .9 });
+      } else if (drop.power === "vulnerable") {
+        actor.vulnerable = 6;
+        state.pops.push({ text: "Fragile!", x: drop.x, y: drop.y, color: palette.red, life: .9 });
+      } else if (drop.power === "heal") {
+        if (isCpu) {
+          actor.life = Math.min(actor.maxLife, actor.life + 5);
+          state.pops.push({ text: "CPU Heal!", x: drop.x, y: drop.y, color: palette.yellow, life: .9 });
+        } else {
+          const before = state.lives;
+          state.lives = Math.min(3, state.lives + 0.5);
+          state.pops.push({ text: state.lives > before ? "+0.5 Heart" : "Full Hearts", x: drop.x, y: drop.y, color: palette.yellow, life: .9 });
+        }
+      } else if (drop.power === "magnet") {
+        actor.magnet = 7;
+        state.pops.push({ text: "Magnet!", x: drop.x, y: drop.y, color: palette.red, life: .9 });
+      } else if (drop.power === "doubleScore") {
+        actor.doubleScore = 7;
+        state.pops.push({ text: "2x Score!", x: drop.x, y: drop.y, color: palette.yellow, life: .9 });
+      } else if (drop.power === "freeze") {
+        actor.freeze = 5;
+        state.pops.push({ text: "Freeze!", x: drop.x, y: drop.y, color: palette.blue, life: .9 });
+      } else if (drop.power === "tiny") {
+        actor.tiny = 6;
+        state.pops.push({ text: "Tiny!", x: drop.x, y: drop.y, color: palette.cream, life: .9 });
+      } else if (drop.power === "security") {
+        spawnSecurityUnit(drop.x + drop.w / 2, drop.y + drop.h / 2);
+        state.pops.push({ text: isCpu ? "CPU Spawned!" : "CPU Player!", x: drop.x, y: drop.y, color: palette.green, life: .9 });
+      }
+    }
+
+    function shouldCpuPassPowerToPlayer(drop, cpu) {
+      if (drop.power === "security") return false;
+      if (drop.power === "heal") return cpu.life >= cpu.maxLife;
+      const timerProp = powerTimerProp(drop.power);
+      return timerProp ? cpu[timerProp] > 0 : false;
+    }
+
+    function powerTimerProp(power) {
+      const timers = {
+        shield: "shield",
+        haste: "haste",
+        slow: "slow",
+        vulnerable: "vulnerable",
+        magnet: "magnet",
+        doubleScore: "doubleScore",
+        freeze: "freeze",
+        tiny: "tiny"
+      };
+      return timers[power] || "";
+    }
+
+    function spawnSecurityUnit(x, y) {
+      state.securityUnits.push({
+        x: x - 17,
+        y: y - 20,
+        w: 34,
+        h: 40,
+        speed: 230,
+        life: 18,
+        maxLife: 28,
+        inv: 0,
+        shield: 0,
+        haste: 0,
+        slow: 0,
+        vulnerable: 0,
+        magnet: 0,
+        doubleScore: 0,
+        freeze: 0,
+        tiny: 0,
+        pulse: 0,
+        targetKind: "follow"
+      });
+    }
+
+    function updateSecurityUnit(unit, dt) {
+      unit.life -= dt;
+      unit.inv = Math.max(0, unit.inv - dt);
+      unit.shield = Math.max(0, unit.shield - dt);
+      unit.haste = Math.max(0, unit.haste - dt);
+      unit.slow = Math.max(0, unit.slow - dt);
+      unit.vulnerable = Math.max(0, unit.vulnerable - dt);
+      unit.magnet = Math.max(0, unit.magnet - dt);
+      unit.doubleScore = Math.max(0, unit.doubleScore - dt);
+      unit.freeze = Math.max(0, unit.freeze - dt);
+      unit.tiny = Math.max(0, unit.tiny - dt);
+      unit.pulse += dt * 8;
+      pullDropsTowardCpu(unit, dt);
+      const target = chooseCpuTarget(unit);
+      if (target) {
+        moveCpuToward(unit, target.x, target.y, dt);
+      } else {
+        const p = state.player;
+        moveCpuToward(unit, p.x + Math.sin(state.time * 4) * 58, p.y - 46, dt);
+      }
+
+      unit.x = Math.max(24, Math.min(W - unit.w - 24, unit.x));
+      unit.y = Math.max(76, Math.min(H - unit.h - 24, unit.y));
+
+      for (const drop of state.drops) {
+        if (drop.dead) continue;
+        if (rectsTouch(unit, drop)) {
+          drop.dead = true;
+          if (drop.power) {
+            applyPower(drop, unit, "cpu");
+          } else {
+            const gained = unit.doubleScore > 0 ? drop.score * 2 : drop.score;
+            state.score += gained;
+            state.pops.push({ text: `CPU +${gained}`, x: drop.x, y: drop.y, color: drop.color, life: .7 });
+          }
+        }
+      }
+
+      for (const enemy of state.enemies) {
+        if (enemy.dead || unit.inv > 0) continue;
+        if (rectsTouch(cpuDamageBox(unit), { x: enemy.x - 16, y: enemy.y - 16, w: 32, h: 32 })) {
+          enemy.dead = true;
+          unit.inv = 0.65;
+          if (unit.shield > 0) {
+            state.score += 35;
+            state.pops.push({ text: "CPU shield +35", x: enemy.x, y: enemy.y, color: palette.green, life: .8 });
+          } else {
+            unit.life -= unit.vulnerable > 0 ? 6 : 3;
+            state.score += 25;
+            state.pops.push({ text: "CPU block +25", x: enemy.x, y: enemy.y, color: palette.green, life: .8 });
+          }
+        }
+      }
+    }
+
+    function pullDropsTowardCpu(unit, dt) {
+      if (unit.magnet <= 0) return;
+      for (const drop of state.drops) {
+        if (drop.dead) continue;
+        const dx = unit.x + unit.w / 2 - (drop.x + drop.w / 2);
+        const dy = unit.y + unit.h / 2 - (drop.y + drop.h / 2);
+        const d = Math.hypot(dx, dy) || 1;
+        if (d < 230) {
+          drop.x += dx / d * 220 * dt;
+          drop.y += dy / d * 220 * dt;
+        }
+      }
+    }
+
+    function chooseCpuTarget(unit) {
+      const drop = bestCpuDropTarget(unit);
+      if (drop) {
+        unit.targetKind = drop.power ? "power" : "item";
+        return { x: drop.x + drop.w / 2 - unit.w / 2, y: drop.y + drop.h / 2 - unit.h / 2 };
+      }
+
+      const enemy = nearestEnemy(unit, 230);
+      if (enemy) {
+        unit.targetKind = "enemy";
+        return { x: enemy.x - unit.w / 2, y: enemy.y - unit.h / 2 };
+      }
+
+      unit.targetKind = "follow";
+      return null;
+    }
+
+    function moveCpuToward(unit, x, y, dt) {
+      const dx = x - unit.x;
+      const dy = y - unit.y;
+      const d = Math.hypot(dx, dy) || 1;
+      if (d < 3) return;
+      const speedMultiplier = (unit.haste > 0 ? 1.5 : 1) * (unit.slow > 0 ? 0.6 : 1);
+      unit.x += dx / d * unit.speed * speedMultiplier * dt;
+      unit.y += dy / d * unit.speed * speedMultiplier * dt;
+    }
+
+    function nearestEnemy(unit, maxDistance = Infinity) {
+      let best = null;
+      let bestDistance = Infinity;
+      for (const enemy of state.enemies) {
+        if (enemy.dead) continue;
+        const distance = Math.hypot(enemy.x - (unit.x + unit.w / 2), enemy.y - (unit.y + unit.h / 2));
+        if (distance < bestDistance) {
+          best = enemy;
+          bestDistance = distance;
+        }
+      }
+      return bestDistance <= maxDistance ? best : null;
+    }
+
+    function bestCpuDropTarget(unit) {
+      let best = null;
+      let bestScore = Infinity;
+      for (const drop of state.drops) {
+        if (drop.dead) continue;
+        const distance = Math.hypot(drop.x - unit.x, drop.y - unit.y);
+        const fallingPenalty = drop.y > H - 45 ? 1000 : 0;
+        let attraction = 1;
+        if (drop.power === "security") {
+          attraction = 0.18;
+        } else if (drop.power) {
+          attraction = 0.32;
+        } else {
+          attraction = 1.45;
+        }
+        const score = distance * attraction + fallingPenalty;
+        if (score < bestScore) {
+          best = drop;
+          bestScore = score;
+        }
+      }
+      return best;
+    }
+
+    function cpuDamageBox(unit) {
+      if (unit.tiny <= 0) return unit;
+      return { x: unit.x + 9, y: unit.y + 9, w: unit.w - 18, h: unit.h - 16 };
+    }
+
+    function bumpEnemy(enemy) {
+      if (state.hitFlash > 0) return;
+      enemy.dead = true;
+      if (state.player.shield > 0) {
+        state.score += 30;
+        state.pops.push({ text: "Bounce +30", x: enemy.x, y: enemy.y, color: palette.green, life: .8 });
+        return;
+      }
+      const damage = state.player.vulnerable > 0 ? 2 : 1;
+      state.lives -= damage;
+      state.hitFlash = 1.0;
+      state.pops.push({ text: `-${damage}`, x: state.player.x, y: state.player.y, color: palette.red, life: .8 });
+      if (state.lives <= 0) endGame();
+    }
+
+    function playerDamageBox() {
+      const p = state.player;
+      if (p.tiny <= 0) return p;
+      return { x: p.x + 10, y: p.y + 10, w: p.w - 20, h: p.h - 18 };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      drawRoom();
+      for (const drop of state.drops) {
+        drop.draw(drop);
+        if (drop.power) drawPowerLabel(drop);
+      }
+      for (const enemy of state.enemies) drawEnemy(enemy);
+      for (const unit of state.securityUnits) drawSecurityUnit(unit);
+      drawPlayer(state.player);
+      drawPops();
+      if (state.hitFlash > 0) {
+        ctx.fillStyle = `rgba(239, 102, 85, ${state.hitFlash * .22})`;
+        ctx.fillRect(0, 0, W, H);
+      }
+      if (state.paused) drawPaused();
+    }
+
+    function drawPaused() {
+      ctx.fillStyle = "rgba(5, 8, 8, .62)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.textAlign = "center";
+      ctx.font = "700 54px 'Courier New', monospace";
+      ctx.fillStyle = "#050808";
+      ctx.fillText("PAUSED", W / 2 + 4, H / 2 + 4);
+      ctx.fillStyle = palette.cream;
+      ctx.fillText("PAUSED", W / 2, H / 2);
+      ctx.font = "700 18px 'Courier New', monospace";
+      ctx.fillStyle = palette.yellow;
+      ctx.fillText("Press P or Escape to resume", W / 2, H / 2 + 38);
+    }
+
+    function pixelRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+    }
+
+    function drawRoom() {
+      pixelRect(0, 0, W, H, "#172326");
+      pixelRect(0, 58, W, 4, "#718161");
+      pixelRect(0, H - 54, W, 54, palette.floor);
+      for (let x = 0; x < W; x += 48) {
+        pixelRect(x, H - 54, 24, 4, "#2c4541");
+      }
+      pixelRect(26, 18, 130, 26, "#25383b");
+      pixelRect(34, 24, 22, 14, palette.red);
+      pixelRect(62, 24, 22, 14, palette.yellow);
+      pixelRect(90, 24, 22, 14, palette.green);
+      pixelRect(118, 24, 22, 14, palette.blue);
+      pixelText("Corner Store", 184, 38, 24, palette.cream);
+      drawArcadeCabinet(760, 12);
+      drawShelf(546, 18);
+    }
+
+    function drawShelf(x, y) {
+      pixelRect(x, y, 154, 34, "#352b25");
+      pixelRect(x + 8, y + 8, 24, 18, palette.red);
+      pixelRect(x + 40, y + 7, 22, 19, palette.yellow);
+      pixelRect(x + 72, y + 8, 24, 18, palette.blue);
+      pixelRect(x + 104, y + 7, 24, 19, palette.green);
+      pixelRect(x, y + 30, 154, 5, "#7b5d35");
+    }
+
+    function drawArcadeCabinet(x, y) {
+      pixelRect(x, y, 96, 43, "#283a40");
+      pixelRect(x + 10, y + 7, 50, 25, "#0a1114");
+      pixelRect(x + 16, y + 12, 38, 14, palette.blue);
+      pixelRect(x + 68, y + 14, 10, 10, palette.red);
+      pixelRect(x + 82, y + 14, 8, 8, palette.yellow);
+      pixelRect(x + 66, y + 29, 26, 5, "#111");
+    }
+
+    function drawPlayer(p) {
+      const blink = state.hitFlash > 0 && Math.floor(state.time * 16) % 2 === 0;
+      if (blink) return;
+      const x = p.x;
+      const y = p.y;
+      pixelRect(x + 10, y, 18, 10, "#222");
+      pixelRect(x + 6, y + 10, 26, 16, "#f0b37e");
+      pixelRect(x + 9, y + 26, 20, 18, palette.blue);
+      pixelRect(x + 2, y + 30, 9, 13, palette.cream);
+      pixelRect(x + 28, y + 30, 9, 13, palette.cream);
+      pixelRect(x + 9, y + 44, 8, 8, "#222");
+      pixelRect(x + 21, y + 44, 8, 8, "#222");
+      pixelRect(x + 12, y + 17, 4, 4, "#111");
+      pixelRect(x + 24, y + 17, 4, 4, "#111");
+      if (p.shield > 0) {
+        ctx.strokeStyle = `rgba(86, 194, 113, ${0.55 + Math.sin(state.time * 10) * .2})`;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(x - 8, y - 8, p.w + 16, p.h + 18);
+      }
+      if (p.haste > 0) {
+        pixelRect(x - 11, y + 38, 7, 4, palette.blue);
+        pixelRect(x + 40, y + 38, 7, 4, palette.blue);
+      }
+      if (p.slow > 0) {
+        ctx.strokeStyle = `rgba(240, 138, 192, ${0.45 + Math.sin(state.time * 8) * .15})`;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - 4, y - 4, p.w + 8, p.h + 10);
+      }
+      if (p.vulnerable > 0) {
+        pixelRect(x + 6, y - 9, 26, 5, palette.red);
+      }
+      if (p.magnet > 0) {
+        ctx.strokeStyle = `rgba(239, 102, 85, ${0.35 + Math.sin(state.time * 7) * .12})`;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - 18, y - 18, p.w + 36, p.h + 38);
+      }
+      if (p.doubleScore > 0) {
+        pixelRect(x + 31, y + 2, 13, 10, palette.yellow);
+        pixelText("2x", x + 33, y + 11, 10, "#111");
+      }
+      if (p.freeze > 0) {
+        pixelRect(x - 7, y + 4, 5, 36, palette.blue);
+        pixelRect(x + 40, y + 4, 5, 36, palette.blue);
+      }
+      if (p.tiny > 0) {
+        ctx.strokeStyle = "rgba(248, 241, 216, .55)";
+        ctx.lineWidth = 2;
+        const box = playerDamageBox();
+        ctx.strokeRect(box.x, box.y, box.w, box.h);
+      }
+    }
+
+    function drawCoin(item) {
+      pixelRect(item.x + 8, item.y + 4, 16, 4, "#fff1a6");
+      pixelRect(item.x + 4, item.y + 8, 24, 16, palette.yellow);
+      pixelRect(item.x + 8, item.y + 12, 16, 8, "#b77f28");
+      pixelRect(item.x + 13, item.y + 9, 6, 14, "#fff1a6");
+      pixelRect(item.x + 8, item.y + 24, 16, 4, "#7a531c");
+    }
+
+    function drawTape(item) {
+      pixelRect(item.x, item.y + 5, 34, 23, "#26343b");
+      pixelRect(item.x + 4, item.y + 9, 26, 9, palette.blue);
+      pixelRect(item.x + 7, item.y + 20, 8, 6, "#111");
+      pixelRect(item.x + 20, item.y + 20, 8, 6, "#111");
+      pixelRect(item.x + 11, item.y + 22, 4, 2, palette.cream);
+      pixelRect(item.x + 24, item.y + 22, 4, 2, palette.cream);
+    }
+
+    function drawSnack(item) {
+      pixelRect(item.x + 4, item.y, 24, 34, palette.red);
+      pixelRect(item.x + 8, item.y + 5, 16, 5, palette.yellow);
+      pixelRect(item.x + 8, item.y + 15, 16, 10, "#ffd6a1");
+      pixelRect(item.x + 11, item.y + 18, 10, 4, "#ab332e");
+    }
+
+    function drawConsole(item) {
+      pixelRect(item.x, item.y + 8, 36, 19, "#dad4bd");
+      pixelRect(item.x + 4, item.y + 12, 14, 4, "#89908b");
+      pixelRect(item.x + 23, item.y + 12, 5, 5, palette.red);
+      pixelRect(item.x + 29, item.y + 12, 5, 5, palette.yellow);
+      pixelRect(item.x + 8, item.y + 27, 6, 5, "#2c2c2c");
+      pixelRect(item.x + 22, item.y + 27, 6, 5, "#2c2c2c");
+    }
+
+    function drawTv(item) {
+      pixelRect(item.x + 2, item.y + 6, 32, 24, "#3b3f45");
+      pixelRect(item.x + 7, item.y + 11, 18, 13, palette.green);
+      pixelRect(item.x + 27, item.y + 12, 4, 4, palette.red);
+      pixelRect(item.x + 27, item.y + 19, 4, 4, palette.yellow);
+      pixelRect(item.x + 10, item.y + 30, 4, 5, "#111");
+      pixelRect(item.x + 23, item.y + 30, 4, 5, "#111");
+      pixelRect(item.x + 11, item.y + 2, 3, 6, palette.cream);
+      pixelRect(item.x + 23, item.y + 2, 3, 6, palette.cream);
+    }
+
+    function drawSoda(item) {
+      pixelRect(item.x + 9, item.y, 12, 5, "#dfffe8");
+      pixelRect(item.x + 6, item.y + 5, 18, 28, palette.green);
+      pixelRect(item.x + 9, item.y + 13, 12, 10, "#eafff0");
+      pixelRect(item.x + 12, item.y + 15, 6, 6, palette.blue);
+    }
+
+    function drawSkates(item) {
+      pixelRect(item.x + 2, item.y + 8, 13, 13, palette.blue);
+      pixelRect(item.x + 20, item.y + 8, 13, 13, palette.blue);
+      pixelRect(item.x + 1, item.y + 22, 15, 4, "#d8e8ff");
+      pixelRect(item.x + 19, item.y + 22, 15, 4, "#d8e8ff");
+      pixelRect(item.x + 4, item.y + 26, 5, 5, "#111");
+      pixelRect(item.x + 23, item.y + 26, 5, 5, "#111");
+    }
+
+    function drawStickyCandy(item) {
+      pixelRect(item.x + 8, item.y + 9, 18, 14, palette.pink);
+      pixelRect(item.x + 2, item.y + 12, 7, 8, "#ffd0e8");
+      pixelRect(item.x + 26, item.y + 12, 7, 8, "#ffd0e8");
+      pixelRect(item.x + 13, item.y + 13, 8, 6, "#b54f87");
+      pixelRect(item.x + 10, item.y + 24, 14, 5, "#8d376b");
+    }
+
+    function drawNotebook(item) {
+      pixelRect(item.x + 2, item.y + 4, 32, 25, "#f6e7d1");
+      pixelRect(item.x + 7, item.y + 9, 22, 3, palette.blue);
+      pixelRect(item.x + 7, item.y + 16, 19, 3, palette.blue);
+      pixelRect(item.x + 7, item.y + 23, 14, 3, palette.red);
+      pixelRect(item.x + 2, item.y + 4, 4, 25, "#c83f38");
+    }
+
+    function drawHawthorn(item) {
+      pixelRect(item.x + 9, item.y + 4, 14, 5, "#ffe1b5");
+      pixelRect(item.x + 5, item.y + 9, 23, 18, palette.red);
+      pixelRect(item.x + 9, item.y + 13, 15, 10, palette.yellow);
+      pixelRect(item.x + 13, item.y + 16, 7, 4, "#9e2f2b");
+      pixelRect(item.x + 9, item.y + 27, 14, 4, "#6e2422");
+    }
+
+    function drawMagnet(item) {
+      pixelRect(item.x + 6, item.y + 5, 8, 24, palette.red);
+      pixelRect(item.x + 22, item.y + 5, 8, 24, palette.red);
+      pixelRect(item.x + 10, item.y + 5, 16, 7, "#f6d7d1");
+      pixelRect(item.x + 7, item.y + 24, 7, 7, palette.blue);
+      pixelRect(item.x + 22, item.y + 24, 7, 7, palette.blue);
+    }
+
+    function drawDoubleScore(item) {
+      pixelRect(item.x + 2, item.y + 7, 32, 18, palette.yellow);
+      pixelRect(item.x + 6, item.y + 11, 24, 10, "#111");
+      pixelText("2x", item.x + 10, item.y + 20, 12, palette.yellow);
+    }
+
+    function drawFreezePop(item) {
+      pixelRect(item.x + 7, item.y, 15, 28, palette.blue);
+      pixelRect(item.x + 10, item.y + 5, 9, 12, "#d8f2ff");
+      pixelRect(item.x + 12, item.y + 28, 5, 10, "#a56d33");
+    }
+
+    function drawTinyCharm(item) {
+      pixelRect(item.x + 9, item.y + 4, 12, 5, palette.cream);
+      pixelRect(item.x + 5, item.y + 9, 22, 20, "#675642");
+      pixelRect(item.x + 10, item.y + 14, 12, 10, palette.cream);
+      pixelRect(item.x + 13, item.y + 17, 6, 4, "#111");
+    }
+
+    function drawSecurityOrb(item) {
+      pixelRect(item.x + 8, item.y + 4, 18, 5, "#dfffe8");
+      pixelRect(item.x + 5, item.y + 9, 24, 18, palette.green);
+      pixelRect(item.x + 10, item.y + 13, 14, 10, "#15251d");
+      pixelRect(item.x + 13, item.y + 15, 3, 3, palette.blue);
+      pixelRect(item.x + 20, item.y + 15, 3, 3, palette.blue);
+      pixelRect(item.x + 13, item.y + 22, 10, 5, "#dfffe8");
+    }
+
+    function drawSecurityUnit(unit) {
+      if (unit.inv > 0 && Math.floor(state.time * 18) % 2 === 0) return;
+      const x = unit.x;
+      const y = unit.y + Math.sin(unit.pulse) * 1.5;
+      pixelRect(x + 8, y, 18, 9, "#143820");
+      pixelRect(x + 5, y + 9, 24, 15, "#e0b083");
+      pixelRect(x + 8, y + 24, 18, 15, palette.green);
+      pixelRect(x + 1, y + 27, 7, 12, palette.cream);
+      pixelRect(x + 26, y + 27, 7, 12, palette.cream);
+      pixelRect(x + 8, y + 39, 7, 7, "#111");
+      pixelRect(x + 20, y + 39, 7, 7, "#111");
+      pixelRect(x + 11, y + 15, 4, 4, "#111");
+      pixelRect(x + 22, y + 15, 4, 4, "#111");
+      pixelRect(x + 6, y - 12, 26, 10, "#050808");
+      pixelText("CPU", x + 9, y - 4, 10, palette.green);
+      if (unit.shield > 0) {
+        ctx.strokeStyle = `rgba(86, 194, 113, ${0.55 + Math.sin(state.time * 10) * .2})`;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(x - 7, y - 7, unit.w + 14, unit.h + 18);
+      }
+      if (unit.haste > 0) {
+        pixelRect(x - 8, y + 34, 6, 4, palette.blue);
+        pixelRect(x + 36, y + 34, 6, 4, palette.blue);
+      }
+      if (unit.slow > 0) {
+        ctx.strokeStyle = "rgba(240, 138, 192, .45)";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - 3, y - 3, unit.w + 6, unit.h + 9);
+      }
+      if (unit.vulnerable > 0) {
+        pixelRect(x + 6, y - 18, 22, 4, palette.red);
+      }
+      if (unit.magnet > 0) {
+        ctx.strokeStyle = "rgba(239, 102, 85, .4)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 16, y - 16, unit.w + 32, unit.h + 36);
+      }
+      if (unit.doubleScore > 0) {
+        pixelRect(x + 28, y + 1, 12, 9, palette.yellow);
+        pixelText("2x", x + 30, y + 9, 9, "#111");
+      }
+      if (unit.freeze > 0) {
+        pixelRect(x - 5, y + 4, 4, 32, palette.blue);
+        pixelRect(x + 35, y + 4, 4, 32, palette.blue);
+      }
+      if (unit.tiny > 0) {
+        const box = cpuDamageBox(unit);
+        ctx.strokeStyle = "rgba(248, 241, 216, .55)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(box.x, box.y, box.w, box.h);
+      }
+      ctx.strokeStyle = unit.targetKind === "enemy" ? "rgba(239, 102, 85, .55)" : unit.targetKind === "power" ? "rgba(242, 200, 75, .65)" : "rgba(86, 194, 113, .45)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x - 5, y - 5, unit.w + 10, unit.h + 12);
+    }
+
+    function drawPowerLabel(item) {
+      const text = item.label || item.name;
+      const x = item.x + item.w / 2;
+      const y = Math.max(14, item.y - 7);
+      ctx.font = "700 10px 'Courier New', monospace";
+      ctx.textAlign = "center";
+      const width = ctx.measureText(text).width + 8;
+      pixelRect(x - width / 2, y - 10, width, 12, "#050808");
+      ctx.fillStyle = item.color;
+      ctx.fillText(text, x, y);
+    }
+
+    function drawEnemy(enemy) {
+      const x = enemy.x + Math.sin(enemy.wobble) * 5;
+      const y = enemy.y;
+      pixelRect(x - 16, y - 12, 32, 24, "#513155");
+      pixelRect(x - 20, y - 4, 8, 8, "#513155");
+      pixelRect(x + 12, y - 4, 8, 8, "#513155");
+      pixelRect(x - 9, y - 5, 6, 6, palette.red);
+      pixelRect(x + 4, y - 5, 6, 6, palette.red);
+      pixelRect(x - 8, y + 8, 16, 4, "#111");
+    }
+
+    function drawPops() {
+      ctx.textAlign = "center";
+      ctx.font = "18px 'Courier New', monospace";
+      for (const pop of state.pops) {
+        ctx.globalAlpha = Math.max(0, pop.life);
+        ctx.fillStyle = "#050808";
+        ctx.fillText(pop.text, pop.x + 2, pop.y + 2);
+        ctx.fillStyle = pop.color;
+        ctx.fillText(pop.text, pop.x, pop.y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function startMiniGame() {
+      state = freshState();
+      state.running = true;
+      state.paused = false;
+      pauseBtn.textContent = "Pause";
+      miniState = currentGame === "castleDefense"
+        ? createCastleDefenseState()
+        : currentGame === "civilization"
+          ? createCivilizationState()
+          : createTvBreakoutState(true);
+      overlay.hidden = true;
+      updateHud();
+      lastTime = performance.now();
+      cancelAnimationFrame(animationId);
+      animationId = requestAnimationFrame(loop);
+    }
+
+    function endMiniGame(message) {
+      state.running = false;
+      state.over = true;
+      overlayTitle.textContent = "Game Over";
+      overlayText.textContent = `${message} Final score: ${miniState.score}.`;
+      startBtn.textContent = "Play Again";
+      overlay.hidden = false;
+    }
+
+    function updateMiniGame(dt) {
+      if (currentGame === "castleDefense") updateCastleDefense(dt);
+      if (currentGame === "tvBreakout") updateTvBreakout(dt);
+      if (currentGame === "civilization") updateCivilization(dt);
+      updateHud();
+    }
+
+    function drawMiniGame() {
+      if (currentGame === "castleDefense") drawCastleDefense();
+      if (currentGame === "tvBreakout") drawTvBreakout();
+      if (currentGame === "civilization") drawCivilization();
+      if (state.paused) drawPaused();
+    }
+
+    function createCastleDefenseState() {
+      return {
+        game: "castleDefense",
+        score: 0,
+        lives: 5,
+        level: 1,
+        time: 0,
+        spawnTimer: 0.4,
+        supplyTimer: 5,
+        fireCooldown: 0,
+        rapid: 0,
+        shake: 0,
+        player: { x: W / 2 - 18, y: H - 132, w: 36, h: 38, speed: 315 },
+        cannons: [
+          { x: 150, y: H - 178, cooldown: 0.7 },
+          { x: W - 190, y: H - 178, cooldown: 1.15 }
+        ],
+        cpus: [
+          { x: 285, y: H - 132, w: 32, h: 36, speed: 145, dir: 1, cooldown: 0.5 },
+          { x: W - 325, y: H - 132, w: 32, h: 36, speed: 145, dir: -1, cooldown: 0.9 }
+        ],
+        shots: [],
+        enemies: [],
+        supplies: [],
+        pops: []
+      };
+    }
+
+    function updateCastleDefense(dt) {
+      const game = miniState;
+      game.time += dt;
+      game.level = 1 + Math.floor(game.score / 260);
+      game.fireCooldown = Math.max(0, game.fireCooldown - dt);
+      game.rapid = Math.max(0, game.rapid - dt);
+      game.shake = Math.max(0, game.shake - dt);
+      const p = game.player;
+      const vx = (keys.has("ArrowRight") || keys.has("KeyD") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("KeyA") ? 1 : 0);
+      p.x = Math.max(82, Math.min(W - p.w - 82, p.x + vx * p.speed * dt));
+      if (keys.has("Space") || keys.has("Enter")) fireCastleShot();
+      updateCastleCannons(dt);
+      updateCastleCpus(dt);
+
+      game.spawnTimer -= dt;
+      game.supplyTimer -= dt;
+      if (game.spawnTimer <= 0) {
+        spawnCastleEnemy();
+        game.spawnTimer = Math.max(0.45, rand(1.0, 1.55) - game.level * 0.06);
+      }
+      if (game.supplyTimer <= 0) {
+        spawnCastleSupply();
+        game.supplyTimer = rand(6, 9);
+      }
+
+      for (const shot of game.shots) {
+        shot.x += (shot.vx || 0) * dt;
+        shot.y -= shot.speed * dt;
+      }
+      game.shots = game.shots.filter(shot => !shot.dead && shot.y > -30);
+
+      for (const enemy of game.enemies) {
+        enemy.y += enemy.speed * dt;
+        enemy.wobble += dt * 7;
+        for (const shot of game.shots) {
+          if (shot.dead || enemy.dead) continue;
+          if (rectsTouch(shot, enemy)) hitCastleEnemy(enemy, shot);
+        }
+        if (!enemy.dead && enemy.y + enemy.h >= H - 84) {
+          enemy.dead = true;
+          game.lives -= enemy.boss ? 2 : 1;
+          game.shake = 0.35;
+          game.pops.push({ text: enemy.boss ? "Gate -2" : "Gate -1", x: enemy.x, y: H - 92, color: palette.red, life: .8 });
+          if (game.lives <= 0) endMiniGame("The gate fell.");
+        }
+      }
+      game.enemies = game.enemies.filter(enemy => !enemy.dead);
+
+      for (const supply of game.supplies) {
+        supply.y += supply.speed * dt;
+        if (!supply.dead && rectsTouch(p, supply)) collectCastleSupply(supply);
+      }
+      game.supplies = game.supplies.filter(supply => !supply.dead && supply.y < H + 40);
+
+      for (const pop of game.pops) {
+        pop.y -= 28 * dt;
+        pop.life -= dt;
+      }
+      game.pops = game.pops.filter(pop => pop.life > 0);
+    }
+
+    function fireCastleShot() {
+      const game = miniState;
+      const cooldown = game.rapid > 0 ? 0.12 : 0.28;
+      if (game.fireCooldown > 0) return;
+      game.fireCooldown = cooldown;
+      game.shots.push({
+        x: game.player.x + game.player.w / 2 - 5,
+        y: game.player.y - 14,
+        w: 10,
+        h: 18,
+        speed: game.rapid > 0 ? 520 : 430
+      });
+    }
+
+    function updateCastleCannons(dt) {
+      for (const cannon of miniState.cannons) {
+        cannon.cooldown -= dt;
+        const target = nearestCastleEnemy(cannon.x, cannon.y, 420);
+        if (target && cannon.cooldown <= 0) {
+          cannon.cooldown = 1.25;
+          miniState.shots.push({
+            x: cannon.x + 13,
+            y: cannon.y - 12,
+            w: 12,
+            h: 20,
+            speed: 360,
+            vx: (target.x + target.w / 2 - cannon.x) * 0.55,
+            heavy: true
+          });
+        }
+      }
+    }
+
+    function updateCastleCpus(dt) {
+      for (const cpu of miniState.cpus) {
+        cpu.cooldown -= dt;
+        const target = nearestCastleEnemy(cpu.x + cpu.w / 2, cpu.y, 310);
+        if (target) {
+          cpu.dir = target.x > cpu.x ? 1 : -1;
+          if (cpu.cooldown <= 0) {
+            cpu.cooldown = 0.72;
+            miniState.shots.push({
+              x: cpu.x + cpu.w / 2 - 4,
+              y: cpu.y - 12,
+              w: 8,
+              h: 16,
+              speed: 390,
+              vx: (target.x + target.w / 2 - cpu.x) * 0.45
+            });
+          }
+        } else {
+          cpu.x += cpu.dir * cpu.speed * dt;
+          if (cpu.x < 120 || cpu.x > W - 154) cpu.dir *= -1;
+          cpu.x = Math.max(120, Math.min(W - 154, cpu.x));
+        }
+      }
+    }
+
+    function nearestCastleEnemy(x, y, maxDistance) {
+      let best = null;
+      let bestDistance = Infinity;
+      for (const enemy of miniState.enemies) {
+        if (enemy.dead) continue;
+        const distance = Math.hypot(enemy.x + enemy.w / 2 - x, enemy.y + enemy.h / 2 - y);
+        if (distance < bestDistance && distance <= maxDistance) {
+          best = enemy;
+          bestDistance = distance;
+        }
+      }
+      return best;
+    }
+
+    function spawnCastleEnemy() {
+      const boss = Math.random() < Math.min(0.08 + miniState.level * 0.01, 0.18);
+      miniState.enemies.push({
+        x: rand(80, W - 120),
+        y: -44,
+        w: boss ? 46 : 32,
+        h: boss ? 44 : 32,
+        speed: rand(54, 82) + miniState.level * 7,
+        hp: boss ? 2 : 1,
+        boss,
+        wobble: 0
+      });
+    }
+
+    function spawnCastleSupply() {
+      const roll = Math.random();
+      const kind = roll < 0.45 ? "repair" : roll < 0.7 ? "rapid" : roll < 0.86 ? "cpu" : "cannon";
+      miniState.supplies.push({
+        kind,
+        label: kind === "repair" ? "REPAIR" : kind === "rapid" ? "RAPID" : kind === "cpu" ? "CPU" : "CANNON",
+        color: kind === "repair" || kind === "cpu" ? palette.green : palette.yellow,
+        x: rand(92, W - 124),
+        y: -36,
+        w: 34,
+        h: 30,
+        speed: rand(84, 120)
+      });
+    }
+
+    function hitCastleEnemy(enemy, shot) {
+      shot.dead = true;
+      enemy.hp -= shot.heavy ? 2 : 1;
+      if (enemy.hp > 0) {
+        miniState.pops.push({ text: "Crack!", x: enemy.x, y: enemy.y, color: palette.yellow, life: .5 });
+        return;
+      }
+      enemy.dead = true;
+      const points = enemy.boss ? 35 : 15;
+      miniState.score += points;
+      miniState.pops.push({ text: `+${points}`, x: enemy.x, y: enemy.y, color: enemy.boss ? palette.yellow : palette.green, life: .7 });
+      if (enemy.boss) {
+        for (const dir of [-1, 1]) {
+          miniState.enemies.push({
+            x: enemy.x + dir * 22,
+            y: enemy.y + 8,
+            w: 28,
+            h: 28,
+            speed: enemy.speed + 18,
+            hp: 1,
+            boss: false,
+            wobble: 0
+          });
+        }
+      }
+    }
+
+    function collectCastleSupply(supply) {
+      supply.dead = true;
+      if (supply.kind === "repair") {
+        const before = miniState.lives;
+        miniState.lives = Math.min(5, miniState.lives + 1);
+        miniState.pops.push({ text: miniState.lives > before ? "Gate +1" : "Gate Full", x: supply.x, y: supply.y, color: palette.green, life: .8 });
+      } else if (supply.kind === "rapid") {
+        miniState.rapid = 5;
+        miniState.pops.push({ text: "Rapid Fire!", x: supply.x, y: supply.y, color: palette.yellow, life: .8 });
+      } else if (supply.kind === "cpu") {
+        miniState.cpus.push({
+          x: supply.x,
+          y: H - 132,
+          w: 32,
+          h: 36,
+          speed: 145,
+          dir: Math.random() < 0.5 ? -1 : 1,
+          cooldown: 0.2
+        });
+        miniState.pops.push({ text: "CPU Defender!", x: supply.x, y: supply.y, color: palette.green, life: .8 });
+      } else {
+        miniState.cannons.push({
+          x: Math.max(108, Math.min(W - 145, supply.x)),
+          y: H - 178,
+          cooldown: 0.35
+        });
+        miniState.pops.push({ text: "Cannon Built!", x: supply.x, y: supply.y, color: palette.yellow, life: .8 });
+      }
+    }
+
+    function drawCastleDefensePreview() {
+      miniState = createCastleDefenseState();
+      drawCastleDefense();
+      miniState = null;
+    }
+
+    function drawCastleDefense() {
+      const game = miniState || createCastleDefenseState();
+      const shakeX = game.shake > 0 ? Math.sin(game.time * 42) * 4 : 0;
+      ctx.save();
+      ctx.translate(shakeX, 0);
+      pixelRect(-10, 0, W + 20, H, "#17242b");
+      pixelRect(0, H - 92, W, 92, "#314047");
+      pixelRect(72, H - 138, W - 144, 48, "#6e775f");
+      for (let x = 90; x < W - 110; x += 54) {
+        pixelRect(x, H - 168, 32, 30, "#6e775f");
+      }
+      pixelRect(0, H - 84, W, 8, "#9a8a57");
+      pixelRect(380, H - 92, 200, 92, "#42342f");
+      pixelRect(420, H - 70, 120, 70, "#2a201d");
+      pixelText("CASTLE GATE", 392, H - 102, 18, palette.cream);
+      for (const supply of game.supplies) drawCastleSupply(supply);
+      for (const enemy of game.enemies) drawCastleEnemy(enemy);
+      for (const cannon of game.cannons) drawCastleCannon(cannon);
+      for (const cpu of game.cpus) drawCastleCpu(cpu);
+      for (const shot of game.shots) {
+        pixelRect(shot.x, shot.y, shot.w, shot.h, shot.heavy ? palette.yellow : palette.cream);
+        pixelRect(shot.x + 2, shot.y + 2, shot.w - 4, 4, shot.heavy ? palette.red : palette.yellow);
+      }
+      drawCastlePlayer(game.player, game);
+      drawMiniPops(game.pops);
+      ctx.restore();
+    }
+
+    function drawCastlePlayer(p, game) {
+      pixelRect(p.x + 8, p.y, 20, 9, "#222");
+      pixelRect(p.x + 5, p.y + 9, 27, 15, "#e0b083");
+      pixelRect(p.x + 7, p.y + 24, 23, 16, palette.blue);
+      pixelRect(p.x - 2, p.y + 26, 9, 14, palette.cream);
+      pixelRect(p.x + 29, p.y + 26, 9, 14, palette.cream);
+      pixelRect(p.x + 17, p.y - 16, 6, 18, palette.cream);
+      pixelRect(p.x + 14, p.y - 20, 12, 6, palette.yellow);
+      if (game.rapid > 0) {
+        ctx.strokeStyle = "rgba(242, 200, 75, .65)";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(p.x - 6, p.y - 8, p.w + 12, p.h + 14);
+      }
+    }
+
+    function drawCastleCannon(cannon) {
+      pixelRect(cannon.x, cannon.y + 12, 38, 18, "#31383d");
+      pixelRect(cannon.x + 9, cannon.y + 2, 20, 16, "#22282c");
+      pixelRect(cannon.x + 16, cannon.y - 12, 8, 18, "#22282c");
+      pixelRect(cannon.x + 5, cannon.y + 27, 9, 9, "#111");
+      pixelRect(cannon.x + 25, cannon.y + 27, 9, 9, "#111");
+      pixelRect(cannon.x + 11, cannon.y - 16, 18, 5, palette.yellow);
+    }
+
+    function drawCastleCpu(cpu) {
+      pixelRect(cpu.x + 7, cpu.y, 18, 8, "#143820");
+      pixelRect(cpu.x + 5, cpu.y + 8, 23, 14, "#e0b083");
+      pixelRect(cpu.x + 7, cpu.y + 22, 19, 15, palette.green);
+      pixelRect(cpu.x + (cpu.dir > 0 ? 25 : -2), cpu.y + 18, 8, 20, palette.cream);
+      pixelRect(cpu.x + 8, cpu.y + 37, 7, 7, "#111");
+      pixelRect(cpu.x + 20, cpu.y + 37, 7, 7, "#111");
+      pixelRect(cpu.x + 4, cpu.y - 11, 26, 9, "#050808");
+      pixelText("CPU", cpu.x + 7, cpu.y - 4, 10, palette.green);
+    }
+
+    function drawCastleEnemy(enemy) {
+      const x = enemy.x + Math.sin(enemy.wobble) * 4;
+      const y = enemy.y;
+      const color = enemy.boss ? "#684668" : "#513155";
+      pixelRect(x, y + 6, enemy.w, enemy.h - 8, color);
+      pixelRect(x + 5, y, enemy.w - 10, 10, color);
+      pixelRect(x + 7, y + 14, 6, 6, palette.red);
+      pixelRect(x + enemy.w - 14, y + 14, 6, 6, palette.red);
+      pixelRect(x + 9, y + enemy.h - 9, enemy.w - 18, 4, "#111");
+      if (enemy.boss) pixelRect(x + 12, y - 8, enemy.w - 24, 8, palette.yellow);
+    }
+
+    function drawCastleSupply(supply) {
+      pixelRect(supply.x, supply.y + 6, supply.w, supply.h - 4, supply.color);
+      pixelRect(supply.x + 5, supply.y + 11, supply.w - 10, 9, "#111");
+      pixelRect(supply.x + 9, supply.y + 14, supply.w - 18, 4, palette.cream);
+      drawPowerLabel(supply);
+    }
+
+    function createTvBreakoutState(active) {
+      const bricks = [];
+      for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 10; col++) {
+          bricks.push({
+            x: 96 + col * 78,
+            y: 78 + row * 34,
+            w: 66,
+            h: 22,
+            type: row === 0 ? "gold" : row === 2 && col % 3 === 0 ? "wide" : row === 4 && col % 4 === 0 ? "fast" : "normal",
+            dead: false
+          });
+        }
+      }
+      return {
+        game: "tvBreakout",
+        score: 0,
+        lives: 3,
+        level: 1,
+        time: 0,
+        paddle: { x: W / 2 - 58, y: H - 48, w: 116, h: 14, speed: 430, wide: 0 },
+        ball: { x: W / 2, y: H - 80, r: 8, vx: 185, vy: active ? -235 : -180 },
+        bricks,
+        pops: []
+      };
+    }
+
+    function updateTvBreakout(dt) {
+      const game = miniState;
+      game.time += dt;
+      game.paddle.wide = Math.max(0, game.paddle.wide - dt);
+      game.paddle.w = game.paddle.wide > 0 ? 154 : 116;
+      game.level = 1 + Math.floor(game.score / 300);
+      const move = (keys.has("ArrowRight") || keys.has("KeyD") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("KeyA") ? 1 : 0);
+      game.paddle.x = Math.max(36, Math.min(W - game.paddle.w - 36, game.paddle.x + move * game.paddle.speed * dt));
+      const ball = game.ball;
+      ball.x += ball.vx * dt;
+      ball.y += ball.vy * dt;
+      if (ball.x < 28 || ball.x > W - 28) {
+        ball.vx *= -1;
+        ball.x = Math.max(28, Math.min(W - 28, ball.x));
+      }
+      if (ball.y < 28) {
+        ball.vy = Math.abs(ball.vy);
+      }
+      if (ball.y > H + 20) {
+        game.lives -= 1;
+        if (game.lives <= 0) {
+          endMiniGame("The TV signal faded out.");
+          return;
+        }
+        resetBreakoutBall();
+      }
+      const paddleBox = { x: game.paddle.x, y: game.paddle.y, w: game.paddle.w, h: game.paddle.h };
+      if (ball.vy > 0 && circleTouchesRect(ball, paddleBox)) {
+        const hit = (ball.x - (game.paddle.x + game.paddle.w / 2)) / (game.paddle.w / 2);
+        ball.vx = hit * 290;
+        ball.vy = -Math.abs(ball.vy) - 8;
+      }
+      for (const brick of game.bricks) {
+        if (brick.dead || !circleTouchesRect(ball, brick)) continue;
+        brick.dead = true;
+        ball.vy *= -1;
+        const points = brick.type === "gold" ? 25 : 10;
+        game.score += points;
+        game.pops.push({ text: `+${points}`, x: brick.x + brick.w / 2, y: brick.y, color: brickColor(brick), life: .7 });
+        if (brick.type === "wide") game.paddle.wide = 7;
+        if (brick.type === "fast") {
+          ball.vx *= 1.12;
+          ball.vy *= 1.12;
+        }
+        break;
+      }
+      if (game.bricks.every(brick => brick.dead)) {
+        game.score += 250;
+        game.bricks = createTvBreakoutState(true).bricks;
+        resetBreakoutBall();
+      }
+      for (const pop of game.pops) {
+        pop.y -= 25 * dt;
+        pop.life -= dt;
+      }
+      game.pops = game.pops.filter(pop => pop.life > 0);
+    }
+
+    function resetBreakoutBall() {
+      const game = miniState;
+      game.ball.x = W / 2;
+      game.ball.y = H - 86;
+      game.ball.vx = Math.random() < .5 ? -180 : 180;
+      game.ball.vy = -235;
+    }
+
+    function drawTvBreakout() {
+      const game = miniState || createTvBreakoutState(false);
+      pixelRect(0, 0, W, H, "#101719");
+      pixelRect(38, 38, W - 76, H - 76, "#18282b");
+      pixelRect(38, 38, W - 76, 5, "#718161");
+      pixelRect(38, 38, 5, H - 76, "#718161");
+      pixelRect(W - 43, 38, 5, H - 76, "#718161");
+      pixelText("TV BREAKOUT", 62, 31, 18, palette.cream);
+      for (const brick of game.bricks) {
+        if (brick.dead) continue;
+        pixelRect(brick.x, brick.y, brick.w, brick.h, brickColor(brick));
+        pixelRect(brick.x + 5, brick.y + 5, brick.w - 10, 4, "rgba(255,255,255,.25)");
+      }
+      pixelRect(game.paddle.x, game.paddle.y, game.paddle.w, game.paddle.h, palette.blue);
+      pixelRect(game.paddle.x + 8, game.paddle.y + 4, game.paddle.w - 16, 4, palette.cream);
+      pixelRect(game.ball.x - game.ball.r, game.ball.y - game.ball.r, game.ball.r * 2, game.ball.r * 2, palette.yellow);
+      drawMiniPops(game.pops);
+    }
+
+    function brickColor(brick) {
+      if (brick.type === "gold") return palette.yellow;
+      if (brick.type === "wide") return palette.blue;
+      if (brick.type === "fast") return palette.red;
+      return palette.green;
+    }
+
+    function circleTouchesRect(circle, rect) {
+      const x = Math.max(rect.x, Math.min(circle.x, rect.x + rect.w));
+      const y = Math.max(rect.y, Math.min(circle.y, rect.y + rect.h));
+      return Math.hypot(circle.x - x, circle.y - y) < circle.r;
+    }
+
+    function drawMiniPops(pops) {
+      ctx.textAlign = "center";
+      ctx.font = "18px 'Courier New', monospace";
+      for (const pop of pops) {
+        ctx.globalAlpha = Math.max(0, pop.life);
+        ctx.fillStyle = "#050808";
+        ctx.fillText(pop.text, pop.x + 2, pop.y + 2);
+        ctx.fillStyle = pop.color;
+        ctx.fillText(pop.text, pop.x, pop.y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function createCivilizationState() {
+      const grid = [];
+      for (let y = 0; y < 8; y++) {
+        grid.push([]);
+        for (let x = 0; x < 12; x++) grid[y].push("");
+      }
+      grid[3][5] = "town";
+      grid[3][6] = "town";
+      grid[4][5] = "town";
+      grid[4][6] = "town";
+      return {
+        game: "civilization",
+        score: 0,
+        lives: 10,
+        level: 1,
+        time: 0,
+        food: 12,
+        gold: 10,
+        population: 4,
+        soldiers: 1,
+        buildMode: 0,
+        cursor: { x: 2, y: 2 },
+        moveCooldown: 0,
+        buildCooldown: 0,
+        waveTimer: 7,
+        resourceTimer: 0,
+        grid,
+        raiders: [],
+        pops: []
+      };
+    }
+
+    const civBuilds = [
+      { id: "farm", label: "FARM", food: 0, gold: 4 },
+      { id: "house", label: "HOUSE", food: 4, gold: 5 },
+      { id: "barracks", label: "BARRACKS", food: 6, gold: 8 },
+      { id: "wall", label: "WALL", food: 0, gold: 3 }
+    ];
+
+    function updateCivilization(dt) {
+      const game = miniState;
+      game.time += dt;
+      game.moveCooldown = Math.max(0, game.moveCooldown - dt);
+      game.buildCooldown = Math.max(0, game.buildCooldown - dt);
+      game.resourceTimer += dt;
+      game.waveTimer -= dt;
+      game.level = 1 + Math.floor(game.score / 350);
+
+      const dx = (keys.has("ArrowRight") || keys.has("KeyD") ? 1 : 0) - (keys.has("ArrowLeft") || keys.has("KeyA") ? 1 : 0);
+      const dy = (keys.has("ArrowDown") || keys.has("KeyS") ? 1 : 0) - (keys.has("ArrowUp") || keys.has("KeyW") ? 1 : 0);
+      if ((dx || dy) && game.moveCooldown <= 0) {
+        game.cursor.x = Math.max(0, Math.min(11, game.cursor.x + Math.sign(dx)));
+        game.cursor.y = Math.max(0, Math.min(7, game.cursor.y + Math.sign(dy)));
+        game.moveCooldown = 0.13;
+      }
+      if (keys.has("Space") && game.buildCooldown <= 0) {
+        game.buildMode = (game.buildMode + 1) % civBuilds.length;
+        game.buildCooldown = 0.25;
+      }
+      if (keys.has("Enter") && game.buildCooldown <= 0) {
+        buildCivilizationTile();
+        game.buildCooldown = 0.25;
+      }
+
+      if (game.resourceTimer >= 1) {
+        game.resourceTimer -= 1;
+        tickCivilizationResources();
+      }
+      if (game.waveTimer <= 0) {
+        spawnCivilizationWave();
+        game.waveTimer = Math.max(4, 9 - game.level * 0.35);
+      }
+
+      for (const raider of game.raiders) {
+        updateRaider(raider, dt);
+      }
+      game.raiders = game.raiders.filter(raider => !raider.dead);
+
+      for (const pop of game.pops) {
+        pop.y -= 24 * dt;
+        pop.life -= dt;
+      }
+      game.pops = game.pops.filter(pop => pop.life > 0);
+      game.lives = Math.max(0, game.lives);
+      if (game.lives <= 0) endMiniGame("Your civilization was overrun.");
+    }
+
+    function buildCivilizationTile() {
+      const game = miniState;
+      const build = civBuilds[game.buildMode];
+      const { x, y } = game.cursor;
+      if (game.grid[y][x]) {
+        game.pops.push({ text: "Occupied", x: civCellX(x), y: civCellY(y), color: palette.red, life: .7 });
+        return;
+      }
+      if (game.food < build.food || game.gold < build.gold) {
+        game.pops.push({ text: "Need resources", x: civCellX(x), y: civCellY(y), color: palette.red, life: .7 });
+        return;
+      }
+      game.food -= build.food;
+      game.gold -= build.gold;
+      game.grid[y][x] = build.id;
+      game.score += 20;
+      game.pops.push({ text: build.label, x: civCellX(x), y: civCellY(y), color: palette.yellow, life: .8 });
+    }
+
+    function tickCivilizationResources() {
+      const game = miniState;
+      const counts = countCivilizationBuildings();
+      game.food += 1 + counts.farm * 2;
+      game.gold += 1 + Math.floor(counts.house / 2);
+      game.population = 4 + counts.house * 2;
+      const trained = Math.min(counts.barracks, Math.floor(game.food / 4), Math.max(0, game.population - game.soldiers));
+      if (trained > 0) {
+        game.food -= trained * 4;
+        game.soldiers += trained;
+        game.pops.push({ text: `+${trained} soldier`, x: 120, y: 68, color: palette.green, life: .7 });
+      }
+      game.score += counts.farm + counts.house + counts.barracks * 2;
+    }
+
+    function countCivilizationBuildings() {
+      const counts = { farm: 0, house: 0, barracks: 0, wall: 0, town: 0 };
+      for (const row of miniState.grid) {
+        for (const cell of row) if (cell) counts[cell] += 1;
+      }
+      return counts;
+    }
+
+    function spawnCivilizationWave() {
+      const game = miniState;
+      const amount = 2 + Math.floor(game.level * 0.7);
+      for (let i = 0; i < amount; i++) {
+        const side = Math.floor(rand(0, 4));
+        let x = 0;
+        let y = 0;
+        if (side === 0) { x = rand(0, 12); y = -0.8; }
+        if (side === 1) { x = 12.6; y = rand(0, 8); }
+        if (side === 2) { x = rand(0, 12); y = 8.6; }
+        if (side === 3) { x = -0.8; y = rand(0, 8); }
+        game.raiders.push({ x, y, hp: 1 + Math.floor(game.level / 4), speed: rand(0.45, 0.72) + game.level * 0.025, attack: 0 });
+      }
+      game.pops.push({ text: "Raiders!", x: W / 2, y: 64, color: palette.red, life: 1 });
+    }
+
+    function updateRaider(raider, dt) {
+      const game = miniState;
+      const tx = 5.5;
+      const ty = 3.5;
+      const dx = tx - raider.x;
+      const dy = ty - raider.y;
+      const d = Math.hypot(dx, dy) || 1;
+      raider.x += dx / d * raider.speed * dt;
+      raider.y += dy / d * raider.speed * dt;
+      const gx = Math.max(0, Math.min(11, Math.floor(raider.x)));
+      const gy = Math.max(0, Math.min(7, Math.floor(raider.y)));
+      const cell = game.grid[gy][gx];
+      raider.attack -= dt;
+      if (cell === "wall" && raider.attack <= 0) {
+        game.grid[gy][gx] = "";
+        raider.attack = 1.5;
+        game.pops.push({ text: "Wall down", x: civCellX(gx), y: civCellY(gy), color: palette.red, life: .8 });
+      }
+      if (Math.hypot(raider.x - tx, raider.y - ty) < 0.55 && raider.attack <= 0) {
+        const damage = game.soldiers > 0 ? 0 : 1;
+        if (game.soldiers > 0) {
+          game.soldiers -= 1;
+          raider.dead = true;
+          game.score += 25;
+          game.pops.push({ text: "Defended +25", x: civCellX(gx), y: civCellY(gy), color: palette.green, life: .8 });
+        } else {
+          game.lives -= damage;
+          raider.dead = true;
+          game.pops.push({ text: "Town -1", x: civCellX(gx), y: civCellY(gy), color: palette.red, life: .8 });
+        }
+      }
+    }
+
+    function drawCivilizationPreview() {
+      miniState = createCivilizationState();
+      drawCivilization();
+      miniState = null;
+    }
+
+    function drawCivilization() {
+      const game = miniState || createCivilizationState();
+      pixelRect(0, 0, W, H, "#162123");
+      pixelRect(34, 34, 280, 88, "#11191c");
+      pixelText(`Food ${game.food}`, 52, 64, 18, palette.green);
+      pixelText(`Gold ${game.gold}`, 52, 92, 18, palette.yellow);
+      pixelText(`Pop ${game.population}`, 166, 64, 18, palette.cream);
+      pixelText(`Soldiers ${game.soldiers}`, 166, 92, 18, palette.blue);
+      const build = civBuilds[game.buildMode];
+      pixelText(`Build: ${build.label} F${build.food} G${build.gold}`, 350, 64, 18, palette.yellow);
+      pixelText(`Wave: ${Math.ceil(game.waveTimer)}`, 350, 92, 18, palette.red);
+
+      for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 12; x++) {
+          const px = civCellX(x);
+          const py = civCellY(y);
+          pixelRect(px, py, 42, 42, (x + y) % 2 ? "#274132" : "#22392f");
+          pixelRect(px, py, 42, 2, "#40594a");
+          drawCivilizationBuilding(game.grid[y][x], px, py);
+        }
+      }
+      for (const raider of game.raiders) drawCivilizationRaider(raider);
+      const cx = civCellX(game.cursor.x);
+      const cy = civCellY(game.cursor.y);
+      ctx.strokeStyle = palette.yellow;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(cx - 2, cy - 2, 46, 46);
+      drawMiniPops(game.pops);
+    }
+
+    function civCellX(x) {
+      return 96 + x * 50;
+    }
+
+    function civCellY(y) {
+      return 132 + y * 48;
+    }
+
+    function drawCivilizationBuilding(type, x, y) {
+      if (!type) return;
+      if (type === "town") {
+        pixelRect(x + 6, y + 10, 30, 26, "#75634b");
+        pixelRect(x + 12, y + 4, 18, 10, palette.red);
+        pixelRect(x + 17, y + 21, 8, 15, "#1a1110");
+      } else if (type === "farm") {
+        pixelRect(x + 5, y + 8, 32, 28, "#5f7d35");
+        for (let i = 0; i < 4; i++) pixelRect(x + 8 + i * 8, y + 11, 3, 24, palette.yellow);
+      } else if (type === "house") {
+        pixelRect(x + 8, y + 17, 26, 20, "#7a5b3b");
+        pixelRect(x + 5, y + 11, 32, 9, palette.red);
+        pixelRect(x + 18, y + 25, 7, 12, "#111");
+      } else if (type === "barracks") {
+        pixelRect(x + 6, y + 12, 30, 25, "#59636a");
+        pixelRect(x + 10, y + 7, 22, 8, palette.blue);
+        pixelRect(x + 12, y + 25, 18, 4, "#111");
+      } else if (type === "wall") {
+        pixelRect(x + 4, y + 10, 34, 28, "#8b846e");
+        for (let i = 0; i < 4; i++) pixelRect(x + 5 + i * 9, y + 6, 6, 8, "#8b846e");
+      }
+    }
+
+    function drawCivilizationRaider(raider) {
+      const x = civCellX(raider.x) + Math.sin(miniState.time * 8) * 3;
+      const y = civCellY(raider.y);
+      pixelRect(x + 6, y + 8, 28, 24, "#513155");
+      pixelRect(x + 10, y + 12, 5, 5, palette.red);
+      pixelRect(x + 24, y + 12, 5, 5, palette.red);
+      pixelRect(x + 12, y + 28, 16, 4, "#111");
+    }
+
+    function pixelText(text, x, y, size, color) {
+      ctx.font = `700 ${size}px 'Courier New', monospace`;
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#050808";
+      ctx.fillText(text, x + 3, y + 3);
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+    }
+
+    function keyToCode(key) {
+      const map = { w: "KeyW", a: "KeyA", s: "KeyS", d: "KeyD" };
+      if (key === " ") return "Space";
+      if (key === "Enter") return "Enter";
+      if (map[key.toLowerCase()]) return map[key.toLowerCase()];
+      return key;
+    }
+
+    window.addEventListener("keydown", event => {
+      const code = keyToCode(event.key);
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyW", "KeyA", "KeyS", "KeyD", "Space", "Enter"].includes(code)) {
+        event.preventDefault();
+        if (!state.paused) keys.add(code);
+      }
+      if ((event.key === "p" || event.key === "P" || event.key === "Escape") && state.running) {
+        event.preventDefault();
+        togglePause();
+      }
+      if ((event.key === "Enter" || event.key === " ") && !state.running) startGame();
+    });
+
+    window.addEventListener("keyup", event => {
+      keys.delete(keyToCode(event.key));
+    });
+
+    document.querySelectorAll("[data-key]").forEach(button => {
+      const code = button.dataset.key;
+      const press = event => {
+        event.preventDefault();
+        if (!state.paused) keys.add(code);
+      };
+      const release = event => {
+        event.preventDefault();
+        keys.delete(code);
+      };
+      button.addEventListener("pointerdown", press);
+      button.addEventListener("pointerup", release);
+      button.addEventListener("pointerleave", release);
+      button.addEventListener("pointercancel", release);
+    });
+
+    startBtn.addEventListener("click", startGame);
+    pauseBtn.addEventListener("click", togglePause);
+    restartBtn.addEventListener("click", startGame);
+    gameTabs.forEach(button => {
+      button.addEventListener("click", () => switchGame(button.dataset.game));
+    });
+    switchGame("corner");
+  </script>
+</body>
+</html>
