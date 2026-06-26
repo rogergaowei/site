@@ -26,5 +26,55 @@
     "summary": "I went to Fremont, museums, Monterey Bay Aquarium, Golden Gate Bridge, and the Computer History Museum.",
     "cover": "/assets/california/image4.jpg",
     "coverAlt": "Golden Gate Bridge in the background"
+  },
+  {
+    "title": "At the zoo in Mexico",
+    "slug": "at-the-zoo-in-mexico",
+    "date": "January 2026",
+    "sortDate": "2026-01-02",
+    "summary": "A Mexico City zoo visit with Xin Xin the giant panda and questions about the axolotl zone.",
+    "cover": "",
+    "coverAlt": "",
+    "status": "published"
+  },
+  {
+    "title": "On the hot air balloon December 26, 2025",
+    "slug": "on-the-hot-air-balloon-december-26-2025",
+    "date": "December 2025",
+    "sortDate": "2025-12-26",
+    "summary": "A first hot air balloon ride over Teotihuacan, with a sunrise, hundreds of balloons, and flight notes.",
+    "cover": "",
+    "coverAlt": "",
+    "status": "published"
+  },
+  {
+    "title": "My Minecraft Territory",
+    "slug": "my-minecraft-territory",
+    "date": "January 2026",
+    "sortDate": "2026-01-01",
+    "summary": "A tour of a giant Minecraft territory with a rollercoaster, cherry tree biome, meat shop, and building techniques.",
+    "cover": "",
+    "coverAlt": "",
+    "status": "published"
+  },
+  {
+    "title": "Cruise ship stats (Harmony of the Seas)",
+    "slug": "cruise-ship-stats-harmony-of-the-seas",
+    "date": "February 2026",
+    "sortDate": "2026-02-18",
+    "summary": "Facts about Harmony of the Seas, including passengers, crew, kitchens, water systems, maintenance, and laundry.",
+    "cover": "",
+    "coverAlt": "",
+    "status": "published"
+  },
+  {
+    "title": "My cruise journey (February 8 - 16, 2026) with my family",
+    "slug": "my-cruise-journey-february-8-16-2026-with-my-family",
+    "date": "February 2026",
+    "sortDate": "2026-02-18",
+    "summary": "A day-by-day cruise journey on Harmony of the Seas, from Galveston to beaches, snorkeling, shows, and the trip home.",
+    "cover": "",
+    "coverAlt": "",
+    "status": "published"
   }
 ]
