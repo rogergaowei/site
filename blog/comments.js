@@ -72,7 +72,8 @@
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Comment was not submitted.");
       form.reset();
-      setStatus("Thanks. Your comment is waiting for review.", "success");
+      setStatus("Posted. Thanks for commenting.", "success");
+      await loadComments();
     } catch (error) {
       setStatus(error.message || "Comment was not submitted.", "error");
     }

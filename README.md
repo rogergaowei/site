@@ -14,13 +14,12 @@ Future sections such as `/projects/` and `/photos/` can live in this same reposi
 
 ## Blog comments
 
-Blog posts include a small moderated comment system.
+Blog posts include a small family-code comment system.
 
 - Public readers can submit a name and comment.
-- New comments are stored as `pending`.
-- Approved comments are shown publicly below the post.
 - Submitting a comment requires the shared family code.
-- Moderation lives at `/admin/comments.html`.
+- Comments with the correct family code are published immediately.
+- Admin tools live at `/admin/comments.html` for hiding or deleting comments later.
 
 Cloudflare runtime configuration:
 

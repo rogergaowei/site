@@ -58,7 +58,7 @@ export async function onRequestPost({ request, env }) {
   if (!payload) return json({ error: "Invalid JSON." }, 400);
 
   const honeypot = String(payload.website || "").trim();
-  if (honeypot) return json({ ok: true, status: "pending" });
+  if (honeypot) return json({ ok: true, status: "approved" });
 
   const post = normalizePostSlug(payload.postSlug || payload.post || "");
   const name = cleanText(payload.name || "", MAX_NAME_LENGTH);
@@ -96,12 +96,12 @@ export async function onRequestPost({ request, env }) {
   await db
     .prepare(
       `INSERT INTO comments (post_slug, name, comment, status, ip_hash, user_agent)
-       VALUES (?, ?, ?, 'pending', ?, ?)`
+       VALUES (?, ?, ?, 'approved', ?, ?)`
     )
     .bind(post, name, comment, ipHash, userAgent)
     .run();
 
-  return json({ ok: true, status: "pending" }, 201);
+  return json({ ok: true, status: "approved" }, 201);
 }
 
 export async function onRequestPatch({ request, env }) {
