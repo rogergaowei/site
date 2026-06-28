@@ -309,6 +309,178 @@ code {
   font-size: 0.95em;
 }
 
+.comments {
+  margin-top: 54px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.comments-header {
+  margin-bottom: 18px;
+}
+
+.comments-header h2 {
+  margin: 0;
+}
+
+.comments-header span {
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 18px;
+}
+
+.comment-list {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.comment-item,
+.admin-comment {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.comment-item header,
+.admin-comment header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+
+.comment-item strong,
+.admin-comment strong {
+  color: var(--text);
+}
+
+.comment-item p,
+.admin-comment p {
+  margin: 10px 0 0;
+  font-size: 17px;
+}
+
+.comment-empty,
+.comment-status {
+  color: var(--muted);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+}
+
+.comment-status[data-kind="success"] {
+  color: var(--accent);
+}
+
+.comment-status[data-kind="error"] {
+  color: #9b2c2c;
+}
+
+.comment-form,
+.admin-token-form {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.comment-form label,
+.admin-token-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.comment-form input,
+.comment-form textarea,
+.admin-token-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 11px 12px;
+  color: var(--text);
+  background: #fff;
+  font: inherit;
+}
+
+.comment-form textarea {
+  resize: vertical;
+}
+
+.comment-form button,
+.admin-token-form button,
+.admin-toolbar button,
+.admin-comment button {
+  min-height: 42px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 9px 13px;
+  background: var(--accent);
+  color: #fff;
+  font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.comment-form button:hover,
+.admin-token-form button:hover,
+.admin-toolbar button:hover,
+.admin-comment button:hover {
+  filter: brightness(0.95);
+}
+
+.comment-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.admin-comments h1 {
+  font-size: clamp(42px, 8vw, 68px);
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.admin-comment-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-comment div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.admin-comment button[data-action="hidden"],
+.admin-comment button[data-action="pending"] {
+  background: #fff;
+  color: var(--accent);
+}
+
+.admin-comment button[data-action="delete"],
+.admin-toolbar button[data-forget-token] {
+  border-color: #9b2c2c;
+  background: #9b2c2c;
+}
+
 @media (max-width: 720px) {
   .site-header {
     padding: 20px;

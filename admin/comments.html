@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comment Moderation - Roger Gao Wei</title>
+    <link rel="stylesheet" href="/blog/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/">Roger Gao Wei</a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/game/">Game</a>
+      </nav>
+    </header>
+
+    <main class="page admin-comments">
+      <section class="intro">
+        <p class="eyebrow">Admin</p>
+        <h1>Comments</h1>
+      </section>
+
+      <form class="admin-token-form" data-token-form>
+        <label>
+          Admin token
+          <input name="token" type="password" autocomplete="current-password" required>
+        </label>
+        <button type="submit">Load comments</button>
+      </form>
+
+      <div class="admin-toolbar" hidden data-toolbar>
+        <button type="button" data-filter="pending">Pending</button>
+        <button type="button" data-filter="approved">Approved</button>
+        <button type="button" data-filter="hidden">Hidden</button>
+        <button type="button" data-forget-token>Forget token</button>
+      </div>
+
+      <p class="comment-status" data-admin-status></p>
+      <section class="admin-comment-list" data-admin-list></section>
+    </main>
+
+    <script>
+      (function () {
+        const tokenForm = document.querySelector("[data-token-form]");
+        const tokenInput = tokenForm.elements.token;
+        const toolbar = document.querySelector("[data-toolbar]");
+        const list = document.querySelector("[data-admin-list]");
+        const status = document.querySelector("[data-admin-status]");
+        let token = localStorage.getItem("commentsAdminToken") || "";
+        let filter = "pending";
+
+        if (token) {
+          tokenInput.value = token;
+          load();
+        }
+
+        tokenForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          token = tokenInput.value.trim();
+          localStorage.setItem("commentsAdminToken", token);
+          load();
+        });
+
+        toolbar.addEventListener("click", async (event) => {
+          const filterButton = event.target.closest("[data-filter]");
+          const forgetButton = event.target.closest("[data-forget-token]");
+          if (filterButton) {
+            filter = filterButton.dataset.filter;
+            await load();
+          }
+          if (forgetButton) {
+            localStorage.removeItem("commentsAdminToken");
+            token = "";
+            tokenInput.value = "";
+            toolbar.hidden = true;
+            list.innerHTML = "";
+            setStatus("Token removed.");
+          }
+        });
+
+        list.addEventListener("click", async (event) => {
+          const button = event.target.closest("button[data-action]");
+          if (!button) return;
+          const item = button.closest("[data-comment-id]");
+          const id = Number(item.dataset.commentId);
+          const action = button.dataset.action;
+          if (action === "delete" && !confirm("Delete this comment?")) return;
+
+          if (action === "delete") {
+            await request(`/api/comments?id=${id}`, { method: "DELETE" });
+          } else {
+            await request("/api/comments", {
+              method: "PATCH",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ id, status: action }),
+            });
+          }
+          await load();
+        });
+
+        async function load() {
+          setStatus("Loading...");
+          try {
+            const data = await request(`/api/comments?moderate=1&status=${encodeURIComponent(filter)}`);
+            toolbar.hidden = false;
+            render(data.comments || []);
+            setStatus(`${filter}: ${(data.comments || []).length}`);
+          } catch (error) {
+            setStatus(error.message || "Unable to load comments.", "error");
+          }
+        }
+
+        async function request(url, options) {
+          const response = await fetch(url, {
+            ...options,
+            headers: {
+              accept: "application/json",
+              authorization: `Bearer ${token}`,
+              ...(options && options.headers ? options.headers : {}),
+            },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.error || "Request failed.");
+          return data;
+        }
+
+        function render(comments) {
+          if (!comments.length) {
+            list.innerHTML = '<p class="comment-empty">No comments in this view.</p>';
+            return;
+          }
+          list.innerHTML = comments
+            .map(
+              (comment) => `
+                <article class="admin-comment" data-comment-id="${comment.id}">
+                  <header>
+                    <strong>${escapeHtml(comment.name)}</strong>
+                    <span>${escapeHtml(comment.post_slug)} · ${escapeHtml(comment.created_at)}</span>
+                  </header>
+                  <p>${escapeHtml(comment.comment).replace(/\n/g, "<br>")}</p>
+                  <div>
+                    <button type="button" data-action="approved">Approve</button>
+                    <button type="button" data-action="hidden">Hide</button>
+                    <button type="button" data-action="pending">Pending</button>
+                    <button type="button" data-action="delete">Delete</button>
+                  </div>
+                </article>
+              `
+            )
+            .join("");
+        }
+
+        function setStatus(message, kind) {
+          status.textContent = message || "";
+          status.dataset.kind = kind || "";
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+      })();
+    </script>
+  </body>
+</html>

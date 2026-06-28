@@ -1,0 +1,11 @@
+name = "blog"
+main = "worker.js"
+compatibility_date = "2026-06-28"
+compatibility_flags = ["nodejs_compat"]
+
+assets = { directory = ".", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "COMMENTS_DB"
+database_name = "roger_comments"
+database_id = "6aa93b53-a90b-4601-9b83-abd4ed91c52b"
