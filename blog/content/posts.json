@@ -33,8 +33,8 @@
     "date": "January 2026",
     "sortDate": "2026-01-02",
     "summary": "A Mexico City zoo visit with Xin Xin the giant panda and questions about the axolotl zone.",
-    "cover": "",
-    "coverAlt": "",
+    "cover": "/blog/assets/mexico-zoo/image1.jpg",
+    "coverAlt": "Roger at the zoo in Mexico",
     "status": "published"
   },
   {
@@ -63,8 +63,8 @@
     "date": "February 2026",
     "sortDate": "2026-02-18",
     "summary": "Facts about Harmony of the Seas, including passengers, crew, kitchens, water systems, maintenance, and laundry.",
-    "cover": "",
-    "coverAlt": "",
+    "cover": "/blog/assets/cruise-ship-stats/image1.jpg",
+    "coverAlt": "Harmony of the Seas cruise ship",
     "status": "published"
   },
   {
@@ -73,8 +73,8 @@
     "date": "February 2026",
     "sortDate": "2026-02-18",
     "summary": "A day-by-day cruise journey on Harmony of the Seas, from Galveston to beaches, snorkeling, shows, and the trip home.",
-    "cover": "",
-    "coverAlt": "",
+    "cover": "/blog/assets/cruise-journey/image1.jpg",
+    "coverAlt": "A view from the cruise journey",
     "status": "published"
   }
 ]
