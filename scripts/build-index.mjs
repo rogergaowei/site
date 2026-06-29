@@ -67,10 +67,10 @@ const html = `<!doctype html>
   </head>
   <body id="top">
     <header class="site-header">
-      <a class="brand" href="/">Roger Gao Wei</a>
+      <a class="brand" href="https://rogergaowei.com/">Roger Gao Wei</a>
       <nav>
-        <a href="/">Home</a>
-        <a href="/game/">Game</a>
+        <a href="https://rogergaowei.com/">Home</a>
+        <a href="https://rogergaowei.com/game/">Game</a>
       </nav>
     </header>
 
