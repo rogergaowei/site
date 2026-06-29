@@ -37,9 +37,19 @@ Do not commit secrets to this repository. Set them as Cloudflare Worker secrets 
 
 ## Add a Google Doc post
 
-Add the Google Doc URL to `blog/content/google-docs.json`, then ask Codex to sync the blog. Codex will export the document, copy images into `blog/assets/`, create the article page, update `blog/content/posts.json`, run `node scripts/build-index.mjs`, and push the result.
+Add the Google Doc URL to `blog/content/google-docs.json`, then ask Codex to sync the blog. Codex will export the document, copy images into `blog/assets/`, create the article page, update `blog/content/posts.json`, run `node scripts/prepare-site.mjs`, and push the result.
 
 If a document shows `needs_access`, open the Google Doc sharing settings and allow the Codex-connected Google account to read it, or set link access to viewer.
+
+## Prepare generated files
+
+After adding or editing blog content, run:
+
+```sh
+node scripts/prepare-site.mjs
+```
+
+This rebuilds the blog index, adds article metadata and lazy image attributes, and regenerates `sitemap.xml` and `robots.txt`.
 
 ## Deploy on Cloudflare Workers
 

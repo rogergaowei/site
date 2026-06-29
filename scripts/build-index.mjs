@@ -1,5 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises";
 
+const SITE_ORIGIN = "https://rogergaowei.com";
+const BLOG_TITLE = "Roger Gao Wei Blog";
+const BLOG_DESCRIPTION = "Personal essays and trip notes by Roger Gao Wei.";
+
 const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
 
@@ -18,7 +22,7 @@ let previousArchiveKey = "";
 
 const cards = posts.map((post) => {
   const media = post.cover
-    ? `<img src="${post.cover}" alt="${escapeHtml(post.coverAlt)}">`
+    ? `<img src="${post.cover}" alt="${escapeHtml(post.coverAlt)}" loading="lazy" decoding="async">`
     : `<div class="post-placeholder" aria-hidden="true">${escapeHtml(post.title.charAt(0))}</div>`;
   const status = post.status === "draft" ? `<span class="status-pill">Writing</span>` : "";
 
@@ -47,11 +51,20 @@ const html = `<!doctype html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Roger Gao Wei Blog</title>
-    <meta name="description" content="Personal essays and trip notes by Roger Gao Wei.">
+    <title>${BLOG_TITLE}</title>
+    <meta name="description" content="${BLOG_DESCRIPTION}">
+    <link rel="canonical" href="${SITE_ORIGIN}/blog/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="${BLOG_TITLE}">
+    <meta property="og:description" content="${BLOG_DESCRIPTION}">
+    <meta property="og:url" content="${SITE_ORIGIN}/blog/">
+    <meta property="og:site_name" content="Roger Gao Wei">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="${BLOG_TITLE}">
+    <meta name="twitter:description" content="${BLOG_DESCRIPTION}">
     <link rel="stylesheet" href="/blog/styles.css">
   </head>
-  <body>
+  <body id="top">
     <header class="site-header">
       <a class="brand" href="/">Roger Gao Wei</a>
       <nav>
@@ -76,6 +89,9 @@ ${archiveLinks}
       <section class="post-list" aria-label="Posts">
 ${cards}
       </section>
+      <nav class="page-bottom-nav" aria-label="Page bottom navigation">
+        <a href="#top">Back to top</a>
+      </nav>
     </main>
   </body>
 </html>
