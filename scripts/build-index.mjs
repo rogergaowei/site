@@ -34,7 +34,7 @@ const cards = posts.map((post) => {
   previousArchiveKey = currentArchiveKey;
 
   return `${monthHeading}        <article class="post-card${post.status === "draft" ? " draft" : ""}">
-          <a href="/blog/posts/${post.slug}.html">
+          <a href="/blog/posts/${post.slug}.html" data-post-card data-search="${escapeHtml(`${post.title} ${post.date} ${post.summary} ${post.status || "published"}`.toLowerCase())}" data-status="${escapeHtml(post.status || "published")}">
             ${media}
             <div>
               <p class="date">${escapeHtml(post.date)}${status}</p>
@@ -87,6 +87,19 @@ ${archiveLinks}
         </div>
       </section>
 
+      <section class="blog-tools" aria-label="Filter posts">
+        <label>
+          Search posts
+          <input type="search" data-post-search placeholder="Search by title, month, or topic">
+        </label>
+        <div class="status-filter" aria-label="Post status">
+          <button type="button" class="active" data-status-filter="all">All</button>
+          <button type="button" data-status-filter="published">Published</button>
+          <button type="button" data-status-filter="draft">Writing</button>
+        </div>
+        <p class="filter-count" data-filter-count></p>
+      </section>
+
       <section class="post-list" aria-label="Posts">
 ${cards}
       </section>
@@ -94,6 +107,7 @@ ${cards}
         <a href="#top">Back to top</a>
       </nav>
     </main>
+    <script src="/blog/index.js" defer></script>
   </body>
 </html>
 `;

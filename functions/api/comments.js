@@ -6,6 +6,7 @@ const JSON_HEADERS = {
 const MAX_NAME_LENGTH = 80;
 const MAX_COMMENT_LENGTH = 2000;
 const MAX_POST_LENGTH = 160;
+const MAX_POST_TITLE_LENGTH = 180;
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -63,6 +64,7 @@ export async function onRequestPost({ request, env, ctx }) {
   const post = normalizePostSlug(payload.postSlug || payload.post || "");
   const name = cleanText(payload.name || "", MAX_NAME_LENGTH);
   const comment = cleanText(payload.comment || "", MAX_COMMENT_LENGTH);
+  const postTitle = cleanText(payload.postTitle || post, MAX_POST_TITLE_LENGTH);
   const familyCode = String(payload.familyCode || "").trim();
   const parentId = parseParentId(payload.parentId);
 
@@ -118,6 +120,7 @@ export async function onRequestPost({ request, env, ctx }) {
     request,
     env,
     post,
+    postTitle,
     name,
     comment,
     parentId,
@@ -300,7 +303,7 @@ async function verifyTurnstile(secret, token, request) {
   return Boolean(result.success);
 }
 
-async function sendCommentNotification({ request, env, post, name, comment, parentId, commentId }) {
+async function sendCommentNotification({ request, env, post, postTitle, name, comment, parentId, commentId }) {
   if (!env.RESEND_API_KEY) return;
 
   const to = env.COMMENT_NOTIFY_TO || "rogergaowei@gmail.com";
@@ -313,11 +316,12 @@ async function sendCommentNotification({ request, env, post, name, comment, pare
   const postUrl = buildPostUrl(request, post);
   const kind = parentId ? "reply" : "comment";
   const subject = parentId
-    ? `New reply on Roger's blog: ${post}`
-    : `New comment on Roger's blog: ${post}`;
+    ? `New reply on Roger's blog: ${postTitle || post}`
+    : `New comment on Roger's blog: ${postTitle || post}`;
   const text = [
     `New ${kind} on Roger's blog`,
-    `Post: ${post}`,
+    `Post: ${postTitle || post}`,
+    `Slug: ${post}`,
     parentId ? `Reply to comment: #${parentId}` : "",
     commentId ? `Comment: #${commentId}` : "",
     `Name: ${name}`,
@@ -332,7 +336,8 @@ async function sendCommentNotification({ request, env, post, name, comment, pare
 
   const html = `
     <h2>New ${escapeHtml(kind)} on Roger's blog</h2>
-    <p><strong>Post:</strong> ${escapeHtml(post)}</p>
+    <p><strong>Post:</strong> ${escapeHtml(postTitle || post)}</p>
+    <p><strong>Slug:</strong> ${escapeHtml(post)}</p>
     ${parentId ? `<p><strong>Reply to:</strong> #${parentId}</p>` : ""}
     ${commentId ? `<p><strong>Comment:</strong> #${commentId}</p>` : ""}
     <p><strong>Name:</strong> ${escapeHtml(name)}</p>

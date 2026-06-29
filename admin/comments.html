@@ -50,6 +50,7 @@
         const status = document.querySelector("[data-admin-status]");
         let token = localStorage.getItem("commentsAdminToken") || "";
         let filter = "pending";
+        let postsBySlug = new Map();
 
         if (token) {
           tokenInput.value = token;
@@ -103,12 +104,25 @@
         async function load() {
           setStatus("Loading...");
           try {
+            await loadPostIndex();
             const data = await request(`/api/comments?moderate=1&status=${encodeURIComponent(filter)}`);
             toolbar.hidden = false;
             render(data.comments || []);
             setStatus(`${filter}: ${(data.comments || []).length}`);
           } catch (error) {
             setStatus(error.message || "Unable to load comments.", "error");
+          }
+        }
+
+        async function loadPostIndex() {
+          if (postsBySlug.size) return;
+          try {
+            const response = await fetch("/blog/content/posts.json", { headers: { accept: "application/json" } });
+            if (!response.ok) return;
+            const posts = await response.json();
+            postsBySlug = new Map(posts.map((post) => [post.slug, post]));
+          } catch {
+            postsBySlug = new Map();
           }
         }
 
@@ -132,12 +146,15 @@
             return;
           }
           list.innerHTML = comments
-            .map(
-              (comment) => `
+            .map((comment) => {
+              const post = postsBySlug.get(comment.post_slug);
+              const title = post?.title || comment.post_slug;
+              const href = `/blog/posts/${comment.post_slug}.html`;
+              return `
                 <article class="admin-comment" data-comment-id="${comment.id}">
                   <header>
                     <strong>${escapeHtml(comment.name)}</strong>
-                    <span>${escapeHtml(comment.post_slug)}${comment.parent_id ? ` · reply to #${comment.parent_id}` : ""} · ${escapeHtml(comment.created_at)}</span>
+                    <span><a href="${escapeHtml(href)}">${escapeHtml(title)}</a>${comment.parent_id ? ` · reply to #${comment.parent_id}` : ""} · ${escapeHtml(comment.created_at)}</span>
                   </header>
                   <p>${escapeHtml(comment.comment).replace(/\n/g, "<br>")}</p>
                   <div>
@@ -147,8 +164,8 @@
                     <button type="button" data-action="delete">Delete</button>
                   </div>
                 </article>
-              `
-            )
+              `;
+            })
             .join("");
         }
 

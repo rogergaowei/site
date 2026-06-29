@@ -3,12 +3,24 @@
   if (!root) return;
 
   const postSlug = root.getAttribute("data-post-slug");
+  const postTitle = document.querySelector(".article-header h1")?.textContent.trim() || postSlug;
   const list = root.querySelector("[data-comment-list]");
   const form = root.querySelector("[data-comment-form]");
   const status = root.querySelector("[data-comment-status]");
   const count = root.querySelector("[data-comment-count]");
+  const nameInput = form.querySelector("input[name='name']");
+  const commentInput = form.querySelector("textarea[name='comment']");
+  const submitButton = form.querySelector("button[type='submit']");
   const apiUrl = `/api/comments?post=${encodeURIComponent(postSlug)}`;
   let replyTarget = null;
+  const savedName = localStorage.getItem("commenterName") || "";
+  if (savedName && nameInput) nameInput.value = savedName;
+
+  const replyContext = document.createElement("p");
+  replyContext.className = "comment-reply-context";
+  replyContext.hidden = true;
+  status.before(replyContext);
+
   const cancelReplyButton = document.createElement("button");
   cancelReplyButton.type = "button";
   cancelReplyButton.className = "comment-cancel-reply";
@@ -91,6 +103,7 @@
     const formData = new FormData(form);
     const payload = {
       postSlug,
+      postTitle,
       parentId: replyTarget ? replyTarget.id : null,
       name: formData.get("name"),
       comment: formData.get("comment"),
@@ -106,7 +119,9 @@
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Comment was not submitted.");
+      localStorage.setItem("commenterName", String(payload.name || "").trim());
       form.reset();
+      if (nameInput) nameInput.value = localStorage.getItem("commenterName") || "";
       clearReplyTarget();
       setStatus("Posted. Thanks for commenting.", "success");
       await loadComments();
@@ -123,9 +138,9 @@
       id: Number(item.dataset.commentId),
       name: item.dataset.commentName || "comment",
     };
-    cancelReplyButton.hidden = false;
-    form.querySelector("textarea[name='comment']").focus();
-    setStatus(`Replying to ${replyTarget.name}.`, "");
+    updateReplyUi();
+    commentInput.focus();
+    setStatus("", "");
   });
 
   cancelReplyButton.addEventListener("click", () => {
@@ -135,7 +150,21 @@
 
   function clearReplyTarget() {
     replyTarget = null;
+    updateReplyUi();
+  }
+
+  function updateReplyUi() {
+    const isReplying = Boolean(replyTarget);
     cancelReplyButton.hidden = true;
+    replyContext.hidden = true;
+    replyContext.textContent = "";
+    submitButton.textContent = "Post comment";
+    if (isReplying) {
+      cancelReplyButton.hidden = false;
+      replyContext.hidden = false;
+      replyContext.textContent = `Replying to ${replyTarget.name}.`;
+      submitButton.textContent = "Post reply";
+    }
   }
 
   function escapeHtml(value) {
