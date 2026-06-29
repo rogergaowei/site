@@ -480,6 +480,32 @@ code {
   overflow: hidden;
 }
 
+.page-bottom-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 44px;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.page-bottom-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.page-bottom-nav a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .admin-comments h1 {
   font-size: clamp(42px, 8vw, 68px);
 }
