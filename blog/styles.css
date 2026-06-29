@@ -30,6 +30,10 @@ img {
   height: auto;
 }
 
+picture {
+  display: block;
+}
+
 .site-header {
   display: flex;
   align-items: center;

@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 
 const SITE_ORIGIN = "https://rogergaowei.com";
 const BLOG_NAME = "Roger Gao Wei Blog";
@@ -44,12 +45,21 @@ function ensureHeadMetadata(html, post) {
 }
 
 function ensureLazyImages(html) {
-  return html.replace(/<img\b([^>]*?)>/g, (match, attrs) => {
+  let output = html.replace(/<picture>\s*<source srcset="[^"]+\.webp" type="image\/webp">\s*(<img\b[^>]*?>)\s*<\/picture>/g, "$1");
+  output = output.replace(/<img\b([^>]*?)>/g, (match, attrs) => {
     let next = attrs;
     if (!/\sloading=/.test(next)) next += ' loading="lazy"';
     if (!/\sdecoding=/.test(next)) next += ' decoding="async"';
-    return `<img${next}>`;
+    const img = `<img${next}>`;
+    const src = next.match(/\ssrc="([^"]+)"/)?.[1] || "";
+    const webp = webpPath(src);
+    if (!webp || !existsSync(webp.local)) return img;
+    return `<picture>
+          <source srcset="${webp.public}" type="image/webp">
+          ${img}
+        </picture>`;
   });
+  return output;
 }
 
 function escapeHtml(value) {
@@ -58,4 +68,13 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function webpPath(src) {
+  if (!/\.(jpe?g|png)$/i.test(src)) return null;
+  const publicPath = src.replace(/\.(jpe?g|png)$/i, ".webp");
+  return {
+    public: publicPath,
+    local: publicPath.replace(/^\//, ""),
+  };
 }

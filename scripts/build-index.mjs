@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 
 const SITE_ORIGIN = "https://rogergaowei.com";
 const BLOG_TITLE = "Roger Gao Wei Blog";
@@ -22,7 +23,7 @@ let previousArchiveKey = "";
 
 const cards = posts.map((post) => {
   const media = post.cover
-    ? `<img src="${post.cover}" alt="${escapeHtml(post.coverAlt)}" loading="lazy" decoding="async">`
+    ? renderImage(post.cover, post.coverAlt)
     : `<div class="post-placeholder" aria-hidden="true">${escapeHtml(post.title.charAt(0))}</div>`;
   const status = post.status === "draft" ? `<span class="status-pill">Writing</span>` : "";
 
@@ -110,4 +111,23 @@ function escapeHtml(value) {
 function archiveKey(sortDate) {
   const date = new Date(`${sortDate}T00:00:00`);
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+function renderImage(src, alt) {
+  const webp = webpPath(src);
+  const img = `<img src="${src}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">`;
+  if (!webp || !existsSync(webp.local)) return img;
+  return `<picture>
+              <source srcset="${webp.public}" type="image/webp">
+              ${img}
+            </picture>`;
+}
+
+function webpPath(src) {
+  if (!/\.(jpe?g|png)$/i.test(src)) return null;
+  const publicPath = src.replace(/\.(jpe?g|png)$/i, ".webp");
+  return {
+    public: publicPath,
+    local: publicPath.replace(/^\//, ""),
+  };
 }
