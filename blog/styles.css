@@ -1,11 +1,14 @@
 :root {
-  color-scheme: light;
-  --bg: #fbfaf7;
-  --text: #24211d;
-  --muted: #706a61;
-  --line: #ded8cf;
-  --surface: #ffffff;
-  --accent: #0f6c5f;
+  color-scheme: dark;
+  --bg: #050713;
+  --text: #f6fbff;
+  --muted: #9fb5c9;
+  --line: rgba(97, 245, 255, 0.34);
+  --surface: rgba(10, 18, 38, 0.9);
+  --accent: #61f5ff;
+  --pink: #ff4f9a;
+  --green: #51ffb2;
+  --yellow: #ffe45e;
 }
 
 * {
@@ -14,20 +17,45 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 16% 14%, rgba(255, 79, 154, 0.22), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgba(97, 245, 255, 0.2), transparent 30%),
+    radial-gradient(circle at 70% 82%, rgba(81, 255, 178, 0.16), transparent 26%),
+    linear-gradient(rgba(97, 245, 255, 0.08) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(90deg, rgba(255, 79, 154, 0.07) 1px, transparent 1px) 0 0 / 34px 34px,
+    var(--bg);
   color: var(--text);
   font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
   line-height: 1.65;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--bg);
 }
 
 a {
   color: inherit;
 }
 
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+}
+
 img {
   display: block;
   width: 100%;
   height: auto;
+  filter: saturate(1.35) contrast(1.08);
 }
 
 picture {
@@ -44,11 +72,19 @@ picture {
   padding: 26px 24px;
   border-bottom: 1px solid var(--line);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-shadow: 0 1px 0 rgba(255, 79, 154, 0.2), 0 18px 50px rgba(97, 245, 255, 0.08);
 }
 
 .brand {
+  color: var(--accent);
   font-weight: 700;
   text-decoration: none;
+  text-shadow: 0 0 18px rgba(97, 245, 255, 0.68);
+}
+
+.brand:hover {
+  color: var(--pink);
+  text-shadow: 0 0 18px rgba(255, 79, 154, 0.78);
 }
 
 nav {
@@ -59,11 +95,14 @@ nav {
 }
 
 nav a {
+  border-bottom: 1px solid transparent;
   text-decoration: none;
 }
 
 nav a:hover {
-  color: var(--accent);
+  color: var(--yellow);
+  border-color: var(--yellow);
+  text-shadow: 0 0 14px rgba(255, 228, 94, 0.8);
 }
 
 .page,
@@ -105,14 +144,23 @@ nav a:hover {
   border-radius: 8px;
   background: var(--surface);
   text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 26px rgba(97, 245, 255, 0.12);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.latest article a:hover {
-  border-color: var(--accent);
+.latest article a:hover,
+.latest article a:focus-visible {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 1px rgba(255, 228, 94, 0.52), 0 0 34px rgba(255, 228, 94, 0.22);
+  transform: translateY(-2px);
+}
+
+.latest article a:active {
+  transform: translateY(1px);
 }
 
 .latest span {
-  color: var(--accent);
+  color: var(--green);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 13px;
   font-weight: 800;
@@ -144,7 +192,7 @@ figcaption {
 
 .eyebrow {
   margin: 0 0 8px;
-  color: var(--accent);
+  color: var(--green);
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -159,6 +207,9 @@ h1 {
   max-width: 820px;
   margin: 0;
   font-size: clamp(42px, 8vw, 76px);
+  text-shadow:
+    0 0 18px rgba(97, 245, 255, 0.45),
+    0 0 34px rgba(255, 79, 154, 0.28);
 }
 
 h2 {
@@ -186,6 +237,7 @@ ul {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+  box-shadow: inset 0 0 28px rgba(97, 245, 255, 0.06), 0 0 26px rgba(97, 245, 255, 0.1);
 }
 
 .archive-nav h2,
@@ -215,15 +267,19 @@ ul {
   color: var(--muted);
   font-size: 14px;
   text-decoration: none;
+  transition: border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.archive-nav a:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+.archive-nav a:hover,
+.archive-nav a:focus-visible {
+  color: var(--yellow);
+  border-color: var(--yellow);
+  box-shadow: 0 0 18px rgba(255, 228, 94, 0.2);
+  transform: translateY(-1px);
 }
 
 .archive-nav span {
-  color: var(--accent);
+  color: var(--green);
   font-weight: 700;
 }
 
@@ -238,6 +294,7 @@ ul {
   border-radius: 8px;
   background: var(--surface);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-shadow: inset 0 0 28px rgba(255, 79, 154, 0.05), 0 0 26px rgba(97, 245, 255, 0.1);
 }
 
 .blog-tools label {
@@ -255,7 +312,7 @@ ul {
   border-radius: 6px;
   padding: 10px 12px;
   color: var(--text);
-  background: #fff;
+  background: rgba(5, 7, 19, 0.92);
   font: inherit;
 }
 
@@ -270,16 +327,29 @@ ul {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 12px;
-  background: #fff;
+  background: rgba(5, 7, 19, 0.92);
   color: var(--muted);
   font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .status-filter button.active,
-.status-filter button:hover {
+.status-filter button:hover,
+.status-filter button:focus-visible {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  box-shadow: 0 0 18px rgba(255, 228, 94, 0.18);
+}
+
+.status-filter button.active {
   border-color: var(--accent);
   color: var(--accent);
+  box-shadow: 0 0 20px rgba(97, 245, 255, 0.22);
+}
+
+.status-filter button:active {
+  transform: translateY(1px);
 }
 
 .filter-count {
@@ -308,6 +378,19 @@ ul {
   border: 1px solid var(--line);
   border-radius: 8px;
   text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 0 30px rgba(255, 79, 154, 0.04), 0 0 26px rgba(97, 245, 255, 0.1);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.post-card a:hover,
+.post-card a:focus-visible {
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 1px rgba(255, 228, 94, 0.52), 0 0 34px rgba(255, 228, 94, 0.22);
+  transform: translateY(-2px);
+}
+
+.post-card a:active {
+  transform: translateY(1px);
 }
 
 .post-card img {
@@ -322,7 +405,7 @@ ul {
   aspect-ratio: 4 / 3;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: #eef5f2;
+  background: rgba(81, 255, 178, 0.1);
   color: var(--accent);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 72px;
@@ -346,7 +429,7 @@ ul {
   padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #eef5f2;
+  background: rgba(81, 255, 178, 0.1);
   color: var(--muted);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -387,7 +470,8 @@ figure img,
 .image-grid img {
   border-radius: 8px;
   border: 1px solid var(--line);
-  background: #eee8df;
+  background: rgba(97, 245, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 79, 154, 0.16), 0 0 30px rgba(97, 245, 255, 0.18);
 }
 
 figcaption,
@@ -415,7 +499,7 @@ figcaption,
   margin: 26px 0;
   padding: 18px 20px;
   border-left: 4px solid var(--accent);
-  background: #eef5f2;
+  background: rgba(81, 255, 178, 0.1);
 }
 
 .puzzle p {
@@ -468,6 +552,7 @@ code {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+  box-shadow: inset 0 0 28px rgba(255, 79, 154, 0.04), 0 0 22px rgba(97, 245, 255, 0.08);
 }
 
 .comment-replies {
@@ -479,7 +564,7 @@ code {
 }
 
 .comment-reply {
-  background: #fbfaf7;
+  background: rgba(5, 7, 19, 0.72);
 }
 
 .comment-item header,
@@ -522,7 +607,7 @@ code {
 }
 
 .comment-status[data-kind="error"] {
-  color: #9b2c2c;
+  color: var(--pink);
 }
 
 .comment-form,
@@ -534,6 +619,7 @@ code {
   border-radius: 8px;
   background: var(--surface);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-shadow: 0 0 26px rgba(97, 245, 255, 0.1);
 }
 
 .comment-form label,
@@ -553,7 +639,7 @@ code {
   border-radius: 6px;
   padding: 11px 12px;
   color: var(--text);
-  background: #fff;
+  background: rgba(5, 7, 19, 0.92);
   font: inherit;
 }
 
@@ -572,9 +658,11 @@ code {
   border-radius: 6px;
   padding: 9px 13px;
   background: var(--accent);
-  color: #fff;
+  color: #050713;
   font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
+  box-shadow: 0 0 22px rgba(97, 245, 255, 0.22);
+  transition: filter 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .comment-form button:hover,
@@ -582,8 +670,24 @@ code {
 .comment-cancel-reply:hover,
 .admin-token-form button:hover,
 .admin-toolbar button:hover,
-.admin-comment button:hover {
-  filter: brightness(0.95);
+.admin-comment button:hover,
+.comment-form button:focus-visible,
+.comment-reply-button:focus-visible,
+.comment-cancel-reply:focus-visible,
+.admin-token-form button:focus-visible,
+.admin-toolbar button:focus-visible,
+.admin-comment button:focus-visible {
+  filter: brightness(1.08);
+  box-shadow: 0 0 28px rgba(97, 245, 255, 0.34);
+}
+
+.comment-form button:active,
+.comment-reply-button:active,
+.comment-cancel-reply:active,
+.admin-token-form button:active,
+.admin-toolbar button:active,
+.admin-comment button:active {
+  transform: translateY(1px);
 }
 
 .comment-reply-button,
@@ -591,7 +695,7 @@ code {
   min-height: 34px;
   margin-top: 10px;
   padding: 6px 10px;
-  background: #fff;
+  background: rgba(5, 7, 19, 0.92);
   color: var(--accent);
 }
 
@@ -626,11 +730,15 @@ code {
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
+  transition: border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.page-bottom-nav a:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.page-bottom-nav a:hover,
+.page-bottom-nav a:focus-visible {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  box-shadow: 0 0 20px rgba(255, 228, 94, 0.2);
+  transform: translateY(-1px);
 }
 
 .admin-comments h1 {
@@ -658,14 +766,14 @@ code {
 
 .admin-comment button[data-action="hidden"],
 .admin-comment button[data-action="pending"] {
-  background: #fff;
+  background: rgba(5, 7, 19, 0.92);
   color: var(--accent);
 }
 
 .admin-comment button[data-action="delete"],
 .admin-toolbar button[data-forget-token] {
-  border-color: #9b2c2c;
-  background: #9b2c2c;
+  border-color: var(--pink);
+  background: var(--pink);
 }
 
 @media (max-width: 720px) {

@@ -21,6 +21,18 @@ for (const month of archiveMonths) {
 
 let previousArchiveKey = "";
 
+const latestCards = posts
+  .filter((post) => post.status !== "draft")
+  .slice(0, 3)
+  .map((post) => `          <article>
+            <a href="/blog/posts/${post.slug}.html">
+              <span>${escapeHtml(post.date)}</span>
+              <h3>${escapeHtml(post.title)}</h3>
+              <p>${escapeHtml(post.summary)}</p>
+            </a>
+          </article>`)
+  .join("\n");
+
 const cards = posts.map((post) => {
   const media = post.cover
     ? renderImage(post.cover, post.coverAlt)
@@ -78,6 +90,16 @@ const html = `<!doctype html>
       <section class="intro">
         <p class="eyebrow">Personal Blog</p>
         <h1>Notes, trips, and things I am learning.</h1>
+      </section>
+
+      <section class="latest" aria-label="Latest blog posts">
+        <div class="section-heading">
+          <p class="eyebrow">Latest</p>
+          <h2>Recent blog posts</h2>
+        </div>
+        <div class="latest-grid">
+${latestCards}
+        </div>
       </section>
 
       <section class="archive-nav" aria-label="Browse posts by month">
