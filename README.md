@@ -59,3 +59,12 @@ This rebuilds the blog index, adds article metadata and lazy image attributes, a
 - Blog comments database binding is defined in `wrangler.toml`.
 
 `blog.rogergaowei.com` is handled by the Worker so that its root path serves the blog index.
+
+## GitHub Action deployment
+
+If you want deployment to happen automatically when `main` is pushed, configure these repository secrets in GitHub:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Then every push to `main` runs the `.github/workflows/deploy.yml` action and deploys the Worker.
