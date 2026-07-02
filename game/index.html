@@ -50,6 +50,9 @@
 	      overflow: hidden;
 	      padding: 16px 12px;
 	      background:
+	        radial-gradient(circle at 16% 14%, rgba(255, 79, 154, 0.22), transparent 28%),
+	        radial-gradient(circle at 82% 18%, rgba(97, 245, 255, 0.2), transparent 30%),
+	        radial-gradient(circle at 70% 82%, rgba(81, 255, 178, 0.16), transparent 26%),
 	        linear-gradient(rgba(97, 245, 255, 0.08) 1px, transparent 1px) 0 0 / 34px 34px,
 	        linear-gradient(90deg, rgba(255, 79, 154, 0.07) 1px, transparent 1px) 0 0 / 34px 34px,
 	        var(--bg);
@@ -60,6 +63,11 @@
 
 	    a {
 	      color: inherit;
+	    }
+
+	    ::selection {
+	      background: var(--red);
+	      color: var(--bg);
 	    }
 
 	    a,
@@ -73,15 +81,16 @@
 	      outline-offset: 4px;
 	    }
 
-    .site-header {
+	    .site-header {
       width: min(1080px, calc(100vw - 24px));
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding-bottom: 2px;
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+	      padding-bottom: 2px;
+	      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	      filter: drop-shadow(0 0 18px rgba(97, 245, 255, 0.16));
+	    }
 
 	    .brand {
 	      color: var(--blue);
@@ -97,13 +106,15 @@
       font-size: 14px;
     }
 
-    .site-nav a {
-      text-decoration: none;
-    }
+	    .site-nav a {
+	      border-bottom: 1px solid transparent;
+	      text-decoration: none;
+	    }
 
 	    .site-nav a:hover,
 	    .site-nav a[aria-current="page"] {
 	      color: var(--accent);
+	      border-color: var(--accent);
 	      text-shadow: 0 0 14px rgba(255, 228, 94, 0.78);
 	    }
 
@@ -121,6 +132,9 @@
       grid-template-rows: auto auto minmax(0, 1fr) auto;
       align-content: stretch;
 	      background:
+	        radial-gradient(circle at 16% 14%, rgba(255, 79, 154, 0.22), transparent 28%),
+	        radial-gradient(circle at 82% 18%, rgba(97, 245, 255, 0.2), transparent 30%),
+	        radial-gradient(circle at 70% 82%, rgba(81, 255, 178, 0.16), transparent 26%),
 	        linear-gradient(rgba(97, 245, 255, 0.08) 1px, transparent 1px) 0 0 / 34px 34px,
 	        linear-gradient(90deg, rgba(255, 79, 154, 0.07) 1px, transparent 1px) 0 0 / 34px 34px,
 	        var(--bg);
@@ -258,12 +272,12 @@
       width: min(560px, 92%);
     }
 
-    .message h2 {
-      margin: 0 0 10px;
-      font-size: clamp(26px, 5vw, 54px);
-      line-height: 1;
-      text-shadow: 4px 4px 0 #000;
-    }
+	    .message h2 {
+	      margin: 0 0 10px;
+	      font-size: clamp(26px, 5vw, 54px);
+	      line-height: 1;
+	      text-shadow: 0 0 22px rgba(97, 245, 255, 0.55), 0 0 36px rgba(255, 79, 154, 0.32);
+	    }
 
     .message p {
 	      margin: 8px 0 16px;
@@ -283,7 +297,7 @@
     }
 
     .legend span {
-	      border: 2px solid #415052;
+	      border: 2px solid var(--line);
 	      background: rgba(10, 18, 38, 0.92);
 	      padding: 5px 8px;
 	      box-shadow: 0 0 14px rgba(97, 245, 255, 0.12);
@@ -497,16 +511,21 @@
     const W = canvas.width;
     const H = canvas.height;
     const keys = new Set();
-    const palette = {
-      cream: "#f8f1d8",
-      yellow: "#f2c84b",
-      red: "#ef6655",
-      green: "#56c271",
-      blue: "#65a8ff",
-      pink: "#f08ac0",
-      dark: "#101719",
-      floor: "#1d3031"
-    };
+	    const palette = {
+	      cream: "#f6fbff",
+	      yellow: "#ffe45e",
+	      red: "#ff4f9a",
+	      green: "#51ffb2",
+	      blue: "#61f5ff",
+	      pink: "#b675ff",
+	      violet: "#b675ff",
+	      dark: "#050713",
+	      panel: "#0a1226",
+	      floor: "#111a36",
+	      grid: "#234b6d",
+	      shadow: "#02040b",
+	      skin: "#ff9bd7"
+	    };
 
     let state;
     let currentGame = "corner";
@@ -1095,20 +1114,20 @@
       for (const unit of state.securityUnits) drawSecurityUnit(unit);
       drawPlayer(state.player);
       drawPops();
-      if (state.hitFlash > 0) {
-        ctx.fillStyle = `rgba(239, 102, 85, ${state.hitFlash * .22})`;
-        ctx.fillRect(0, 0, W, H);
-      }
+	      if (state.hitFlash > 0) {
+	        ctx.fillStyle = `rgba(255, 79, 154, ${state.hitFlash * .24})`;
+	        ctx.fillRect(0, 0, W, H);
+	      }
       if (state.paused) drawPaused();
     }
 
-    function drawPaused() {
-      ctx.fillStyle = "rgba(5, 8, 8, .62)";
-      ctx.fillRect(0, 0, W, H);
-      ctx.textAlign = "center";
-      ctx.font = "700 54px 'Courier New', monospace";
-      ctx.fillStyle = "#050808";
-      ctx.fillText("PAUSED", W / 2 + 4, H / 2 + 4);
+	    function drawPaused() {
+	      ctx.fillStyle = "rgba(5, 7, 19, .72)";
+	      ctx.fillRect(0, 0, W, H);
+	      ctx.textAlign = "center";
+	      ctx.font = "700 54px 'Courier New', monospace";
+	      ctx.fillStyle = palette.shadow;
+	      ctx.fillText("PAUSED", W / 2 + 4, H / 2 + 4);
       ctx.fillStyle = palette.cream;
       ctx.fillText("PAUSED", W / 2, H / 2);
       ctx.font = "700 18px 'Courier New', monospace";
@@ -1121,14 +1140,14 @@
       ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
     }
 
-    function drawRoom() {
-      pixelRect(0, 0, W, H, "#172326");
-      pixelRect(0, 58, W, 4, "#718161");
-      pixelRect(0, H - 54, W, 54, palette.floor);
-      for (let x = 0; x < W; x += 48) {
-        pixelRect(x, H - 54, 24, 4, "#2c4541");
-      }
-      pixelRect(26, 18, 130, 26, "#25383b");
+	    function drawRoom() {
+	      pixelRect(0, 0, W, H, palette.dark);
+	      pixelRect(0, 58, W, 4, palette.blue);
+	      pixelRect(0, H - 54, W, 54, palette.floor);
+	      for (let x = 0; x < W; x += 48) {
+	        pixelRect(x, H - 54, 24, 4, palette.grid);
+	      }
+	      pixelRect(26, 18, 130, 26, palette.panel);
       pixelRect(34, 24, 22, 14, palette.red);
       pixelRect(62, 24, 22, 14, palette.yellow);
       pixelRect(90, 24, 22, 14, palette.green);
@@ -1138,40 +1157,40 @@
       drawShelf(546, 18);
     }
 
-    function drawShelf(x, y) {
-      pixelRect(x, y, 154, 34, "#352b25");
+	    function drawShelf(x, y) {
+	      pixelRect(x, y, 154, 34, palette.panel);
       pixelRect(x + 8, y + 8, 24, 18, palette.red);
       pixelRect(x + 40, y + 7, 22, 19, palette.yellow);
       pixelRect(x + 72, y + 8, 24, 18, palette.blue);
       pixelRect(x + 104, y + 7, 24, 19, palette.green);
-      pixelRect(x, y + 30, 154, 5, "#7b5d35");
-    }
+	      pixelRect(x, y + 30, 154, 5, palette.violet);
+	    }
 
-    function drawArcadeCabinet(x, y) {
-      pixelRect(x, y, 96, 43, "#283a40");
-      pixelRect(x + 10, y + 7, 50, 25, "#0a1114");
+	    function drawArcadeCabinet(x, y) {
+	      pixelRect(x, y, 96, 43, palette.panel);
+	      pixelRect(x + 10, y + 7, 50, 25, palette.shadow);
       pixelRect(x + 16, y + 12, 38, 14, palette.blue);
       pixelRect(x + 68, y + 14, 10, 10, palette.red);
       pixelRect(x + 82, y + 14, 8, 8, palette.yellow);
-      pixelRect(x + 66, y + 29, 26, 5, "#111");
-    }
+	      pixelRect(x + 66, y + 29, 26, 5, palette.shadow);
+	    }
 
     function drawPlayer(p) {
       const blink = state.hitFlash > 0 && Math.floor(state.time * 16) % 2 === 0;
       if (blink) return;
       const x = p.x;
       const y = p.y;
-      pixelRect(x + 10, y, 18, 10, "#222");
-      pixelRect(x + 6, y + 10, 26, 16, "#f0b37e");
+	      pixelRect(x + 10, y, 18, 10, palette.violet);
+	      pixelRect(x + 6, y + 10, 26, 16, palette.skin);
       pixelRect(x + 9, y + 26, 20, 18, palette.blue);
       pixelRect(x + 2, y + 30, 9, 13, palette.cream);
       pixelRect(x + 28, y + 30, 9, 13, palette.cream);
-      pixelRect(x + 9, y + 44, 8, 8, "#222");
-      pixelRect(x + 21, y + 44, 8, 8, "#222");
-      pixelRect(x + 12, y + 17, 4, 4, "#111");
-      pixelRect(x + 24, y + 17, 4, 4, "#111");
+	      pixelRect(x + 9, y + 44, 8, 8, palette.shadow);
+	      pixelRect(x + 21, y + 44, 8, 8, palette.shadow);
+	      pixelRect(x + 12, y + 17, 4, 4, palette.shadow);
+	      pixelRect(x + 24, y + 17, 4, 4, palette.shadow);
       if (p.shield > 0) {
-        ctx.strokeStyle = `rgba(86, 194, 113, ${0.55 + Math.sin(state.time * 10) * .2})`;
+	        ctx.strokeStyle = `rgba(81, 255, 178, ${0.55 + Math.sin(state.time * 10) * .2})`;
         ctx.lineWidth = 4;
         ctx.strokeRect(x - 8, y - 8, p.w + 16, p.h + 18);
       }
@@ -1180,7 +1199,7 @@
         pixelRect(x + 40, y + 38, 7, 4, palette.blue);
       }
       if (p.slow > 0) {
-        ctx.strokeStyle = `rgba(240, 138, 192, ${0.45 + Math.sin(state.time * 8) * .15})`;
+	        ctx.strokeStyle = `rgba(182, 117, 255, ${0.45 + Math.sin(state.time * 8) * .15})`;
         ctx.lineWidth = 3;
         ctx.strokeRect(x - 4, y - 4, p.w + 8, p.h + 10);
       }
@@ -1188,20 +1207,20 @@
         pixelRect(x + 6, y - 9, 26, 5, palette.red);
       }
       if (p.magnet > 0) {
-        ctx.strokeStyle = `rgba(239, 102, 85, ${0.35 + Math.sin(state.time * 7) * .12})`;
+	        ctx.strokeStyle = `rgba(255, 79, 154, ${0.35 + Math.sin(state.time * 7) * .12})`;
         ctx.lineWidth = 3;
         ctx.strokeRect(x - 18, y - 18, p.w + 36, p.h + 38);
       }
       if (p.doubleScore > 0) {
         pixelRect(x + 31, y + 2, 13, 10, palette.yellow);
-        pixelText("2x", x + 33, y + 11, 10, "#111");
+	        pixelText("2x", x + 33, y + 11, 10, palette.shadow);
       }
       if (p.freeze > 0) {
         pixelRect(x - 7, y + 4, 5, 36, palette.blue);
         pixelRect(x + 40, y + 4, 5, 36, palette.blue);
       }
       if (p.tiny > 0) {
-        ctx.strokeStyle = "rgba(248, 241, 216, .55)";
+	        ctx.strokeStyle = "rgba(246, 251, 255, .62)";
         ctx.lineWidth = 2;
         const box = playerDamageBox();
         ctx.strokeRect(box.x, box.y, box.w, box.h);
@@ -1209,18 +1228,18 @@
     }
 
     function drawCoin(item) {
-      pixelRect(item.x + 8, item.y + 4, 16, 4, "#fff1a6");
-      pixelRect(item.x + 4, item.y + 8, 24, 16, palette.yellow);
-      pixelRect(item.x + 8, item.y + 12, 16, 8, "#b77f28");
-      pixelRect(item.x + 13, item.y + 9, 6, 14, "#fff1a6");
-      pixelRect(item.x + 8, item.y + 24, 16, 4, "#7a531c");
+	      pixelRect(item.x + 8, item.y + 4, 16, 4, palette.cream);
+	      pixelRect(item.x + 4, item.y + 8, 24, 16, palette.yellow);
+	      pixelRect(item.x + 8, item.y + 12, 16, 8, palette.red);
+	      pixelRect(item.x + 13, item.y + 9, 6, 14, palette.cream);
+	      pixelRect(item.x + 8, item.y + 24, 16, 4, palette.violet);
     }
 
     function drawTape(item) {
-      pixelRect(item.x, item.y + 5, 34, 23, "#26343b");
+	      pixelRect(item.x, item.y + 5, 34, 23, palette.panel);
       pixelRect(item.x + 4, item.y + 9, 26, 9, palette.blue);
-      pixelRect(item.x + 7, item.y + 20, 8, 6, "#111");
-      pixelRect(item.x + 20, item.y + 20, 8, 6, "#111");
+	      pixelRect(item.x + 7, item.y + 20, 8, 6, palette.shadow);
+	      pixelRect(item.x + 20, item.y + 20, 8, 6, palette.shadow);
       pixelRect(item.x + 11, item.y + 22, 4, 2, palette.cream);
       pixelRect(item.x + 24, item.y + 22, 4, 2, palette.cream);
     }
@@ -1228,123 +1247,123 @@
     function drawSnack(item) {
       pixelRect(item.x + 4, item.y, 24, 34, palette.red);
       pixelRect(item.x + 8, item.y + 5, 16, 5, palette.yellow);
-      pixelRect(item.x + 8, item.y + 15, 16, 10, "#ffd6a1");
-      pixelRect(item.x + 11, item.y + 18, 10, 4, "#ab332e");
+	      pixelRect(item.x + 8, item.y + 15, 16, 10, palette.yellow);
+	      pixelRect(item.x + 11, item.y + 18, 10, 4, palette.violet);
     }
 
     function drawConsole(item) {
-      pixelRect(item.x, item.y + 8, 36, 19, "#dad4bd");
-      pixelRect(item.x + 4, item.y + 12, 14, 4, "#89908b");
+	      pixelRect(item.x, item.y + 8, 36, 19, palette.cream);
+	      pixelRect(item.x + 4, item.y + 12, 14, 4, palette.blue);
       pixelRect(item.x + 23, item.y + 12, 5, 5, palette.red);
       pixelRect(item.x + 29, item.y + 12, 5, 5, palette.yellow);
-      pixelRect(item.x + 8, item.y + 27, 6, 5, "#2c2c2c");
-      pixelRect(item.x + 22, item.y + 27, 6, 5, "#2c2c2c");
+	      pixelRect(item.x + 8, item.y + 27, 6, 5, palette.shadow);
+	      pixelRect(item.x + 22, item.y + 27, 6, 5, palette.shadow);
     }
 
     function drawTv(item) {
-      pixelRect(item.x + 2, item.y + 6, 32, 24, "#3b3f45");
+	      pixelRect(item.x + 2, item.y + 6, 32, 24, palette.panel);
       pixelRect(item.x + 7, item.y + 11, 18, 13, palette.green);
       pixelRect(item.x + 27, item.y + 12, 4, 4, palette.red);
       pixelRect(item.x + 27, item.y + 19, 4, 4, palette.yellow);
-      pixelRect(item.x + 10, item.y + 30, 4, 5, "#111");
-      pixelRect(item.x + 23, item.y + 30, 4, 5, "#111");
+	      pixelRect(item.x + 10, item.y + 30, 4, 5, palette.shadow);
+	      pixelRect(item.x + 23, item.y + 30, 4, 5, palette.shadow);
       pixelRect(item.x + 11, item.y + 2, 3, 6, palette.cream);
       pixelRect(item.x + 23, item.y + 2, 3, 6, palette.cream);
     }
 
     function drawSoda(item) {
-      pixelRect(item.x + 9, item.y, 12, 5, "#dfffe8");
+	      pixelRect(item.x + 9, item.y, 12, 5, palette.cream);
       pixelRect(item.x + 6, item.y + 5, 18, 28, palette.green);
-      pixelRect(item.x + 9, item.y + 13, 12, 10, "#eafff0");
+	      pixelRect(item.x + 9, item.y + 13, 12, 10, palette.cream);
       pixelRect(item.x + 12, item.y + 15, 6, 6, palette.blue);
     }
 
     function drawSkates(item) {
       pixelRect(item.x + 2, item.y + 8, 13, 13, palette.blue);
       pixelRect(item.x + 20, item.y + 8, 13, 13, palette.blue);
-      pixelRect(item.x + 1, item.y + 22, 15, 4, "#d8e8ff");
-      pixelRect(item.x + 19, item.y + 22, 15, 4, "#d8e8ff");
-      pixelRect(item.x + 4, item.y + 26, 5, 5, "#111");
-      pixelRect(item.x + 23, item.y + 26, 5, 5, "#111");
+	      pixelRect(item.x + 1, item.y + 22, 15, 4, palette.cream);
+	      pixelRect(item.x + 19, item.y + 22, 15, 4, palette.cream);
+	      pixelRect(item.x + 4, item.y + 26, 5, 5, palette.shadow);
+	      pixelRect(item.x + 23, item.y + 26, 5, 5, palette.shadow);
     }
 
     function drawStickyCandy(item) {
       pixelRect(item.x + 8, item.y + 9, 18, 14, palette.pink);
-      pixelRect(item.x + 2, item.y + 12, 7, 8, "#ffd0e8");
-      pixelRect(item.x + 26, item.y + 12, 7, 8, "#ffd0e8");
-      pixelRect(item.x + 13, item.y + 13, 8, 6, "#b54f87");
-      pixelRect(item.x + 10, item.y + 24, 14, 5, "#8d376b");
+	      pixelRect(item.x + 2, item.y + 12, 7, 8, palette.cream);
+	      pixelRect(item.x + 26, item.y + 12, 7, 8, palette.cream);
+	      pixelRect(item.x + 13, item.y + 13, 8, 6, palette.blue);
+	      pixelRect(item.x + 10, item.y + 24, 14, 5, palette.violet);
     }
 
     function drawNotebook(item) {
-      pixelRect(item.x + 2, item.y + 4, 32, 25, "#f6e7d1");
+	      pixelRect(item.x + 2, item.y + 4, 32, 25, palette.cream);
       pixelRect(item.x + 7, item.y + 9, 22, 3, palette.blue);
       pixelRect(item.x + 7, item.y + 16, 19, 3, palette.blue);
       pixelRect(item.x + 7, item.y + 23, 14, 3, palette.red);
-      pixelRect(item.x + 2, item.y + 4, 4, 25, "#c83f38");
+	      pixelRect(item.x + 2, item.y + 4, 4, 25, palette.red);
     }
 
     function drawHawthorn(item) {
-      pixelRect(item.x + 9, item.y + 4, 14, 5, "#ffe1b5");
+	      pixelRect(item.x + 9, item.y + 4, 14, 5, palette.cream);
       pixelRect(item.x + 5, item.y + 9, 23, 18, palette.red);
       pixelRect(item.x + 9, item.y + 13, 15, 10, palette.yellow);
-      pixelRect(item.x + 13, item.y + 16, 7, 4, "#9e2f2b");
-      pixelRect(item.x + 9, item.y + 27, 14, 4, "#6e2422");
+	      pixelRect(item.x + 13, item.y + 16, 7, 4, palette.violet);
+	      pixelRect(item.x + 9, item.y + 27, 14, 4, palette.blue);
     }
 
     function drawMagnet(item) {
       pixelRect(item.x + 6, item.y + 5, 8, 24, palette.red);
       pixelRect(item.x + 22, item.y + 5, 8, 24, palette.red);
-      pixelRect(item.x + 10, item.y + 5, 16, 7, "#f6d7d1");
+	      pixelRect(item.x + 10, item.y + 5, 16, 7, palette.cream);
       pixelRect(item.x + 7, item.y + 24, 7, 7, palette.blue);
       pixelRect(item.x + 22, item.y + 24, 7, 7, palette.blue);
     }
 
     function drawDoubleScore(item) {
       pixelRect(item.x + 2, item.y + 7, 32, 18, palette.yellow);
-      pixelRect(item.x + 6, item.y + 11, 24, 10, "#111");
+	      pixelRect(item.x + 6, item.y + 11, 24, 10, palette.shadow);
       pixelText("2x", item.x + 10, item.y + 20, 12, palette.yellow);
     }
 
     function drawFreezePop(item) {
       pixelRect(item.x + 7, item.y, 15, 28, palette.blue);
-      pixelRect(item.x + 10, item.y + 5, 9, 12, "#d8f2ff");
-      pixelRect(item.x + 12, item.y + 28, 5, 10, "#a56d33");
+	      pixelRect(item.x + 10, item.y + 5, 9, 12, palette.cream);
+	      pixelRect(item.x + 12, item.y + 28, 5, 10, palette.yellow);
     }
 
     function drawTinyCharm(item) {
       pixelRect(item.x + 9, item.y + 4, 12, 5, palette.cream);
-      pixelRect(item.x + 5, item.y + 9, 22, 20, "#675642");
+	      pixelRect(item.x + 5, item.y + 9, 22, 20, palette.violet);
       pixelRect(item.x + 10, item.y + 14, 12, 10, palette.cream);
-      pixelRect(item.x + 13, item.y + 17, 6, 4, "#111");
+	      pixelRect(item.x + 13, item.y + 17, 6, 4, palette.shadow);
     }
 
     function drawSecurityOrb(item) {
-      pixelRect(item.x + 8, item.y + 4, 18, 5, "#dfffe8");
+	      pixelRect(item.x + 8, item.y + 4, 18, 5, palette.cream);
       pixelRect(item.x + 5, item.y + 9, 24, 18, palette.green);
-      pixelRect(item.x + 10, item.y + 13, 14, 10, "#15251d");
+	      pixelRect(item.x + 10, item.y + 13, 14, 10, palette.shadow);
       pixelRect(item.x + 13, item.y + 15, 3, 3, palette.blue);
       pixelRect(item.x + 20, item.y + 15, 3, 3, palette.blue);
-      pixelRect(item.x + 13, item.y + 22, 10, 5, "#dfffe8");
+	      pixelRect(item.x + 13, item.y + 22, 10, 5, palette.cream);
     }
 
     function drawSecurityUnit(unit) {
       if (unit.inv > 0 && Math.floor(state.time * 18) % 2 === 0) return;
       const x = unit.x;
       const y = unit.y + Math.sin(unit.pulse) * 1.5;
-      pixelRect(x + 8, y, 18, 9, "#143820");
-      pixelRect(x + 5, y + 9, 24, 15, "#e0b083");
+	      pixelRect(x + 8, y, 18, 9, palette.violet);
+	      pixelRect(x + 5, y + 9, 24, 15, palette.skin);
       pixelRect(x + 8, y + 24, 18, 15, palette.green);
       pixelRect(x + 1, y + 27, 7, 12, palette.cream);
       pixelRect(x + 26, y + 27, 7, 12, palette.cream);
-      pixelRect(x + 8, y + 39, 7, 7, "#111");
-      pixelRect(x + 20, y + 39, 7, 7, "#111");
-      pixelRect(x + 11, y + 15, 4, 4, "#111");
-      pixelRect(x + 22, y + 15, 4, 4, "#111");
-      pixelRect(x + 6, y - 12, 26, 10, "#050808");
+	      pixelRect(x + 8, y + 39, 7, 7, palette.shadow);
+	      pixelRect(x + 20, y + 39, 7, 7, palette.shadow);
+	      pixelRect(x + 11, y + 15, 4, 4, palette.shadow);
+	      pixelRect(x + 22, y + 15, 4, 4, palette.shadow);
+	      pixelRect(x + 6, y - 12, 26, 10, palette.shadow);
       pixelText("CPU", x + 9, y - 4, 10, palette.green);
       if (unit.shield > 0) {
-        ctx.strokeStyle = `rgba(86, 194, 113, ${0.55 + Math.sin(state.time * 10) * .2})`;
+	        ctx.strokeStyle = `rgba(81, 255, 178, ${0.55 + Math.sin(state.time * 10) * .2})`;
         ctx.lineWidth = 4;
         ctx.strokeRect(x - 7, y - 7, unit.w + 14, unit.h + 18);
       }
@@ -1353,7 +1372,7 @@
         pixelRect(x + 36, y + 34, 6, 4, palette.blue);
       }
       if (unit.slow > 0) {
-        ctx.strokeStyle = "rgba(240, 138, 192, .45)";
+	        ctx.strokeStyle = "rgba(182, 117, 255, .52)";
         ctx.lineWidth = 3;
         ctx.strokeRect(x - 3, y - 3, unit.w + 6, unit.h + 9);
       }
@@ -1361,13 +1380,13 @@
         pixelRect(x + 6, y - 18, 22, 4, palette.red);
       }
       if (unit.magnet > 0) {
-        ctx.strokeStyle = "rgba(239, 102, 85, .4)";
+	        ctx.strokeStyle = "rgba(255, 79, 154, .48)";
         ctx.lineWidth = 2;
         ctx.strokeRect(x - 16, y - 16, unit.w + 32, unit.h + 36);
       }
       if (unit.doubleScore > 0) {
         pixelRect(x + 28, y + 1, 12, 9, palette.yellow);
-        pixelText("2x", x + 30, y + 9, 9, "#111");
+	        pixelText("2x", x + 30, y + 9, 9, palette.shadow);
       }
       if (unit.freeze > 0) {
         pixelRect(x - 5, y + 4, 4, 32, palette.blue);
@@ -1375,11 +1394,11 @@
       }
       if (unit.tiny > 0) {
         const box = cpuDamageBox(unit);
-        ctx.strokeStyle = "rgba(248, 241, 216, .55)";
+	        ctx.strokeStyle = "rgba(246, 251, 255, .62)";
         ctx.lineWidth = 2;
         ctx.strokeRect(box.x, box.y, box.w, box.h);
       }
-      ctx.strokeStyle = unit.targetKind === "enemy" ? "rgba(239, 102, 85, .55)" : unit.targetKind === "power" ? "rgba(242, 200, 75, .65)" : "rgba(86, 194, 113, .45)";
+	      ctx.strokeStyle = unit.targetKind === "enemy" ? "rgba(255, 79, 154, .62)" : unit.targetKind === "power" ? "rgba(255, 228, 94, .7)" : "rgba(81, 255, 178, .52)";
       ctx.lineWidth = 2;
       ctx.strokeRect(x - 5, y - 5, unit.w + 10, unit.h + 12);
     }
@@ -1391,7 +1410,7 @@
       ctx.font = "700 10px 'Courier New', monospace";
       ctx.textAlign = "center";
       const width = ctx.measureText(text).width + 8;
-      pixelRect(x - width / 2, y - 10, width, 12, "#050808");
+	      pixelRect(x - width / 2, y - 10, width, 12, palette.shadow);
       ctx.fillStyle = item.color;
       ctx.fillText(text, x, y);
     }
@@ -1399,12 +1418,12 @@
     function drawEnemy(enemy) {
       const x = enemy.x + Math.sin(enemy.wobble) * 5;
       const y = enemy.y;
-      pixelRect(x - 16, y - 12, 32, 24, "#513155");
-      pixelRect(x - 20, y - 4, 8, 8, "#513155");
-      pixelRect(x + 12, y - 4, 8, 8, "#513155");
+	      pixelRect(x - 16, y - 12, 32, 24, palette.violet);
+	      pixelRect(x - 20, y - 4, 8, 8, palette.violet);
+	      pixelRect(x + 12, y - 4, 8, 8, palette.violet);
       pixelRect(x - 9, y - 5, 6, 6, palette.red);
       pixelRect(x + 4, y - 5, 6, 6, palette.red);
-      pixelRect(x - 8, y + 8, 16, 4, "#111");
+	      pixelRect(x - 8, y + 8, 16, 4, palette.shadow);
     }
 
     function drawPops() {
@@ -1412,7 +1431,7 @@
       ctx.font = "18px 'Courier New', monospace";
       for (const pop of state.pops) {
         ctx.globalAlpha = Math.max(0, pop.life);
-        ctx.fillStyle = "#050808";
+	        ctx.fillStyle = palette.shadow;
         ctx.fillText(pop.text, pop.x + 2, pop.y + 2);
         ctx.fillStyle = pop.color;
         ctx.fillText(pop.text, pop.x, pop.y);
@@ -1718,15 +1737,15 @@
       const shakeX = game.shake > 0 ? Math.sin(game.time * 42) * 4 : 0;
       ctx.save();
       ctx.translate(shakeX, 0);
-      pixelRect(-10, 0, W + 20, H, "#17242b");
-      pixelRect(0, H - 92, W, 92, "#314047");
-      pixelRect(72, H - 138, W - 144, 48, "#6e775f");
-      for (let x = 90; x < W - 110; x += 54) {
-        pixelRect(x, H - 168, 32, 30, "#6e775f");
-      }
-      pixelRect(0, H - 84, W, 8, "#9a8a57");
-      pixelRect(380, H - 92, 200, 92, "#42342f");
-      pixelRect(420, H - 70, 120, 70, "#2a201d");
+	      pixelRect(-10, 0, W + 20, H, palette.dark);
+	      pixelRect(0, H - 92, W, 92, palette.floor);
+	      pixelRect(72, H - 138, W - 144, 48, palette.panel);
+	      for (let x = 90; x < W - 110; x += 54) {
+	        pixelRect(x, H - 168, 32, 30, palette.panel);
+	      }
+	      pixelRect(0, H - 84, W, 8, palette.yellow);
+	      pixelRect(380, H - 92, 200, 92, palette.violet);
+	      pixelRect(420, H - 70, 120, 70, palette.shadow);
       pixelText("CASTLE GATE", 392, H - 102, 18, palette.cream);
       for (const supply of game.supplies) drawCastleSupply(supply);
       for (const enemy of game.enemies) drawCastleEnemy(enemy);
@@ -1742,55 +1761,55 @@
     }
 
     function drawCastlePlayer(p, game) {
-      pixelRect(p.x + 8, p.y, 20, 9, "#222");
-      pixelRect(p.x + 5, p.y + 9, 27, 15, "#e0b083");
+	      pixelRect(p.x + 8, p.y, 20, 9, palette.violet);
+	      pixelRect(p.x + 5, p.y + 9, 27, 15, palette.skin);
       pixelRect(p.x + 7, p.y + 24, 23, 16, palette.blue);
       pixelRect(p.x - 2, p.y + 26, 9, 14, palette.cream);
       pixelRect(p.x + 29, p.y + 26, 9, 14, palette.cream);
       pixelRect(p.x + 17, p.y - 16, 6, 18, palette.cream);
       pixelRect(p.x + 14, p.y - 20, 12, 6, palette.yellow);
       if (game.rapid > 0) {
-        ctx.strokeStyle = "rgba(242, 200, 75, .65)";
+	        ctx.strokeStyle = "rgba(255, 228, 94, .72)";
         ctx.lineWidth = 3;
         ctx.strokeRect(p.x - 6, p.y - 8, p.w + 12, p.h + 14);
       }
     }
 
     function drawCastleCannon(cannon) {
-      pixelRect(cannon.x, cannon.y + 12, 38, 18, "#31383d");
-      pixelRect(cannon.x + 9, cannon.y + 2, 20, 16, "#22282c");
-      pixelRect(cannon.x + 16, cannon.y - 12, 8, 18, "#22282c");
-      pixelRect(cannon.x + 5, cannon.y + 27, 9, 9, "#111");
-      pixelRect(cannon.x + 25, cannon.y + 27, 9, 9, "#111");
+	      pixelRect(cannon.x, cannon.y + 12, 38, 18, palette.panel);
+	      pixelRect(cannon.x + 9, cannon.y + 2, 20, 16, palette.blue);
+	      pixelRect(cannon.x + 16, cannon.y - 12, 8, 18, palette.blue);
+	      pixelRect(cannon.x + 5, cannon.y + 27, 9, 9, palette.shadow);
+	      pixelRect(cannon.x + 25, cannon.y + 27, 9, 9, palette.shadow);
       pixelRect(cannon.x + 11, cannon.y - 16, 18, 5, palette.yellow);
     }
 
     function drawCastleCpu(cpu) {
-      pixelRect(cpu.x + 7, cpu.y, 18, 8, "#143820");
-      pixelRect(cpu.x + 5, cpu.y + 8, 23, 14, "#e0b083");
+	      pixelRect(cpu.x + 7, cpu.y, 18, 8, palette.violet);
+	      pixelRect(cpu.x + 5, cpu.y + 8, 23, 14, palette.skin);
       pixelRect(cpu.x + 7, cpu.y + 22, 19, 15, palette.green);
       pixelRect(cpu.x + (cpu.dir > 0 ? 25 : -2), cpu.y + 18, 8, 20, palette.cream);
-      pixelRect(cpu.x + 8, cpu.y + 37, 7, 7, "#111");
-      pixelRect(cpu.x + 20, cpu.y + 37, 7, 7, "#111");
-      pixelRect(cpu.x + 4, cpu.y - 11, 26, 9, "#050808");
+	      pixelRect(cpu.x + 8, cpu.y + 37, 7, 7, palette.shadow);
+	      pixelRect(cpu.x + 20, cpu.y + 37, 7, 7, palette.shadow);
+	      pixelRect(cpu.x + 4, cpu.y - 11, 26, 9, palette.shadow);
       pixelText("CPU", cpu.x + 7, cpu.y - 4, 10, palette.green);
     }
 
     function drawCastleEnemy(enemy) {
       const x = enemy.x + Math.sin(enemy.wobble) * 4;
       const y = enemy.y;
-      const color = enemy.boss ? "#684668" : "#513155";
+	      const color = enemy.boss ? palette.pink : palette.violet;
       pixelRect(x, y + 6, enemy.w, enemy.h - 8, color);
       pixelRect(x + 5, y, enemy.w - 10, 10, color);
       pixelRect(x + 7, y + 14, 6, 6, palette.red);
       pixelRect(x + enemy.w - 14, y + 14, 6, 6, palette.red);
-      pixelRect(x + 9, y + enemy.h - 9, enemy.w - 18, 4, "#111");
+	      pixelRect(x + 9, y + enemy.h - 9, enemy.w - 18, 4, palette.shadow);
       if (enemy.boss) pixelRect(x + 12, y - 8, enemy.w - 24, 8, palette.yellow);
     }
 
     function drawCastleSupply(supply) {
       pixelRect(supply.x, supply.y + 6, supply.w, supply.h - 4, supply.color);
-      pixelRect(supply.x + 5, supply.y + 11, supply.w - 10, 9, "#111");
+	      pixelRect(supply.x + 5, supply.y + 11, supply.w - 10, 9, palette.shadow);
       pixelRect(supply.x + 9, supply.y + 14, supply.w - 18, 4, palette.cream);
       drawPowerLabel(supply);
     }
@@ -1890,16 +1909,16 @@
 
     function drawTvBreakout() {
       const game = miniState || createTvBreakoutState(false);
-      pixelRect(0, 0, W, H, "#101719");
-      pixelRect(38, 38, W - 76, H - 76, "#18282b");
-      pixelRect(38, 38, W - 76, 5, "#718161");
-      pixelRect(38, 38, 5, H - 76, "#718161");
-      pixelRect(W - 43, 38, 5, H - 76, "#718161");
+	      pixelRect(0, 0, W, H, palette.dark);
+	      pixelRect(38, 38, W - 76, H - 76, palette.panel);
+	      pixelRect(38, 38, W - 76, 5, palette.blue);
+	      pixelRect(38, 38, 5, H - 76, palette.blue);
+	      pixelRect(W - 43, 38, 5, H - 76, palette.blue);
       pixelText("TV BREAKOUT", 62, 31, 18, palette.cream);
       for (const brick of game.bricks) {
         if (brick.dead) continue;
         pixelRect(brick.x, brick.y, brick.w, brick.h, brickColor(brick));
-        pixelRect(brick.x + 5, brick.y + 5, brick.w - 10, 4, "rgba(255,255,255,.25)");
+	        pixelRect(brick.x + 5, brick.y + 5, brick.w - 10, 4, "rgba(246, 251, 255, .35)");
       }
       pixelRect(game.paddle.x, game.paddle.y, game.paddle.w, game.paddle.h, palette.blue);
       pixelRect(game.paddle.x + 8, game.paddle.y + 4, game.paddle.w - 16, 4, palette.cream);
@@ -1925,7 +1944,7 @@
       ctx.font = "18px 'Courier New', monospace";
       for (const pop of pops) {
         ctx.globalAlpha = Math.max(0, pop.life);
-        ctx.fillStyle = "#050808";
+	        ctx.fillStyle = palette.shadow;
         ctx.fillText(pop.text, pop.x + 2, pop.y + 2);
         ctx.fillStyle = pop.color;
         ctx.fillText(pop.text, pop.x, pop.y);
@@ -2119,8 +2138,8 @@
 
     function drawCivilization() {
       const game = miniState || createCivilizationState();
-      pixelRect(0, 0, W, H, "#162123");
-      pixelRect(34, 34, 280, 88, "#11191c");
+	      pixelRect(0, 0, W, H, palette.dark);
+	      pixelRect(34, 34, 280, 88, palette.panel);
       pixelText(`Food ${game.food}`, 52, 64, 18, palette.green);
       pixelText(`Gold ${game.gold}`, 52, 92, 18, palette.yellow);
       pixelText(`Pop ${game.population}`, 166, 64, 18, palette.cream);
@@ -2133,8 +2152,8 @@
         for (let x = 0; x < 12; x++) {
           const px = civCellX(x);
           const py = civCellY(y);
-          pixelRect(px, py, 42, 42, (x + y) % 2 ? "#274132" : "#22392f");
-          pixelRect(px, py, 42, 2, "#40594a");
+	          pixelRect(px, py, 42, 42, (x + y) % 2 ? "#102852" : "#121a3a");
+	          pixelRect(px, py, 42, 2, palette.grid);
           drawCivilizationBuilding(game.grid[y][x], px, py);
         }
       }
@@ -2158,39 +2177,39 @@
     function drawCivilizationBuilding(type, x, y) {
       if (!type) return;
       if (type === "town") {
-        pixelRect(x + 6, y + 10, 30, 26, "#75634b");
-        pixelRect(x + 12, y + 4, 18, 10, palette.red);
-        pixelRect(x + 17, y + 21, 8, 15, "#1a1110");
-      } else if (type === "farm") {
-        pixelRect(x + 5, y + 8, 32, 28, "#5f7d35");
-        for (let i = 0; i < 4; i++) pixelRect(x + 8 + i * 8, y + 11, 3, 24, palette.yellow);
-      } else if (type === "house") {
-        pixelRect(x + 8, y + 17, 26, 20, "#7a5b3b");
-        pixelRect(x + 5, y + 11, 32, 9, palette.red);
-        pixelRect(x + 18, y + 25, 7, 12, "#111");
-      } else if (type === "barracks") {
-        pixelRect(x + 6, y + 12, 30, 25, "#59636a");
-        pixelRect(x + 10, y + 7, 22, 8, palette.blue);
-        pixelRect(x + 12, y + 25, 18, 4, "#111");
-      } else if (type === "wall") {
-        pixelRect(x + 4, y + 10, 34, 28, "#8b846e");
-        for (let i = 0; i < 4; i++) pixelRect(x + 5 + i * 9, y + 6, 6, 8, "#8b846e");
-      }
+	        pixelRect(x + 6, y + 10, 30, 26, palette.violet);
+	        pixelRect(x + 12, y + 4, 18, 10, palette.red);
+	        pixelRect(x + 17, y + 21, 8, 15, palette.shadow);
+	      } else if (type === "farm") {
+	        pixelRect(x + 5, y + 8, 32, 28, palette.green);
+	        for (let i = 0; i < 4; i++) pixelRect(x + 8 + i * 8, y + 11, 3, 24, palette.yellow);
+	      } else if (type === "house") {
+	        pixelRect(x + 8, y + 17, 26, 20, palette.blue);
+	        pixelRect(x + 5, y + 11, 32, 9, palette.red);
+	        pixelRect(x + 18, y + 25, 7, 12, palette.shadow);
+	      } else if (type === "barracks") {
+	        pixelRect(x + 6, y + 12, 30, 25, palette.panel);
+	        pixelRect(x + 10, y + 7, 22, 8, palette.blue);
+	        pixelRect(x + 12, y + 25, 18, 4, palette.shadow);
+	      } else if (type === "wall") {
+	        pixelRect(x + 4, y + 10, 34, 28, palette.cream);
+	        for (let i = 0; i < 4; i++) pixelRect(x + 5 + i * 9, y + 6, 6, 8, palette.cream);
+	      }
     }
 
     function drawCivilizationRaider(raider) {
       const x = civCellX(raider.x) + Math.sin(miniState.time * 8) * 3;
       const y = civCellY(raider.y);
-      pixelRect(x + 6, y + 8, 28, 24, "#513155");
+	      pixelRect(x + 6, y + 8, 28, 24, palette.violet);
       pixelRect(x + 10, y + 12, 5, 5, palette.red);
       pixelRect(x + 24, y + 12, 5, 5, palette.red);
-      pixelRect(x + 12, y + 28, 16, 4, "#111");
+	      pixelRect(x + 12, y + 28, 16, 4, palette.shadow);
     }
 
     function pixelText(text, x, y, size, color) {
       ctx.font = `700 ${size}px 'Courier New', monospace`;
       ctx.textAlign = "left";
-      ctx.fillStyle = "#050808";
+	      ctx.fillStyle = palette.shadow;
       ctx.fillText(text, x + 3, y + 3);
       ctx.fillStyle = color;
       ctx.fillText(text, x, y);
