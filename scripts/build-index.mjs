@@ -75,15 +75,20 @@ const html = `<!doctype html>
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="${BLOG_TITLE}">
     <meta name="twitter:description" content="${BLOG_DESCRIPTION}">
-    <link rel="stylesheet" href="/blog/styles.css?v=neon-readable-1">
+    <link rel="stylesheet" href="/blog/styles.css?v=theme-switch-1">
   </head>
   <body id="top">
     <header class="site-header">
       <a class="brand" href="https://rogergaowei.com/">Roger Gao Wei</a>
-      <nav>
-        <a href="https://rogergaowei.com/">Home</a>
-        <a href="https://rogergaowei.com/game/">Game</a>
-      </nav>
+      <div class="header-controls">
+        <span class="theme-control">
+          <button type="button" class="theme-button" data-theme-button aria-label="Cycle theme">Theme</button>
+        </span>
+        <nav>
+          <a href="https://rogergaowei.com/">Home</a>
+          <a href="https://rogergaowei.com/game/">Game</a>
+        </nav>
+      </div>
     </header>
 
     <main class="page">
@@ -130,6 +135,7 @@ ${cards}
       </nav>
     </main>
     <script src="/blog/index.js" defer></script>
+    <script src="/theme-switch.js" defer></script>
   </body>
 </html>
 `;

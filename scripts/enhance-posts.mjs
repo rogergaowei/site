@@ -12,6 +12,8 @@ for (const post of postsBySlug.values()) {
   let html = await readFile(file, "utf8");
   html = ensureHeadMetadata(html, post);
   html = ensureLazyImages(html);
+  html = ensureThemeControls(html);
+  html = ensureThemeScript(html);
   await writeFile(file, html);
 }
 
@@ -60,6 +62,27 @@ function ensureLazyImages(html) {
         </picture>`;
   });
   return output;
+}
+
+function ensureThemeControls(html) {
+  const headerPattern = /<header class="site-header">\s*<a class="brand" href="[^"]+">[^<]+<\/a>\s*<nav>/;
+  if (headerPattern.test(html)) {
+    const wrapped = html.replace(headerPattern, `<header class="site-header">
+      <a class="brand" href="https://rogergaowei.com/">Roger Gao Wei</a>
+      <div class="header-controls">
+        <span class="theme-control">
+          <button type="button" class="theme-button" data-theme-button aria-label="Cycle theme">Theme</button>
+        </span>
+        <nav>`);
+    return wrapped.replace(/<\/nav>\n(\s*)<\/header>/, `</nav>\n      </div>\n$1</header>`);
+  }
+
+  return html;
+}
+
+function ensureThemeScript(html) {
+  if (html.includes("theme-switch.js")) return html;
+  return html.replace(/\n\s*<script src=\/blog\/comments\.js defer><\/script>/, '$&\n      <script src="/theme-switch.js?v=theme-switch-1" defer></script>');
 }
 
 function escapeHtml(value) {

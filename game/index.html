@@ -15,19 +15,84 @@
   <meta name="twitter:title" content="Retro Corner Catch">
   <meta name="twitter:description" content="A small browser game collection by Roger Gao Wei, including Retro Corner Catch and other arcade-style games.">
 	<style>
-	    :root {
-	      color-scheme: dark;
-	      --ink: #f6fbff;
-	      --muted: #9fb5c9;
-	      --panel: rgba(10, 18, 38, 0.92);
-	      --line: rgba(97, 245, 255, 0.45);
-	      --accent: #ffe45e;
-	      --red: #ff4f9a;
-	      --green: #51ffb2;
-	      --blue: #61f5ff;
-	      --violet: #b675ff;
-	      --bg: #050713;
-	    }
+    :root {
+      color-scheme: dark;
+      --ink: #f6fbff;
+      --muted: #9fb5c9;
+      --panel: rgba(10, 18, 38, 0.92);
+      --line: rgba(97, 245, 255, 0.45);
+      --accent: #ffe45e;
+      --red: #ff4f9a;
+      --green: #51ffb2;
+      --blue: #61f5ff;
+      --violet: #b675ff;
+      --bg: #050713;
+      --bg-deco-1: rgba(255, 79, 154, 0.22);
+      --bg-deco-2: rgba(97, 245, 255, 0.2);
+      --bg-deco-3: rgba(81, 255, 178, 0.16);
+      --grid-1: rgba(97, 245, 255, 0.08);
+      --grid-2: rgba(255, 79, 154, 0.07);
+    }
+
+    html[data-theme="regular"],
+    html[data-theme="neon"],
+    html[data-theme="technology"] {
+      color-scheme: dark;
+    }
+
+    html[data-theme="regular"] {
+      --ink: #e8f1ff;
+      --muted: #a7bfdb;
+      --panel: rgba(17, 27, 49, 0.92);
+      --line: rgba(125, 167, 236, 0.5);
+      --accent: #72c6ff;
+      --red: #ff6fa2;
+      --green: #4ac59f;
+      --blue: #79d7ff;
+      --violet: #b08bff;
+      --bg: #071225;
+      --bg-deco-1: rgba(255, 111, 162, 0.2);
+      --bg-deco-2: rgba(114, 198, 255, 0.22);
+      --bg-deco-3: rgba(74, 197, 161, 0.16);
+      --grid-1: rgba(114, 198, 255, 0.06);
+      --grid-2: rgba(255, 111, 162, 0.05);
+    }
+
+    html[data-theme="neon"] {
+      --ink: #f6fbff;
+      --muted: #9fb5c9;
+      --panel: rgba(10, 18, 38, 0.92);
+      --line: rgba(97, 245, 255, 0.45);
+      --accent: #ffe45e;
+      --red: #ff4f9a;
+      --green: #51ffb2;
+      --blue: #61f5ff;
+      --violet: #b675ff;
+      --bg: #050713;
+      --bg-deco-1: rgba(255, 79, 154, 0.22);
+      --bg-deco-2: rgba(97, 245, 255, 0.2);
+      --bg-deco-3: rgba(81, 255, 178, 0.16);
+      --grid-1: rgba(97, 245, 255, 0.08);
+      --grid-2: rgba(255, 79, 154, 0.07);
+    }
+
+    html[data-theme="technology"] {
+      --ink: #edf9ff;
+      --muted: #a9dbef;
+      --panel: rgba(4, 11, 27, 0.94);
+      --line: rgba(0, 255, 210, 0.75);
+      --accent: #29f2ff;
+      --red: #ff4db8;
+      --green: #3effa8;
+      --blue: #44d8ff;
+      --violet: #b68cff;
+      --bg: #020611;
+      --bg-deco-1: rgba(255, 77, 184, 0.22);
+      --bg-deco-2: rgba(0, 255, 210, 0.2);
+      --bg-deco-3: rgba(46, 242, 255, 0.2);
+      --grid-1: rgba(0, 255, 210, 0.06);
+      --grid-2: rgba(255, 77, 184, 0.05);
+    }
 
     * {
       box-sizing: border-box;
@@ -47,18 +112,18 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-	      overflow: hidden;
-	      padding: 16px 12px;
-	      background:
-	        radial-gradient(circle at 16% 14%, rgba(255, 79, 154, 0.22), transparent 28%),
-	        radial-gradient(circle at 82% 18%, rgba(97, 245, 255, 0.2), transparent 30%),
-	        radial-gradient(circle at 70% 82%, rgba(81, 255, 178, 0.16), transparent 26%),
-	        linear-gradient(rgba(97, 245, 255, 0.08) 1px, transparent 1px) 0 0 / 34px 34px,
-	        linear-gradient(90deg, rgba(255, 79, 154, 0.07) 1px, transparent 1px) 0 0 / 34px 34px,
-	        var(--bg);
-	      color: var(--ink);
-	      font-family: "Courier New", "Microsoft YaHei", monospace;
-	      letter-spacing: 0;
+    overflow: hidden;
+    padding: 16px 12px;
+    background:
+      radial-gradient(circle at 16% 14%, var(--bg-deco-1), transparent 28%),
+      radial-gradient(circle at 82% 18%, var(--bg-deco-2), transparent 30%),
+      radial-gradient(circle at 70% 82%, var(--bg-deco-3), transparent 26%),
+      linear-gradient(var(--grid-1) 1px, transparent 1px) 0 0 / 34px 34px,
+      linear-gradient(90deg, var(--grid-2) 1px, transparent 1px) 0 0 / 34px 34px,
+      var(--bg);
+    color: var(--ink);
+    font-family: "Courier New", "Microsoft YaHei", monospace;
+    letter-spacing: 0;
 	    }
 
 	    a {
@@ -111,12 +176,45 @@
 	      text-decoration: none;
 	    }
 
-	    .site-nav a:hover,
-	    .site-nav a[aria-current="page"] {
-	      color: var(--accent);
-	      border-color: var(--accent);
-	      text-shadow: 0 0 14px rgba(255, 228, 94, 0.78);
-	    }
+    .site-nav a:hover,
+    .site-nav a[aria-current="page"] {
+      color: var(--accent);
+      border-color: var(--accent);
+      text-shadow: 0 0 14px rgba(255, 228, 94, 0.78);
+    }
+
+    .header-controls {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .theme-control {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 700;
+    }
+
+    .theme-button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      min-height: 38px;
+      padding: 8px 12px;
+      color: var(--ink);
+      background: var(--panel);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 0 18px rgba(97, 245, 255, 0.18);
+      cursor: pointer;
+    }
 
     .shell {
       width: min(1080px, calc(100vw - 24px));
@@ -226,11 +324,11 @@
 	      box-shadow: 0 0 18px rgba(255, 228, 94, 0.18), 1px 1px 0 #02040b;
 	    }
 
-	    .game-wrap {
-	      position: relative;
-	      border: 4px solid var(--line);
-	      background: #050713;
-	      box-shadow: 0 0 34px rgba(97, 245, 255, 0.2), 8px 8px 0 #02040b;
+    .game-wrap {
+      position: relative;
+      border: 4px solid var(--line);
+      background: var(--bg);
+      box-shadow: 0 0 34px rgba(97, 245, 255, 0.2), 8px 8px 0 #02040b;
       aspect-ratio: 16 / 9;
       min-height: 300px;
       max-height: calc(100vh - 178px);
@@ -248,8 +346,8 @@
       width: 100%;
       height: 100%;
       display: block;
-	      image-rendering: pixelated;
-	      background: #071120;
+      image-rendering: pixelated;
+      background: color-mix(in srgb, var(--bg) 92%, var(--ink));
       user-select: none;
       -webkit-touch-callout: none;
     }
@@ -260,7 +358,7 @@
       display: grid;
       place-items: center;
       padding: 20px;
-	      background: rgba(5, 7, 19, .78);
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
       text-align: center;
     }
 
@@ -394,10 +492,6 @@
         padding: 8px 0;
       }
 
-      .site-header {
-        display: none;
-      }
-
       .shell {
         gap: 8px;
       }
@@ -440,6 +534,11 @@
       <a href="/blog/">Blog</a>
       <a href="/game/" aria-current="page">Game</a>
     </nav>
+    <span class="header-controls">
+      <span class="theme-control">
+        <button type="button" class="theme-button" data-theme-button aria-label="Cycle theme" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;border-radius:999px;border:1px solid var(--line,rgba(97,245,255,.55));background:var(--panel,rgba(10,18,38,.92));color:var(--ink,#fff);box-shadow:0 0 18px rgba(97,245,255,.28);cursor:pointer;">Theme</button>
+      </span>
+    </span>
   </header>
 
   <main class="shell">
@@ -492,6 +591,7 @@
     </section>
   </main>
 
+  <script src="/theme-switch.js?v=theme-switch-1" defer></script>
   <script>
     const canvas = document.getElementById("game");
     const shell = document.querySelector(".shell");

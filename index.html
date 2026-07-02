@@ -14,15 +14,20 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Roger Gao Wei">
     <meta name="twitter:description" content="Roger Gao Wei's personal home page, with links to his blog and game.">
-    <link rel="stylesheet" href="/styles.css?v=neon-readable-1">
+    <link rel="stylesheet" href="/styles.css?v=theme-switch-1">
   </head>
   <body>
     <header class="site-header">
       <a class="brand" href="/">Roger Gao Wei</a>
-      <nav aria-label="Primary">
-        <a href="/blog/">Blog</a>
-        <a href="/game/">Game</a>
-      </nav>
+      <div class="header-controls">
+        <span class="theme-control">
+          <button type="button" class="theme-button" data-theme-button aria-label="Cycle theme" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;border-radius:999px;border:1px solid var(--line,rgba(97,245,255,.55));background:var(--surface,rgba(2,5,18,.94));color:var(--text,#fff);box-shadow:0 0 18px rgba(97,245,255,.28);cursor:pointer;">Theme</button>
+        </span>
+        <nav aria-label="Primary">
+          <a href="/blog/">Blog</a>
+          <a href="/game/">Game</a>
+        </nav>
+      </div>
     </header>
 
     <main>
@@ -58,5 +63,6 @@
       </section>
 
     </main>
+    <script src="/theme-switch.js?v=theme-switch-1" defer></script>
   </body>
 </html>
