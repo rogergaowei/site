@@ -75,7 +75,7 @@ const html = `<!doctype html>
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="${BLOG_TITLE}">
     <meta name="twitter:description" content="${BLOG_DESCRIPTION}">
-    <link rel="stylesheet" href="/blog/styles.css">
+    <link rel="stylesheet" href="/blog/styles.css?v=neon-blog-2">
   </head>
   <body id="top">
     <header class="site-header">
