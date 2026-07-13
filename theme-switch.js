@@ -6,7 +6,7 @@
     technology: "Technology",
   };
   const STORAGE_KEY = "site-theme";
-  const DEFAULT_THEME = "neon";
+  const DEFAULT_THEME = "regular";
 
   const root = document.documentElement;
   const buttonMarkup = `<button type="button" class="theme-button" data-theme-button aria-label="Cycle theme">Theme</button>`;
@@ -56,7 +56,7 @@
   const normalizeThemeText = (theme) => `Theme: ${LABELS[theme] || "Neon"}`;
 
   const syncControls = (theme) => {
-    const labels = Array.from(document.querySelectorAll(".theme-control span"));
+    const labels = Array.from(document.querySelectorAll(".theme-control [data-theme-label]"));
     for (const label of labels) {
       label.textContent = normalizeThemeText(theme);
     }
@@ -134,10 +134,6 @@
         document.body.appendChild(fallbackButton);
       }
       return;
-    }
-
-    for (const button of buttons) {
-      styleFallbackButton(button);
     }
   };
 

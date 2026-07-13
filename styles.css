@@ -1,22 +1,31 @@
 :root {
-  color-scheme: dark;
-  --bg: #02030d;
-  --text: #ffffff;
-  --muted: #e8f3ff;
-  --line: rgba(97, 245, 255, 0.82);
-  --surface: rgba(2, 5, 18, 0.94);
-  --green: #51ffb2;
-  --yellow: #ffe45e;
-  --red: #ff4f9a;
-  --blue: #61f5ff;
-  --violet: #b675ff;
-  --shadow: rgba(97, 245, 255, 0.58);
-  --image-filter: saturate(1.35) contrast(1.08);
-  --bg-glow-a: rgba(255, 79, 154, 0.54);
-  --bg-glow-b: rgba(97, 245, 255, 0.46);
-  --bg-glow-c: rgba(81, 255, 178, 0.32);
-  --bg-glow-ink: rgba(182, 117, 255, 0.22);
-  --bg-glow-sun: rgba(255, 228, 94, 0.11);
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #2b2722;
+  --muted: #4a443b;
+  --line: #b8a078;
+  --surface: rgba(255, 255, 255, 0.95);
+  --green: #2c8a56;
+  --yellow: #caa25d;
+  --red: #cf6a44;
+  --blue: #2f66a2;
+  --violet: #9f79bf;
+  --shadow: rgba(184, 160, 120, 0.35);
+  --image-filter: saturate(1.1) contrast(1.05);
+  --bg-glow-a: rgba(255, 195, 92, 0.12);
+  --bg-glow-b: rgba(184, 150, 85, 0.12);
+  --bg-glow-c: rgba(142, 114, 70, 0.1);
+  --bg-glow-ink: rgba(108, 128, 160, 0.12);
+  --bg-glow-sun: rgba(196, 151, 88, 0.08);
+  --theme-bg: linear-gradient(180deg, #ffffff 0, #faf7f1 100%);
+  --theme-overlay: none;
+  --header-glow: rgba(184, 160, 120, 0.42);
+  --header-glow-ring: rgba(184, 160, 120, 0.2);
+  --header-shadow: rgba(184, 160, 120, 0.2);
+  --title-glow: rgba(184, 160, 120, 0.35);
+  --title-trace: rgba(184, 150, 84, 0.42);
+  --title-radiance: rgba(184, 160, 120, 0.25);
+  --brand-glow: rgba(184, 160, 120, 0.8);
 }
 
 html[data-theme="regular"],
@@ -26,23 +35,33 @@ html[data-theme="technology"] {
 }
 
 html[data-theme="regular"] {
-  --bg: #1a1c27;
-  --text: #f4f7fb;
-  --muted: #d8deeb;
-  --line: rgba(197, 170, 122, 0.76);
-  --surface: rgba(31, 33, 47, 0.94);
-  --green: #9cff7a;
-  --yellow: #ffc35c;
-  --red: #ff8c5a;
-  --blue: #8dc8ff;
-  --violet: #ceadff;
-  --shadow: rgba(197, 170, 122, 0.44);
-  --image-filter: saturate(1.1) contrast(1.05);
-  --bg-glow-a: rgba(255, 195, 92, 0.22);
-  --bg-glow-b: rgba(141, 200, 255, 0.2);
-  --bg-glow-c: rgba(156, 255, 122, 0.16);
-  --bg-glow-ink: rgba(138, 157, 181, 0.18);
-  --bg-glow-sun: rgba(255, 195, 92, 0.13);
+  color-scheme: light;
+  --bg: #ffffff;
+  --text: #2b2722;
+  --muted: #4a443b;
+  --line: #b8a078;
+  --surface: rgba(255, 255, 255, 0.95);
+  --green: #2c8a56;
+  --yellow: #caa25d;
+  --red: #cf6a44;
+  --blue: #2f66a2;
+  --violet: #9f79bf;
+  --shadow: rgba(184, 160, 120, 0.35);
+  --image-filter: saturate(1.08) contrast(1.02);
+  --bg-glow-a: rgba(255, 195, 92, 0.12);
+  --bg-glow-b: rgba(184, 150, 85, 0.12);
+  --bg-glow-c: rgba(142, 114, 70, 0.1);
+  --bg-glow-ink: rgba(108, 128, 160, 0.12);
+  --bg-glow-sun: rgba(196, 151, 88, 0.08);
+  --theme-bg: linear-gradient(180deg, #ffffff 0, #faf7f1 100%);
+  --theme-overlay: none;
+  --header-glow: rgba(184, 160, 120, 0.42);
+  --header-glow-ring: rgba(184, 160, 120, 0.2);
+  --header-shadow: rgba(184, 160, 120, 0.2);
+  --title-glow: rgba(184, 160, 120, 0.35);
+  --title-trace: rgba(184, 150, 84, 0.42);
+  --title-radiance: rgba(184, 160, 120, 0.25);
+  --brand-glow: rgba(184, 160, 120, 0.8);
 }
 
 html[data-theme="neon"] {
@@ -63,6 +82,14 @@ html[data-theme="neon"] {
   --bg-glow-c: rgba(81, 255, 178, 0.32);
   --bg-glow-ink: rgba(182, 117, 255, 0.22);
   --bg-glow-sun: rgba(255, 228, 94, 0.11);
+  --theme-bg: radial-gradient(circle at 15% 18%, var(--bg-glow-a), transparent 24%),
+    radial-gradient(circle at 82% 12%, var(--bg-glow-b), transparent 27%),
+    radial-gradient(circle at 70% 82%, var(--bg-glow-c), transparent 26%),
+    linear-gradient(135deg, var(--bg-glow-ink), transparent 36%, var(--bg-glow-sun)),
+    var(--bg);
+  --theme-overlay: linear-gradient(90deg, transparent 0%, transparent 95%, rgba(255, 255, 255, 0.025) 95%, rgba(255, 255, 255, 0.025) 96%, transparent 96%, transparent 100%),
+    linear-gradient(0deg, transparent 0%, transparent 95%, rgba(97, 245, 255, 0.02) 95%, rgba(97, 245, 255, 0.02) 96%, transparent 96%, transparent 100%);
+  --header-shadow: rgba(97, 245, 255, 0.16);
 }
 
 html[data-theme="technology"] {
@@ -83,6 +110,57 @@ html[data-theme="technology"] {
   --bg-glow-c: rgba(62, 255, 168, 0.18);
   --bg-glow-ink: rgba(20, 180, 180, 0.15);
   --bg-glow-sun: rgba(214, 255, 91, 0.08);
+  --theme-bg:
+    radial-gradient(circle at 16% 16%, rgba(0, 250, 197, 0.22) 0, transparent 33%),
+    radial-gradient(circle at 76% 18%, rgba(35, 233, 255, 0.2) 0, transparent 33%),
+    radial-gradient(circle at 66% 78%, rgba(70, 255, 186, 0.2) 0, transparent 28%),
+    repeating-linear-gradient(60deg, transparent 0, transparent 16px, rgba(23, 232, 253, 0.22) 16px, rgba(23, 232, 253, 0.22) 17px, transparent 17px, transparent 34px),
+    repeating-linear-gradient(120deg, transparent 0, transparent 16px, rgba(140, 255, 178, 0.2) 16px, rgba(140, 255, 178, 0.2) 17px, transparent 17px, transparent 34px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 34px),
+    repeating-linear-gradient(0deg, rgba(0, 250, 197, 0.1) 0, rgba(0, 250, 197, 0.1) 1px, transparent 1px, transparent 34px),
+    repeating-linear-gradient(30deg, transparent 0, transparent 29px, rgba(23, 232, 253, 0.13) 29px, rgba(23, 232, 253, 0.13) 30px, transparent 30px, transparent 59px),
+    repeating-linear-gradient(-30deg, transparent 0, transparent 29px, rgba(0, 250, 197, 0.11) 29px, rgba(0, 250, 197, 0.11) 30px, transparent 30px, transparent 59px),
+    linear-gradient(145deg, rgba(0, 250, 197, 0.12) 0, transparent 58%),
+    linear-gradient(55deg, rgba(8, 30, 48, 0.86), transparent 65%, rgba(8, 30, 48, 0.66)),
+    linear-gradient(150deg,
+      rgba(0, 250, 197, 0.18) 0,
+      transparent 18%,
+      transparent 82%,
+      rgba(255, 255, 255, 0.08) 83%,
+      transparent 100%),
+    radial-gradient(circle at 50% 50%, rgba(0, 250, 197, 0.16) 0, rgba(0, 250, 197, 0.16) 1px, transparent 1px, transparent 4px),
+    var(--bg);
+  --header-glow: rgba(0, 250, 197, 0.58);
+  --header-glow-ring: rgba(0, 250, 197, 0.28);
+  --title-glow: rgba(35, 233, 255, 0.72);
+  --title-trace: rgba(0, 250, 197, 0.94);
+  --title-radiance: rgba(140, 255, 178, 0.44);
+  --brand-glow: rgba(0, 250, 197, 0.84);
+  --theme-overlay:
+    radial-gradient(circle at 16% 15%, rgba(0, 250, 197, 0.35) 0, rgba(0, 250, 197, 0.35) 1px, transparent 1px, transparent 12px),
+    radial-gradient(circle at 56% 40%, rgba(35, 233, 255, 0.25) 0, rgba(35, 233, 255, 0.25) 1px, transparent 1px, transparent 10px),
+    radial-gradient(circle at 84% 75%, rgba(140, 255, 178, 0.22) 0, rgba(140, 255, 178, 0.22) 1px, transparent 1px, transparent 12px),
+    linear-gradient(30deg,
+      transparent 0,
+      transparent 33%,
+      rgba(0, 250, 197, 0.16) 33.2%,
+      rgba(0, 250, 197, 0.16) 33.8%,
+      transparent 34%,
+      transparent 66%,
+      rgba(35, 233, 255, 0.11) 66.3%,
+      rgba(35, 233, 255, 0.11) 66.8%,
+      transparent 67%),
+    linear-gradient(-30deg,
+      transparent 0,
+      transparent 33%,
+      rgba(140, 255, 178, 0.14) 33.2%,
+      rgba(140, 255, 178, 0.14) 33.8%,
+      transparent 34%,
+      transparent 66%,
+      rgba(0, 250, 197, 0.11) 66.3%,
+      rgba(0, 250, 197, 0.11) 66.8%,
+      transparent 67%);
+  --header-shadow: rgba(0, 250, 197, 0.14);
 }
 
 * {
@@ -92,15 +170,26 @@ html[data-theme="technology"] {
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(circle at 15% 18%, var(--bg-glow-a), transparent 24%),
-    radial-gradient(circle at 82% 12%, var(--bg-glow-b), transparent 27%),
-    radial-gradient(circle at 70% 82%, var(--bg-glow-c), transparent 26%),
-    linear-gradient(135deg, var(--bg-glow-ink), transparent 36%, var(--bg-glow-sun)),
-    var(--bg);
+  background-color: var(--bg);
+  background: var(--theme-bg);
   background-attachment: fixed;
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--theme-overlay);
+  opacity: 0.52;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 ::selection {
@@ -132,7 +221,7 @@ button:focus-visible {
   margin: 0 auto;
   padding: 26px 24px;
   border-bottom: 2px solid var(--line);
-  box-shadow: 0 0 0 1px rgba(255, 79, 154, 0.48), 0 0 34px rgba(97, 245, 255, 0.32), 0 18px 70px rgba(255, 79, 154, 0.16);
+  box-shadow: 0 0 0 1px var(--header-glow), 0 0 34px var(--header-glow-ring), 0 18px 70px var(--header-shadow);
 }
 
 .header-controls {
@@ -153,7 +242,7 @@ nav a,
   color: var(--blue);
   font-size: 20px;
   font-weight: 800;
-  text-shadow: 0 0 8px var(--blue), 0 0 24px rgba(97, 245, 255, 0.9), 0 0 52px rgba(255, 79, 154, 0.55);
+  text-shadow: 0 0 8px var(--blue), 0 0 24px var(--title-trace), 0 0 52px var(--title-radiance);
 }
 
 .brand:hover {
@@ -193,6 +282,12 @@ nav a:hover {
   font-weight: 700;
 }
 
+.theme-label {
+  color: var(--text);
+  opacity: 0.95;
+  text-shadow: 0 0 8px var(--header-glow);
+}
+
 .theme-button {
   appearance: none;
   border: 1px solid var(--line);
@@ -206,10 +301,6 @@ nav a:hover {
   font-weight: 700;
   box-shadow: 0 0 18px var(--shadow);
   cursor: pointer;
-}
-
-.theme-control span {
-  opacity: 0.88;
 }
 
 .theme-select {

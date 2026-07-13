@@ -1,5 +1,14 @@
 [
   {
+    "title": "Trip to Seattle",
+    "slug": "trip-to-seattle",
+    "date": "July 2026",
+    "sortDate": "2026-07-02",
+    "summary": "A three-day family trip from Houston to Seattle, a Boeing factory tour, and the journey onward to Vancouver.",
+    "coverAlt": "Trip to Seattle",
+    "status": "published"
+  },
+  {
     "title": "Dallas and Fifa world cup: memories",
     "slug": "dallas-and-fifa-memories",
     "date": "June 2026",

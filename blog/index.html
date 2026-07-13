@@ -13,15 +13,21 @@
     <meta property="og:site_name" content="Roger Gao Wei">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Roger Gao Wei Blog">
-    <meta name="twitter:description" content="Personal essays and trip notes by Roger Gao Wei.">
-    <link rel="stylesheet" href="/blog/styles.css?v=theme-switch-1">
+  <meta name="twitter:description" content="Personal essays and trip notes by Roger Gao Wei.">
+  <link rel="stylesheet" href="/blog/styles.css?v=theme-switch-3">
   </head>
   <body id="top">
     <header class="site-header">
       <a class="brand" href="https://rogergaowei.com/">Roger Gao Wei</a>
       <div class="header-controls">
         <span class="theme-control">
+          <span class="theme-label" data-theme-label aria-live="polite">Theme: Regular</span>
           <button type="button" class="theme-button" data-theme-button aria-label="Cycle theme" style="display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;font:inherit;font-size:13px;font-weight:700;border-radius:999px;border:1px solid var(--line,rgba(97,245,255,.55));background:var(--surface,rgba(2,5,18,.94));color:var(--text,#fff);box-shadow:0 0 18px rgba(97,245,255,.28);cursor:pointer;">Theme</button>
+          <select class="theme-select" data-theme-select aria-label="Choose theme">
+            <option value="regular">Regular</option>
+            <option value="neon">Neon</option>
+            <option value="technology">Technology</option>
+          </select>
         </span>
         <nav>
           <a href="https://rogergaowei.com/">Home</a>
@@ -42,6 +48,13 @@
           <h2>Recent blog posts</h2>
         </div>
         <div class="latest-grid">
+          <article>
+            <a href="/blog/posts/trip-to-seattle.html">
+              <span>July 2026</span>
+              <h3>Trip to Seattle</h3>
+              <p>A three-day family trip from Houston to Seattle, a Boeing factory tour, and the journey onward to Vancouver.</p>
+            </a>
+          </article>
           <article>
             <a href="/blog/posts/dallas-and-fifa-memories.html">
               <span>June 2026</span>
@@ -69,6 +82,7 @@
       <section class="archive-nav" aria-label="Browse posts by month">
         <h2>Archive</h2>
         <div>
+          <a href="#2026-07">July 2026 <span>1</span></a>
           <a href="#2026-06">June 2026 <span>1</span></a>
           <a href="#2026-04">April 2026 <span>1</span></a>
           <a href="#2026-02">February 2026 <span>2</span></a>
@@ -91,6 +105,17 @@
       </section>
 
       <section class="post-list" aria-label="Posts">
+        <h2 id="2026-07" class="month-heading">July 2026</h2>
+        <article class="post-card">
+          <a href="/blog/posts/trip-to-seattle.html" data-post-card data-search="trip to seattle july 2026 a three-day family trip from houston to seattle, a boeing factory tour, and the journey onward to vancouver. published" data-status="published">
+            <div class="post-placeholder" aria-hidden="true">TS</div>
+            <div>
+              <p class="date">July 2026</p>
+              <h2>Trip to Seattle</h2>
+              <p>A three-day family trip from Houston to Seattle, a Boeing factory tour, and the journey onward to Vancouver.</p>
+            </div>
+          </a>
+        </article>
         <h2 id="2026-06" class="month-heading">June 2026</h2>
         <article class="post-card">
           <a href="/blog/posts/dallas-and-fifa-memories.html" data-post-card data-search="dallas and fifa world cup: memories june 2026 a dallas visit with friends, bikes, circuits, swimming, and a fifa world cup match in houston. published" data-status="published">
@@ -206,6 +231,6 @@
       </nav>
     </main>
     <script src="/blog/index.js" defer></script>
-    <script src="/theme-switch.js?v=theme-switch-1" defer></script>
+    <script src="/theme-switch.js?v=theme-switch-3" defer></script>
   </body>
 </html>
