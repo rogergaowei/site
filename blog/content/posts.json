@@ -1,5 +1,15 @@
 [
   {
+    "title": "Cruise ship highlights (Princess Discovery)",
+    "slug": "cruise-ship-highlights-princess-discovery",
+    "date": "July 2026",
+    "sortDate": "2026-07-13",
+    "summary": "Seven days of cruise highlights aboard Discovery Princess, from Vancouver to Alaska's ports, glaciers, games, and family adventures.",
+    "cover": "/blog/assets/princess-discovery/image1.jpg",
+    "coverAlt": "Roger's Minecraft world with cherry trees and a rollercoaster",
+    "status": "published"
+  },
+  {
     "title": "Trip to Seattle",
     "slug": "trip-to-seattle",
     "date": "July 2026",
