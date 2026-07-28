@@ -1,5 +1,15 @@
 [
   {
+    "title": "A Strange (and cool) restaurant",
+    "slug": "a-strange-and-cool-restaurant",
+    "date": "July 2026",
+    "sortDate": "2026-07-27",
+    "summary": "A visit to Beijing's SpaceLab restaurant, where trackbots and groundbots deliver food in a neon, space-like setting.",
+    "coverAlt": "A Strange (and cool) restaurant",
+    "status": "published",
+    "section": "Posts"
+  },
+  {
     "title": "Cruise ship highlights (Princess Discovery)",
     "slug": "cruise-ship-highlights-princess-discovery",
     "date": "July 2026",

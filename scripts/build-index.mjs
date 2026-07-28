@@ -8,7 +8,10 @@ const BLOG_DESCRIPTION = "Personal essays and trip notes by Roger Gao Wei.";
 const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
 
-const archiveMonths = [...new Map(posts.map((post) => {
+const featuredPosts = posts.filter((post) => post.section === "Posts");
+const archivePosts = posts.filter((post) => post.section !== "Posts");
+
+const archiveMonths = [...new Map(archivePosts.map((post) => {
   const date = new Date(`${post.sortDate}T00:00:00`);
   const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
   const label = date.toLocaleString("en", { month: "long", year: "numeric", timeZone: "UTC" });
@@ -16,12 +19,13 @@ const archiveMonths = [...new Map(posts.map((post) => {
 })).values()];
 
 for (const month of archiveMonths) {
-  month.count = posts.filter((post) => archiveKey(post.sortDate) === month.key).length;
+  month.count = archivePosts.filter((post) => archiveKey(post.sortDate) === month.key).length;
 }
 
 let previousArchiveKey = "";
 
 const latestCards = posts
+  .filter((post) => post.section !== "Posts")
   .filter((post) => post.status !== "draft")
   .slice(0, 3)
   .map((post) => `          <article>
@@ -33,7 +37,17 @@ const latestCards = posts
           </article>`)
   .join("\n");
 
-const cards = posts.map((post) => {
+const featuredCards = featuredPosts
+  .map((post) => `          <article>
+            <a href="/blog/posts/${post.slug}.html">
+              <span>${escapeHtml(post.date)}</span>
+              <h3>${escapeHtml(post.title)}</h3>
+              <p>${escapeHtml(post.summary)}</p>
+            </a>
+          </article>`)
+  .join("\n");
+
+const cards = archivePosts.map((post) => {
   const media = post.cover
     ? renderImage(post.cover, post.coverAlt)
     : `<div class="post-placeholder" aria-hidden="true">${escapeHtml(post.title.charAt(0))}</div>`;
@@ -95,6 +109,16 @@ const html = `<!doctype html>
       <section class="intro">
         <p class="eyebrow">Personal Blog</p>
         <h1>Notes, trips, and things I am learning.</h1>
+      </section>
+
+      <section class="latest posts-section" aria-labelledby="posts-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Stories</p>
+          <h2 id="posts-heading">Posts</h2>
+        </div>
+        <div class="latest-grid">
+${featuredCards}
+        </div>
       </section>
 
       <section class="latest" aria-label="Latest blog posts">
