@@ -25,7 +25,6 @@ for (const month of archiveMonths) {
 let previousArchiveKey = "";
 
 const latestCards = posts
-  .filter((post) => post.section !== "Posts")
   .filter((post) => post.status !== "draft")
   .slice(0, 3)
   .map((post) => `          <article>
