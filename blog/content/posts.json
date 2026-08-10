@@ -1,5 +1,26 @@
 [
   {
+    "title": "Updated: My Minecraft Territory",
+    "slug": "updated-my-minecraft-territory",
+    "date": "August 2026",
+    "sortDate": "2026-08-10",
+    "summary": "A Minecraft territory update with a TNT shower, wildfire, expanded rollercoaster, jungle-tree hideout, and underground base.",
+    "cover": "/blog/assets/minecraft-territory/image1.jpg",
+    "coverAlt": "Minecraft territory with a cherry tree biome and rollercoaster",
+    "status": "published",
+    "section": "Posts"
+  },
+  {
+    "title": "Erhai, Yunnan: The Three Pagodas",
+    "slug": "erhai-yunnan-the-three-pagodas",
+    "date": "July 2026",
+    "sortDate": "2026-07-31",
+    "summary": "A visit to the Three Pagodas near Erhai Lake, making clay Wamao animals and trying poses at a picture wall.",
+    "coverAlt": "Erhai, Yunnan: The Three Pagodas",
+    "status": "published",
+    "section": "Posts"
+  },
+  {
     "title": "A Strange (and cool) restaurant",
     "slug": "a-strange-and-cool-restaurant",
     "date": "July 2026",
