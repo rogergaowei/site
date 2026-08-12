@@ -8,7 +8,8 @@
     "cover": "/blog/assets/minecraft-territory/image1.jpg",
     "coverAlt": "Minecraft territory with a cherry tree biome and rollercoaster",
     "status": "published",
-    "section": "Posts"
+    "section": "Posts",
+    "group": "minecraft-territory"
   },
   {
     "title": "Erhai, Yunnan: The Three Pagodas",
@@ -105,7 +106,8 @@
     "summary": "A tour of a giant Minecraft territory with a rollercoaster, cherry tree biome, meat shop, and building techniques.",
     "cover": "/blog/assets/minecraft-territory/image1.jpg",
     "coverAlt": "Minecraft territory with a cherry tree biome and rollercoaster",
-    "status": "published"
+    "status": "published",
+    "group": "minecraft-territory"
   },
   {
     "title": "Cruise ship stats (Harmony of the Seas)",

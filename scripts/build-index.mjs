@@ -4,12 +4,14 @@ import { existsSync } from "node:fs";
 const SITE_ORIGIN = "https://rogergaowei.com";
 const BLOG_TITLE = "Roger Gao Wei Blog";
 const BLOG_DESCRIPTION = "Personal essays and trip notes by Roger Gao Wei.";
+const RECENT_WINDOW_DAYS = 30;
 
 const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
 
-const featuredPosts = posts.filter((post) => post.section === "Posts");
-const archivePosts = posts.filter((post) => post.section !== "Posts");
+const minecraftPosts = posts.filter(isMinecraftTerritoryPost);
+const featuredPosts = posts.filter((post) => post.section === "Posts" && !isMinecraftTerritoryPost(post));
+const archivePosts = posts.filter((post) => post.section !== "Posts" && !isMinecraftTerritoryPost(post));
 
 const archiveMonths = [...new Map(archivePosts.map((post) => {
   const date = new Date(`${post.sortDate}T00:00:00`);
@@ -25,9 +27,8 @@ for (const month of archiveMonths) {
 let previousArchiveKey = "";
 
 const latestCards = posts
-  .filter((post) => post.status !== "draft")
-  .slice(0, 3)
-  .map((post) => `          <article>
+  .filter((post) => post.status !== "draft" && isRecent(post))
+  .map((post) => `          <article data-recent-post data-published-date="${escapeHtml(post.sortDate)}">
             <a href="/blog/posts/${post.slug}.html">
               <span>${escapeHtml(post.date)}</span>
               <h3>${escapeHtml(post.title)}</h3>
@@ -36,14 +37,12 @@ const latestCards = posts
           </article>`)
   .join("\n");
 
+const minecraftCards = minecraftPosts
+  .map(renderFeatureCard)
+  .join("\n");
+
 const featuredCards = featuredPosts
-  .map((post) => `          <article>
-            <a href="/blog/posts/${post.slug}.html">
-              <span>${escapeHtml(post.date)}</span>
-              <h3>${escapeHtml(post.title)}</h3>
-              <p>${escapeHtml(post.summary)}</p>
-            </a>
-          </article>`)
+  .map(renderFeatureCard)
   .join("\n");
 
 const cards = archivePosts.map((post) => {
@@ -120,7 +119,17 @@ ${featuredCards}
         </div>
       </section>
 
-      <section class="latest" aria-label="Latest blog posts">
+      <section class="latest posts-section" aria-labelledby="minecraft-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Series</p>
+          <h2 id="minecraft-heading">My Minecraft Territory</h2>
+        </div>
+        <div class="latest-grid">
+${minecraftCards}
+        </div>
+      </section>
+
+      <section class="latest" data-recents-section aria-label="Latest blog posts">
         <div class="section-heading">
           <p class="eyebrow">Latest</p>
           <h2>Recent blog posts</h2>
@@ -176,6 +185,27 @@ function escapeHtml(value) {
 function archiveKey(sortDate) {
   const date = new Date(`${sortDate}T00:00:00`);
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+function isMinecraftTerritoryPost(post) {
+  if (post.group === "minecraft-territory") return true;
+  return `${post.slug} ${post.title}`.toLowerCase().includes("minecraft territory");
+}
+
+function isRecent(post, now = new Date()) {
+  const published = new Date(`${post.sortDate}T00:00:00Z`);
+  const age = now.getTime() - published.getTime();
+  return age >= 0 && age <= RECENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+}
+
+function renderFeatureCard(post) {
+  return `          <article>
+            <a href="/blog/posts/${post.slug}.html">
+              <span>${escapeHtml(post.date)}</span>
+              <h3>${escapeHtml(post.title)}</h3>
+              <p>${escapeHtml(post.summary)}</p>
+            </a>
+          </article>`;
 }
 
 function renderImage(src, alt) {

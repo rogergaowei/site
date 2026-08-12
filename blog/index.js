@@ -1,4 +1,14 @@
 (function () {
+  const recentPosts = Array.from(document.querySelectorAll("[data-recent-post]"));
+  const recentSection = document.querySelector("[data-recents-section]");
+  const recentCutoff = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  for (const post of recentPosts) {
+    const published = Date.parse(`${post.dataset.publishedDate}T00:00:00Z`);
+    post.hidden = !Number.isFinite(published) || now - published > recentCutoff;
+  }
+  if (recentSection) recentSection.hidden = !recentPosts.some((post) => !post.hidden);
+
   const search = document.querySelector("[data-post-search]");
   const cards = Array.from(document.querySelectorAll("[data-post-card]"));
   const filters = Array.from(document.querySelectorAll("[data-status-filter]"));
