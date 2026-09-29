@@ -45,6 +45,10 @@ const featuredCards = featuredPosts
   .map(renderFeatureCard)
   .join("\n");
 
+const searchCards = posts
+  .map(renderSearchCard)
+  .join("\n");
+
 const cards = archivePosts.map((post) => {
   const media = post.cover
     ? renderImage(post.cover, post.coverAlt)
@@ -109,7 +113,26 @@ const html = `<!doctype html>
         <h1>Notes, trips, and things I am learning.</h1>
       </section>
 
-      <section class="latest posts-section" aria-labelledby="posts-heading">
+      <section class="unified-search" aria-label="Search all posts">
+        <label for="site-post-search">
+          Search all posts
+          <input id="site-post-search" type="search" data-unified-search placeholder="Search by title, date, or topic" autocomplete="off">
+        </label>
+        <p class="filter-count" data-search-count aria-live="polite"></p>
+      </section>
+
+      <section class="latest search-results" data-search-results aria-label="Search results" hidden>
+        <div class="section-heading">
+          <p class="eyebrow">Search</p>
+          <h2>Results</h2>
+        </div>
+        <div class="latest-grid">
+${searchCards}
+        </div>
+        <p class="search-empty" data-search-empty hidden>No posts matched your search.</p>
+      </section>
+
+      <section class="latest posts-section" data-browse-section aria-labelledby="posts-heading">
         <div class="section-heading">
           <p class="eyebrow">Stories</p>
           <h2 id="posts-heading">Posts</h2>
@@ -119,7 +142,7 @@ ${featuredCards}
         </div>
       </section>
 
-      <section class="latest posts-section" aria-labelledby="minecraft-heading">
+      <section class="latest posts-section" data-browse-section aria-labelledby="minecraft-heading">
         <div class="section-heading">
           <p class="eyebrow">Series</p>
           <h2 id="minecraft-heading">My Minecraft Territory</h2>
@@ -129,7 +152,7 @@ ${minecraftCards}
         </div>
       </section>
 
-      <section class="latest" data-recents-section aria-label="Latest blog posts">
+      <section class="latest" data-browse-section data-recents-section aria-label="Latest blog posts">
         <div class="section-heading">
           <p class="eyebrow">Latest</p>
           <h2>Recent blog posts</h2>
@@ -139,27 +162,14 @@ ${latestCards}
         </div>
       </section>
 
-      <section class="archive-nav" aria-label="Browse posts by month">
+      <section class="archive-nav" data-browse-section aria-label="Browse posts by month">
         <h2>Archive</h2>
         <div>
 ${archiveLinks}
         </div>
       </section>
 
-      <section class="blog-tools" aria-label="Filter posts">
-        <label>
-          Search posts
-          <input type="search" data-post-search placeholder="Search by title, month, or topic">
-        </label>
-        <div class="status-filter" aria-label="Post status">
-          <button type="button" class="active" data-status-filter="all">All</button>
-          <button type="button" data-status-filter="published">Published</button>
-          <button type="button" data-status-filter="draft">Writing</button>
-        </div>
-        <p class="filter-count" data-filter-count></p>
-      </section>
-
-      <section class="post-list" aria-label="Posts">
+      <section class="post-list" data-browse-section aria-label="Posts">
 ${cards}
       </section>
       <nav class="page-bottom-nav" aria-label="Page bottom navigation">
@@ -202,6 +212,18 @@ function renderFeatureCard(post) {
   return `          <article>
             <a href="/blog/posts/${post.slug}.html">
               <span>${escapeHtml(post.date)}</span>
+              <h3>${escapeHtml(post.title)}</h3>
+              <p>${escapeHtml(post.summary)}</p>
+            </a>
+          </article>`;
+}
+
+function renderSearchCard(post) {
+  const status = post.status === "draft" ? " Writing" : "";
+  const searchable = `${post.title} ${post.date} ${post.summary} ${post.status || "published"}`.toLowerCase();
+  return `          <article data-search-card data-search="${escapeHtml(searchable)}">
+            <a href="/blog/posts/${post.slug}.html">
+              <span>${escapeHtml(post.date)}${status}</span>
               <h3>${escapeHtml(post.title)}</h3>
               <p>${escapeHtml(post.summary)}</p>
             </a>
