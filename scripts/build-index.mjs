@@ -32,7 +32,7 @@ const latestCards = posts
             <a href="/blog/posts/${post.slug}.html">
               <span>${escapeHtml(post.date)}</span>
               <h3>${escapeHtml(post.title)}</h3>
-              <p>${escapeHtml(post.summary)}</p>
+              <p>${escapeHtml(summaryWithAuthor(post))}</p>
             </a>
           </article>`)
   .join("\n");
@@ -62,12 +62,12 @@ const cards = archivePosts.map((post) => {
   previousArchiveKey = currentArchiveKey;
 
   return `${monthHeading}        <article class="post-card${post.status === "draft" ? " draft" : ""}">
-          <a href="/blog/posts/${post.slug}.html" data-post-card data-search="${escapeHtml(`${post.title} ${post.date} ${post.summary} ${post.status || "published"}`.toLowerCase())}" data-status="${escapeHtml(post.status || "published")}">
+          <a href="/blog/posts/${post.slug}.html" data-post-card data-search="${escapeHtml(`${post.title} ${post.date} ${summaryWithAuthor(post)} ${post.status || "published"}`.toLowerCase())}" data-status="${escapeHtml(post.status || "published")}">
             ${media}
             <div>
               <p class="date">${escapeHtml(post.date)}${status}</p>
               <h2>${escapeHtml(post.title)}</h2>
-              <p>${escapeHtml(post.summary)}</p>
+              <p>${escapeHtml(summaryWithAuthor(post))}</p>
             </div>
           </a>
         </article>`;
@@ -213,21 +213,25 @@ function renderFeatureCard(post) {
             <a href="/blog/posts/${post.slug}.html">
               <span>${escapeHtml(post.date)}</span>
               <h3>${escapeHtml(post.title)}</h3>
-              <p>${escapeHtml(post.summary)}</p>
+              <p>${escapeHtml(summaryWithAuthor(post))}</p>
             </a>
           </article>`;
 }
 
 function renderSearchCard(post) {
   const status = post.status === "draft" ? " Writing" : "";
-  const searchable = `${post.title} ${post.date} ${post.summary} ${post.status || "published"}`.toLowerCase();
+  const searchable = `${post.title} ${post.date} ${summaryWithAuthor(post)} ${post.status || "published"}`.toLowerCase();
   return `          <article data-search-card data-search="${escapeHtml(searchable)}">
             <a href="/blog/posts/${post.slug}.html">
               <span>${escapeHtml(post.date)}${status}</span>
               <h3>${escapeHtml(post.title)}</h3>
-              <p>${escapeHtml(post.summary)}</p>
+              <p>${escapeHtml(summaryWithAuthor(post))}</p>
             </a>
           </article>`;
+}
+
+function summaryWithAuthor(post) {
+  return `${post.summary} Published by ${post.author || "Roger"}.`;
 }
 
 function renderImage(src, alt) {

@@ -1,6 +1,17 @@
 [
   {
+    "title": "My Trip to China: Journey",
+    "author": "Mom",
+    "slug": "my-trip-to-china-journey",
+    "date": "October 2026",
+    "sortDate": "2026-10-04",
+    "summary": "Mom's first day of a trip to China, from an early morning departure at IAH to movies on the flight and a visit to Zhusong's house.",
+    "coverAlt": "My trip to China",
+    "status": "published"
+  },
+  {
     "title": "My Playdate with Maxton",
+    "author": "Roger",
     "slug": "my-playdate-with-maxton",
     "date": "September 2026",
     "sortDate": "2026-09-07",
@@ -11,6 +22,7 @@
   },
   {
     "title": "Azam's Birthday Party at Sloomoo",
+    "author": "Roger",
     "slug": "azams-birthday-party-at-sloomoo",
     "date": "September 2026",
     "sortDate": "2026-09-05",
@@ -20,6 +32,7 @@
   },
   {
     "title": "Updated: My Minecraft Territory",
+    "author": "Roger",
     "slug": "updated-my-minecraft-territory",
     "date": "August 2026",
     "sortDate": "2026-08-10",
@@ -32,6 +45,7 @@
   },
   {
     "title": "Erhai, Yunnan: The Three Pagodas",
+    "author": "Roger",
     "slug": "erhai-yunnan-the-three-pagodas",
     "date": "July 2026",
     "sortDate": "2026-07-31",
@@ -42,6 +56,7 @@
   },
   {
     "title": "A Strange (and cool) restaurant",
+    "author": "Roger",
     "slug": "a-strange-and-cool-restaurant",
     "date": "July 2026",
     "sortDate": "2026-07-27",
@@ -52,6 +67,7 @@
   },
   {
     "title": "Cruise ship highlights (Princess Discovery)",
+    "author": "Roger",
     "slug": "cruise-ship-highlights-princess-discovery",
     "date": "July 2026",
     "sortDate": "2026-07-13",
@@ -62,6 +78,7 @@
   },
   {
     "title": "Trip to Seattle",
+    "author": "Roger",
     "slug": "trip-to-seattle",
     "date": "July 2026",
     "sortDate": "2026-07-02",
@@ -71,6 +88,7 @@
   },
   {
     "title": "Dallas and Fifa world cup: memories",
+    "author": "Roger",
     "slug": "dallas-and-fifa-memories",
     "date": "June 2026",
     "sortDate": "2026-06-26",
@@ -81,6 +99,7 @@
   },
   {
     "title": "At the Zoo December 22, 2025",
+    "author": "Roger",
     "slug": "at-the-zoo-december-22-2025",
     "date": "December 2025",
     "sortDate": "2025-12-22",
@@ -90,6 +109,7 @@
   },
   {
     "title": "A Trip to California",
+    "author": "Roger",
     "slug": "a-trip-to-california",
     "date": "April 2026",
     "sortDate": "2026-04-01",
@@ -99,6 +119,7 @@
   },
   {
     "title": "At the zoo in Mexico",
+    "author": "Roger",
     "slug": "at-the-zoo-in-mexico",
     "date": "January 2026",
     "sortDate": "2026-01-02",
@@ -109,6 +130,7 @@
   },
   {
     "title": "On the hot air balloon December 26, 2025",
+    "author": "Roger",
     "slug": "on-the-hot-air-balloon-december-26-2025",
     "date": "December 2025",
     "sortDate": "2025-12-26",
@@ -119,6 +141,7 @@
   },
   {
     "title": "My Minecraft Territory",
+    "author": "Roger",
     "slug": "my-minecraft-territory",
     "date": "January 2026",
     "sortDate": "2026-01-01",
@@ -130,6 +153,7 @@
   },
   {
     "title": "Cruise ship stats (Harmony of the Seas)",
+    "author": "Roger",
     "slug": "cruise-ship-stats-harmony-of-the-seas",
     "date": "February 2026",
     "sortDate": "2026-02-18",
@@ -140,6 +164,7 @@
   },
   {
     "title": "My cruise journey (February 8 - 16, 2026) with my family",
+    "author": "Roger",
     "slug": "my-cruise-journey-february-8-16-2026-with-my-family",
     "date": "February 2026",
     "sortDate": "2026-02-18",

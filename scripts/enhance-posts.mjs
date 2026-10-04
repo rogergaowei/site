@@ -19,7 +19,7 @@ for (const post of postsBySlug.values()) {
 
 function ensureHeadMetadata(html, post) {
   const title = `${post.title} | ${BLOG_NAME}`;
-  const description = post.summary || `${post.title} by Roger Gao Wei.`;
+  const description = summaryWithAuthor(post);
   const url = `${SITE_ORIGIN}/blog/posts/${post.slug}.html`;
   const image = post.cover ? `${SITE_ORIGIN}${post.cover}` : "";
   const metadataPattern = /\s*<title>[\s\S]*?<\/title>\s*<meta name="description" content="[\s\S]*?">\s*(?:<link rel="canonical" href="[^"]*">\s*|<meta property="(?:og:[^"]+|article:[^"]+)" content="[\s\S]*?">\s*|<meta name="twitter:[^"]+" content="[\s\S]*?">\s*)*/;
@@ -43,7 +43,16 @@ function ensureHeadMetadata(html, post) {
     image ? `<meta name="twitter:image" content="${escapeHtml(image)}">` : "",
   ].filter(Boolean).map((line) => `    ${line}`).join("\n");
 
-  return html.replace(metadataPattern, `\n${extra}\n    `);
+  const withMetadata = html.replace(metadataPattern, `\n${extra}\n    `);
+  return ensureAuthorByline(withMetadata, post);
+}
+
+function ensureAuthorByline(html, post) {
+  const byline = `<p class="byline">Published by ${escapeHtml(post.author || "Roger")}.</p>`;
+  if (html.includes("class=\"byline\"")) {
+    return html.replace(/<p class="byline">[\s\S]*?<\/p>/, byline);
+  }
+  return html.replace(/(<p class="dek">[\s\S]*?<\/p>)/, `$1\n          ${byline}`);
 }
 
 function ensureLazyImages(html) {
@@ -91,6 +100,10 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function summaryWithAuthor(post) {
+  return `${post.summary} Published by ${post.author || "Roger"}.`;
 }
 
 function webpPath(src) {
