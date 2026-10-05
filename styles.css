@@ -438,8 +438,8 @@ h1 {
 }
 
 .tile-moms-blog {
+  top: 120px;
   left: 50%;
-  bottom: 92px;
   width: 150px;
   height: 112px;
   background: var(--pink);
@@ -538,7 +538,7 @@ h1 {
   }
 
   .visual {
-    min-height: 260px;
+    min-height: 320px;
   }
 
   .tile {
@@ -548,7 +548,7 @@ h1 {
 
   .tile-moms-blog {
     right: 8px;
-    bottom: 8px;
+    top: 90px;
     left: auto;
     width: 128px;
     height: 92px;
