@@ -385,12 +385,13 @@ h1 {
 
 .orbit-one {
   border-color: rgba(81, 255, 178, 0.56);
+  transform: scaleY(0.68);
 }
 
 .orbit-two {
   inset: 82px 34px 42px 74px;
   border-color: rgba(255, 79, 154, 0.46);
-  transform: rotate(-12deg);
+  transform: rotate(-12deg) scaleY(0.68);
 }
 
 .tile {
