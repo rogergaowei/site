@@ -92,7 +92,7 @@ function ensureThemeControls(html) {
 
 function ensureThemeScript(html) {
   if (html.includes("theme-switch.js")) return html;
-  return html.replace(/\n\s*<script src=\/blog\/comments\.js defer><\/script>/, '$&\n      <script src="/theme-switch.js?v=theme-switch-1" defer></script>');
+  return html.replace(/\n\s*<script src=\/blog\/comments\.js defer><\/script>/, '$&\n      <script src="/theme-switch.js?v=contrast-2" defer></script>');
 }
 
 function escapeHtml(value) {

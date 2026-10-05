@@ -6,9 +6,9 @@
   --line: #b8a078;
   --surface: rgba(255, 255, 255, 0.95);
   --accent: #2f66a2;
-  --pink: #cf6a44;
+  --pink: #a64c2d;
   --green: #2c8a56;
-  --yellow: #caa25d;
+  --yellow: #8c672b;
   --violet: #9f79bf;
   --shadow: rgba(184, 160, 120, 0.35);
   --image-filter: saturate(1.1) contrast(1.05);
@@ -25,6 +25,7 @@
   --title-glow: rgba(184, 160, 120, 0.35);
   --title-trace: rgba(184, 150, 84, 0.42);
   --title-radiance: rgba(184, 160, 120, 0.25);
+  --button-ink: #ffffff;
 }
 
 html[data-theme="regular"],
@@ -41,9 +42,9 @@ html[data-theme="regular"] {
   --line: #b8a078;
   --surface: rgba(255, 255, 255, 0.95);
   --accent: #2f66a2;
-  --pink: #cf6a44;
+  --pink: #a64c2d;
   --green: #2c8a56;
-  --yellow: #caa25d;
+  --yellow: #8c672b;
   --violet: #9f79bf;
   --shadow: rgba(184, 160, 120, 0.35);
   --image-filter: saturate(1.08) contrast(1.02);
@@ -60,6 +61,7 @@ html[data-theme="regular"] {
   --title-glow: rgba(184, 160, 120, 0.35);
   --title-trace: rgba(184, 150, 84, 0.42);
   --title-radiance: rgba(184, 160, 120, 0.25);
+  --button-ink: #ffffff;
 }
 
 html[data-theme="neon"] {
@@ -69,6 +71,7 @@ html[data-theme="neon"] {
   --line: rgba(97, 245, 255, 0.82);
   --surface: rgba(2, 5, 18, 0.94);
   --accent: #61f5ff;
+  --button-ink: #02030d;
   --pink: #ff4f9a;
   --green: #51ffb2;
   --yellow: #ffe45e;
@@ -96,6 +99,7 @@ html[data-theme="technology"] {
   --line: rgba(0, 250, 197, 0.78);
   --surface: rgba(5, 22, 31, 0.96);
   --accent: #23e9ff;
+  --button-ink: #02090f;
   --pink: #ff4db8;
   --green: #3effa8;
   --yellow: #d6ff5b;
@@ -339,12 +343,11 @@ nav a:hover {
   max-width: 720px;
   margin-bottom: 44px;
   padding: 28px;
-  border: 2px solid rgba(97, 245, 255, 0.72);
+  border: 2px solid var(--line);
   border-radius: 8px;
-  background:
-    linear-gradient(135deg, rgba(97, 245, 255, 0.1), rgba(255, 79, 154, 0.09) 48%, rgba(81, 255, 178, 0.08)),
-    rgba(2, 5, 18, 0.92);
-  box-shadow: inset 0 0 60px rgba(97, 245, 255, 0.16), 0 0 44px rgba(97, 245, 255, 0.3), 0 0 90px rgba(255, 79, 154, 0.18);
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 0 12px 32px var(--shadow);
 }
 
 .archive-tools {
@@ -558,10 +561,10 @@ ul {
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
-  border: 1px solid rgba(97, 245, 255, 0.74);
+  border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--text);
-  background: rgba(2, 5, 18, 0.94);
+  background: var(--surface);
   box-shadow: 0 0 14px rgba(97, 245, 255, 0.18);
   font-size: 14px;
   text-decoration: none;
@@ -577,7 +580,7 @@ ul {
 }
 
 .archive-nav span {
-  color: var(--pink);
+  color: var(--accent);
   font-weight: 700;
   text-shadow: 0 0 8px rgba(255, 79, 154, 0.34);
 }
@@ -607,23 +610,30 @@ ul {
 .unified-search label {
   display: grid;
   gap: 7px;
-  color: var(--yellow);
+  color: var(--text);
   font-size: 14px;
   font-weight: 700;
-  text-shadow: 0 0 8px rgba(255, 228, 94, 0.34);
 }
 
 .blog-tools input,
 .unified-search input {
   width: 100%;
   min-height: 42px;
-  border: 2px solid rgba(97, 245, 255, 0.72);
+  border: 2px solid var(--line);
   border-radius: 6px;
   padding: 10px 12px;
   color: var(--text);
-  background: rgba(2, 3, 13, 0.92);
+  background: var(--surface);
   font: inherit;
   box-shadow: inset 0 0 18px rgba(97, 245, 255, 0.14), 0 0 18px rgba(97, 245, 255, 0.16);
+}
+
+.blog-tools input::placeholder,
+.unified-search input::placeholder,
+.comment-form input::placeholder,
+.comment-form textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
 }
 
 .status-filter {
@@ -634,10 +644,10 @@ ul {
 
 .status-filter button {
   min-height: 42px;
-  border: 1px solid rgba(97, 245, 255, 0.74);
+  border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 12px;
-  background: rgba(2, 3, 13, 0.92);
+  background: var(--surface);
   color: var(--text);
   font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
@@ -886,7 +896,7 @@ code {
 }
 
 .comment-reply {
-  background: rgba(2, 5, 18, 0.94);
+  background: var(--surface);
 }
 
 .comment-item header,
@@ -896,7 +906,7 @@ code {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  color: var(--yellow);
+  color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 14px;
 }
@@ -951,7 +961,7 @@ code {
 .admin-token-form label {
   display: grid;
   gap: 7px;
-  color: var(--yellow);
+  color: var(--text);
   font-size: 14px;
   font-weight: 700;
 }
@@ -960,11 +970,11 @@ code {
 .comment-form textarea,
 .admin-token-form input {
   width: 100%;
-  border: 2px solid rgba(97, 245, 255, 0.72);
+  border: 2px solid var(--line);
   border-radius: 6px;
   padding: 11px 12px;
   color: var(--text);
-  background: rgba(2, 3, 13, 0.92);
+  background: var(--surface);
   font: inherit;
   box-shadow: inset 0 0 18px rgba(97, 245, 255, 0.14);
 }
@@ -984,7 +994,7 @@ code {
   border-radius: 6px;
   padding: 9px 13px;
   background: var(--accent);
-  color: #050713;
+  color: var(--button-ink, #ffffff);
   font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   cursor: pointer;
   box-shadow: 0 0 22px rgba(97, 245, 255, 0.52), 0 0 46px rgba(255, 79, 154, 0.18);
@@ -1021,7 +1031,7 @@ code {
   min-height: 34px;
   margin-top: 10px;
   padding: 6px 10px;
-  background: rgba(2, 3, 13, 0.92);
+  background: var(--surface);
   color: var(--accent);
 }
 
@@ -1060,10 +1070,10 @@ code {
   justify-content: center;
   min-height: 42px;
   padding: 9px 14px;
-  border: 1px solid rgba(97, 245, 255, 0.74);
+  border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--text);
-  background: rgba(5, 9, 28, 0.76);
+  background: var(--surface);
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
@@ -1109,7 +1119,7 @@ code {
 
 .admin-comment button[data-action="hidden"],
 .admin-comment button[data-action="pending"] {
-  background: rgba(2, 3, 13, 0.92);
+  background: var(--surface);
   color: var(--accent);
 }
 

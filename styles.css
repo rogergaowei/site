@@ -6,8 +6,8 @@
   --line: #b8a078;
   --surface: rgba(255, 255, 255, 0.95);
   --green: #2c8a56;
-  --yellow: #caa25d;
-  --red: #cf6a44;
+  --yellow: #8c672b;
+  --red: #a64c2d;
   --blue: #2f66a2;
   --violet: #9f79bf;
   --shadow: rgba(184, 160, 120, 0.35);
@@ -26,6 +26,8 @@
   --title-trace: rgba(184, 150, 84, 0.42);
   --title-radiance: rgba(184, 160, 120, 0.25);
   --brand-glow: rgba(184, 160, 120, 0.8);
+  --tile-ink: #ffffff;
+  --mom-tile-ink: #ffffff;
 }
 
 html[data-theme="regular"],
@@ -42,8 +44,8 @@ html[data-theme="regular"] {
   --line: #b8a078;
   --surface: rgba(255, 255, 255, 0.95);
   --green: #2c8a56;
-  --yellow: #caa25d;
-  --red: #cf6a44;
+  --yellow: #8c672b;
+  --red: #a64c2d;
   --blue: #2f66a2;
   --violet: #9f79bf;
   --shadow: rgba(184, 160, 120, 0.35);
@@ -62,6 +64,8 @@ html[data-theme="regular"] {
   --title-trace: rgba(184, 150, 84, 0.42);
   --title-radiance: rgba(184, 160, 120, 0.25);
   --brand-glow: rgba(184, 160, 120, 0.8);
+  --tile-ink: #ffffff;
+  --mom-tile-ink: #ffffff;
 }
 
 html[data-theme="neon"] {
@@ -74,6 +78,8 @@ html[data-theme="neon"] {
   --yellow: #ffe45e;
   --red: #ff4f9a;
   --blue: #61f5ff;
+  --tile-ink: var(--bg);
+  --mom-tile-ink: var(--bg);
   --violet: #b675ff;
   --shadow: rgba(97, 245, 255, 0.58);
   --image-filter: saturate(1.35) contrast(1.08);
@@ -102,6 +108,8 @@ html[data-theme="technology"] {
   --yellow: #d6ff5b;
   --red: #ff4db8;
   --blue: #23e9ff;
+  --tile-ink: var(--bg);
+  --mom-tile-ink: var(--bg);
   --violet: #8fd4ff;
   --shadow: rgba(0, 250, 197, 0.38);
   --image-filter: saturate(1.4) contrast(1.12);
@@ -401,7 +409,7 @@ h1 {
   height: 130px;
   border-width: 2px;
   border-radius: 8px;
-  color: var(--bg);
+  color: var(--tile-ink);
   font-size: 22px;
   font-weight: 800;
   text-decoration: none;
@@ -443,10 +451,11 @@ h1 {
   bottom: 26px;
   width: 150px;
   height: 112px;
-  background: var(--pink);
+  background: var(--red);
+  color: var(--mom-tile-ink);
   font-size: 18px;
   text-align: center;
-  text-shadow: 0 0 14px rgba(5, 7, 19, 0.55);
+  text-shadow: none;
 }
 
 .links {
