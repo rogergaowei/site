@@ -114,6 +114,9 @@
 
   const ensureVisibleThemeButton = () => {
     const buttons = Array.from(document.querySelectorAll("[data-theme-button]"));
+    const selects = Array.from(document.querySelectorAll("[data-theme-select]"));
+
+    if (selects.length > 0) return;
 
     if (buttons.length === 0 || !buttons.some(isVisible)) {
       const existingFallback = document.getElementById(FALLBACK_ID);

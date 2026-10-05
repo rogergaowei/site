@@ -437,6 +437,27 @@ h1 {
   text-shadow: 0 0 14px rgba(5, 7, 19, 0.55);
 }
 
+.tile-moms-blog {
+  left: 50%;
+  bottom: 92px;
+  width: 150px;
+  height: 112px;
+  background: var(--pink);
+  font-size: 18px;
+  text-align: center;
+  text-shadow: 0 0 14px rgba(5, 7, 19, 0.55);
+  transform: translateX(-50%);
+}
+
+.tile-moms-blog:hover,
+.tile-moms-blog:focus-visible {
+  transform: translate(-50%, -3px);
+}
+
+.tile-moms-blog:active {
+  transform: translate(-50%, 1px);
+}
+
 .links {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -523,5 +544,20 @@ h1 {
   .tile {
     width: 140px;
     height: 104px;
+  }
+
+  .tile-moms-blog {
+    right: 8px;
+    bottom: 8px;
+    left: auto;
+    width: 128px;
+    height: 92px;
+    transform: none;
+  }
+
+  .tile-moms-blog:hover,
+  .tile-moms-blog:focus-visible,
+  .tile-moms-blog:active {
+    transform: translateY(-3px);
   }
 }
