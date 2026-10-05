@@ -366,7 +366,7 @@ h1 {
 
 .visual {
   position: relative;
-  min-height: 360px;
+  min-height: 460px;
   filter: drop-shadow(0 0 30px rgba(97, 245, 255, 0.18));
 }
 
@@ -438,7 +438,7 @@ h1 {
 }
 
 .tile-moms-blog {
-  top: 120px;
+  top: 50%;
   left: 50%;
   width: 150px;
   height: 112px;
@@ -446,16 +446,16 @@ h1 {
   font-size: 18px;
   text-align: center;
   text-shadow: 0 0 14px rgba(5, 7, 19, 0.55);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .tile-moms-blog:hover,
 .tile-moms-blog:focus-visible {
-  transform: translate(-50%, -3px);
+  transform: translate(-50%, calc(-50% - 3px));
 }
 
 .tile-moms-blog:active {
-  transform: translate(-50%, 1px);
+  transform: translate(-50%, calc(-50% + 1px));
 }
 
 .links {
