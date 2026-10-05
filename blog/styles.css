@@ -361,7 +361,11 @@ nav a:hover {
   height: 100%;
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1200px) {
+  .page {
+    max-width: min(920px, calc(100vw - 380px));
+  }
+
   .archive-tools {
     display: contents;
   }
@@ -371,7 +375,7 @@ nav a:hover {
     position: fixed;
     top: 128px;
     z-index: 10;
-    width: 180px;
+    width: 160px;
     height: auto;
   }
 
