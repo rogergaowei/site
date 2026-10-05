@@ -11,7 +11,7 @@ const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
 
 const minecraftPosts = posts.filter(isMinecraftTerritoryPost);
-const archivePosts = posts.filter((post) => post.section !== "Posts" && !isMinecraftTerritoryPost(post));
+const archivePosts = posts.filter((post) => !isMinecraftTerritoryPost(post));
 
 const archiveMonths = [...new Map(archivePosts.map((post) => {
   const date = new Date(`${post.sortDate}T00:00:00`);
