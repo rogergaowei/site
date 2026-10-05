@@ -363,7 +363,7 @@ nav a:hover {
 
 @media (min-width: 1200px) {
   .page {
-    max-width: min(920px, calc(100vw - 380px));
+    max-width: min(920px, calc(100vw - 500px));
   }
 
   .archive-tools {
@@ -375,16 +375,26 @@ nav a:hover {
     position: fixed;
     top: 128px;
     z-index: 10;
-    width: 160px;
+    width: 220px;
     height: auto;
   }
 
   .archive-tools .unified-search {
-    left: max(18px, calc(50% - 650px));
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
+  .archive-tools .unified-search label,
+  .archive-tools .unified-search input {
+    min-width: 0;
+  }
+
+  .archive-tools .unified-search {
+    left: max(12px, calc(50% - 700px));
   }
 
   .archive-tools .archive-nav {
-    right: max(18px, calc(50% - 650px));
+    right: max(12px, calc(50% - 700px));
   }
 }
 
