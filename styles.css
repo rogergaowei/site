@@ -213,6 +213,9 @@ button:focus-visible {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -220,6 +223,8 @@ button:focus-visible {
   max-width: 1080px;
   margin: 0 auto;
   padding: 26px 24px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
   border-bottom: 2px solid var(--line);
   box-shadow: 0 0 0 1px var(--header-glow), 0 0 34px var(--header-glow-ring), 0 18px 70px var(--header-shadow);
 }

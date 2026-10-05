@@ -222,6 +222,9 @@ picture {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -229,6 +232,8 @@ picture {
   max-width: 1040px;
   margin: 0 auto;
   padding: 26px 24px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px);
   border-bottom: 2px solid var(--line);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   box-shadow: 0 0 0 1px var(--header-glow), 0 0 34px var(--header-glow-ring), 0 18px 70px var(--header-shadow);
@@ -354,6 +359,29 @@ nav a:hover {
 .archive-tools .archive-nav {
   margin: 0;
   height: 100%;
+}
+
+@media (min-width: 1400px) {
+  .archive-tools {
+    display: contents;
+  }
+
+  .archive-tools .unified-search,
+  .archive-tools .archive-nav {
+    position: fixed;
+    top: 128px;
+    z-index: 10;
+    width: 180px;
+    height: auto;
+  }
+
+  .archive-tools .unified-search {
+    left: max(18px, calc(50% - 650px));
+  }
+
+  .archive-tools .archive-nav {
+    right: max(18px, calc(50% - 650px));
+  }
 }
 
 .page .intro h1 {
