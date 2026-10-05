@@ -7,10 +7,10 @@ const BLOG_DESCRIPTION = "Personal essays and trip notes by Roger Gao Wei.";
 const RECENT_WINDOW_DAYS = 30;
 
 const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
+  .filter((post) => post.site !== "moms-blog")
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate));
 
 const minecraftPosts = posts.filter(isMinecraftTerritoryPost);
-const featuredPosts = posts.filter((post) => post.section === "Posts" && !isMinecraftTerritoryPost(post));
 const archivePosts = posts.filter((post) => post.section !== "Posts" && !isMinecraftTerritoryPost(post));
 
 const archiveMonths = [...new Map(archivePosts.map((post) => {
@@ -38,10 +38,6 @@ const latestCards = posts
   .join("\n");
 
 const minecraftCards = minecraftPosts
-  .map(renderFeatureCard)
-  .join("\n");
-
-const featuredCards = featuredPosts
   .map(renderFeatureCard)
   .join("\n");
 
@@ -102,6 +98,7 @@ const html = `<!doctype html>
         </span>
         <nav>
           <a href="https://rogergaowei.com/">Home</a>
+          <a href="/moms-blog/">Mom's Blog</a>
           <a href="https://rogergaowei.com/game/">Game</a>
         </nav>
       </div>
@@ -113,13 +110,21 @@ const html = `<!doctype html>
         <h1>Notes, trips, and things I am learning.</h1>
       </section>
 
-      <section class="unified-search" aria-label="Search all posts">
-        <label for="site-post-search">
-          Search all posts
-          <input id="site-post-search" type="search" data-unified-search placeholder="Search by title, date, or topic" autocomplete="off">
-        </label>
-        <p class="filter-count" data-search-count aria-live="polite"></p>
-      </section>
+      <div class="archive-tools">
+        <section class="unified-search" aria-label="Search all posts">
+          <label for="site-post-search">
+            Search all posts
+            <input id="site-post-search" type="search" data-unified-search placeholder="Search by title, date, or topic" autocomplete="off">
+          </label>
+          <p class="filter-count" data-search-count aria-live="polite"></p>
+        </section>
+        <section class="archive-nav" data-browse-section aria-label="Browse posts by month">
+          <h2>Archive</h2>
+          <div>
+${archiveLinks}
+          </div>
+        </section>
+      </div>
 
       <section class="latest search-results" data-search-results aria-label="Search results" hidden>
         <div class="section-heading">
@@ -132,16 +137,9 @@ ${searchCards}
         <p class="search-empty" data-search-empty hidden>No posts matched your search.</p>
       </section>
 
-      <section class="latest posts-section" data-browse-section aria-labelledby="posts-heading">
-        <div class="section-heading">
-          <p class="eyebrow">Stories</p>
-          <h2 id="posts-heading">Posts</h2>
-        </div>
-        <div class="latest-grid">
-${featuredCards}
-        </div>
+      <section class="post-list" data-browse-section aria-label="Posts">
+${cards}
       </section>
-
       <section class="latest posts-section" data-browse-section aria-labelledby="minecraft-heading">
         <div class="section-heading">
           <p class="eyebrow">Series</p>
@@ -150,27 +148,6 @@ ${featuredCards}
         <div class="latest-grid">
 ${minecraftCards}
         </div>
-      </section>
-
-      <section class="latest" data-browse-section data-recents-section aria-label="Latest blog posts">
-        <div class="section-heading">
-          <p class="eyebrow">Latest</p>
-          <h2>Recent blog posts</h2>
-        </div>
-        <div class="latest-grid">
-${latestCards}
-        </div>
-      </section>
-
-      <section class="archive-nav" data-browse-section aria-label="Browse posts by month">
-        <h2>Archive</h2>
-        <div>
-${archiveLinks}
-        </div>
-      </section>
-
-      <section class="post-list" data-browse-section aria-label="Posts">
-${cards}
       </section>
       <nav class="page-bottom-nav" aria-label="Page bottom navigation">
         <a href="#top">Back to top</a>
