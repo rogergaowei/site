@@ -438,24 +438,14 @@ h1 {
 }
 
 .tile-moms-blog {
-  top: 50%;
-  left: 50%;
+  right: 26px;
+  bottom: 26px;
   width: 150px;
   height: 112px;
   background: var(--pink);
   font-size: 18px;
   text-align: center;
   text-shadow: 0 0 14px rgba(5, 7, 19, 0.55);
-  transform: translate(-50%, -50%);
-}
-
-.tile-moms-blog:hover,
-.tile-moms-blog:focus-visible {
-  transform: translate(-50%, calc(-50% - 3px));
-}
-
-.tile-moms-blog:active {
-  transform: translate(-50%, calc(-50% + 1px));
 }
 
 .links {
@@ -548,16 +538,8 @@ h1 {
 
   .tile-moms-blog {
     right: 8px;
-    top: 90px;
-    left: auto;
+    bottom: 8px;
     width: 128px;
     height: 92px;
-    transform: none;
-  }
-
-  .tile-moms-blog:hover,
-  .tile-moms-blog:focus-visible,
-  .tile-moms-blog:active {
-    transform: translateY(-3px);
   }
 }
