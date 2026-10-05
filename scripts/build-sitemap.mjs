@@ -6,11 +6,12 @@ const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"));
 const staticPages = [
   { loc: "/", priority: "1.0", changefreq: "weekly" },
   { loc: "/blog/", priority: "0.9", changefreq: "weekly" },
+  { loc: "/moms-blog/", priority: "0.8", changefreq: "weekly" },
   { loc: "/game/", priority: "0.8", changefreq: "monthly" },
 ];
 
 const postPages = posts
-  .filter((post) => post.status !== "draft")
+  .filter((post) => post.status !== "draft" && post.site !== "moms-blog")
   .toSorted((a, b) => new Date(b.sortDate) - new Date(a.sortDate))
   .map((post) => ({
     loc: `/blog/posts/${post.slug}.html`,

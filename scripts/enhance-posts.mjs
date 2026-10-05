@@ -4,7 +4,8 @@ import { existsSync } from "node:fs";
 const SITE_ORIGIN = "https://rogergaowei.com";
 const BLOG_NAME = "Roger Gao Wei Blog";
 
-const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"));
+const posts = JSON.parse(await readFile("blog/content/posts.json", "utf8"))
+  .filter((post) => post.site !== "moms-blog");
 const postsBySlug = new Map(posts.map((post) => [post.slug, post]));
 
 for (const post of postsBySlug.values()) {
