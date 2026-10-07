@@ -1,5 +1,15 @@
 [
   {
+    "title": "A Fun Day at iCode",
+    "author": "Roger",
+    "slug": "a-fun-day-at-icode",
+    "date": "October 2026",
+    "sortDate": "2026-10-06",
+    "summary": "A robotics program at iCode with Battle of the Bots, Minecraft, a drawing game, and robot sumo wrestling.",
+    "coverAlt": "A day at iCode",
+    "status": "published"
+  },
+  {
     "title": "Dad's Club Team Evaluation",
     "author": "Roger",
     "slug": "dads-club-team-evaluation",
