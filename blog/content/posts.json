@@ -1,5 +1,27 @@
 [
   {
+    "title": "Day 3: Changzhou",
+    "author": "Mom",
+    "slug": "day-3-changzhou",
+    "date": "October 2026",
+    "sortDate": "2026-10-07",
+    "summary": "Mom reunites with an elementary-school friend in Changzhou and reflects on school, activities, Minecraft, and iCode.",
+    "coverAlt": "Mom's Day 3 journal from Changzhou",
+    "status": "published",
+    "site": "moms-blog"
+  },
+  {
+    "title": "Day 2: Shanghai to Changzhou",
+    "author": "Mom",
+    "slug": "day-2-shanghai-to-changzhou",
+    "date": "October 2026",
+    "sortDate": "2026-10-06",
+    "summary": "A LEGO flower show, a visit with Ru's family, and an evening train trip to Changzhou.",
+    "coverAlt": "Mom's Day 2 journal from Shanghai to Changzhou",
+    "status": "published",
+    "site": "moms-blog"
+  },
+  {
     "title": "LEGO City News: Space Program",
     "author": "Roger",
     "slug": "lego-city-news-space-program",
