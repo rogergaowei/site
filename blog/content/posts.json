@@ -1,5 +1,15 @@
 [
   {
+    "title": "LEGO City News: Space Program",
+    "author": "Roger",
+    "slug": "lego-city-news-space-program",
+    "date": "October 2026",
+    "sortDate": "2026-10-06",
+    "summary": "A report on LEGO City's rebuilt Space Launch Rocket, its updated launch pad, and the first three missions.",
+    "coverAlt": "LEGO City space launch rocket",
+    "status": "published"
+  },
+  {
     "title": "A Fun Day at iCode",
     "author": "Roger",
     "slug": "a-fun-day-at-icode",

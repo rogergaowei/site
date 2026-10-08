@@ -790,6 +790,32 @@ ul {
   font-size: 22px;
 }
 
+.table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+.article table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.article th,
+.article td {
+  padding: 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article th {
+  color: var(--accent);
+}
+
 figure {
   margin: 28px 0;
 }
