@@ -1,5 +1,16 @@
 [
   {
+    "title": "The LEGO City Battleship Fleet",
+    "author": "Roger",
+    "slug": "lego-city-battleship-fleet",
+    "date": "October 2026",
+    "sortDate": "2026-10-09",
+    "summary": "An overview of LEGO City's four battleships, their roles, special features, and history.",
+    "cover": "/blog/assets/lego-city-battleship-fleet/light-assault.jpg",
+    "coverAlt": "A colorful LEGO City light assault battleship",
+    "status": "published"
+  },
+  {
     "title": "Day 3: Changzhou",
     "author": "Mom",
     "slug": "day-3-changzhou",
