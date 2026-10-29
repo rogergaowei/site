@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {VoxelWorld,RECIPES,craft,toolLevel,requiredTool,drop,HEIGHT,LIMIT} from '../game/blocklands/world.js';
+import {freshHotbar,ownedHotbar,hasGroundContact} from '../game/blocklands/player.js';
+import * as CANNON from '../game/blocklands/vendor/cannon-es.js';
 
 const world=new VoxelWorld(291026),bag={},unlocks={};
 function gather(id,count,dimension='overworld'){
@@ -28,4 +30,18 @@ const restored=new VoxelWorld(world.seed,JSON.parse(JSON.stringify(world.edits))
 assert.equal(restored.get(-17,20,-1,'end'),24);
 assert.equal(restored.get(25,12,25,'nether'),world.get(25,12,25,'nether'));
 assert.equal(new VoxelWorld(123).get(500,20,-500,'overworld'),new VoxelWorld(123).get(500,20,-500,'overworld'));
+assert.deepEqual(freshHotbar('survival'),Array(9).fill(null));
+assert.deepEqual(ownedHotbar(freshHotbar('creative'),{},'survival'),Array(9).fill(null));
+assert.equal(ownedHotbar(['5'],{'5':2},'survival')[0],'5');
+const physics=new CANNON.World({gravity:new CANNON.Vec3(0,-24,0)});
+physics.addBody(new CANNON.Body({mass:0,shape:new CANNON.Box(new CANNON.Vec3(4,.5,4)),position:new CANNON.Vec3(0,-.5,0)}));
+const player=new CANNON.Body({mass:1,fixedRotation:true,shape:new CANNON.Box(new CANNON.Vec3(.3,.85,.3)),position:new CANNON.Vec3(0,2,0)});
+physics.addBody(player);
+for(let i=0;i<90;i++)physics.step(1/60);
+assert.ok(hasGroundContact(player,physics.contacts),'Standing player has support even with solver penetration');
+const floorY=player.position.y;player.velocity.y=8.5;
+for(let i=0;i<20;i++)physics.step(1/60);
+assert.ok(player.position.y>floorY+1,'Survival jump clears a one-block ledge');
+assert.equal(hasGroundContact(player,physics.contacts),false,'Airborne player cannot jump again');
 console.log('Passed: Survival crafting reaches both portals with generated resources; spawn floors; negative-coordinate edits; deterministic terrain; world boundary.');
+console.log('Passed: empty Survival hotbar, old-save placeholder cleanup, grounded contact detection, jump height and airborne rejection.');

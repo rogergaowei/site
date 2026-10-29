@@ -4,6 +4,8 @@ Original browser voxel sandbox built with Three.js (MIT), cannon-es (MIT), and L
 
 Each of the three dimensions covers 2,048 by 2,048 blocks, with chunks generated around the player. A browser-local save retains the world seed, edits, portals, inventory, progression, position, and mode. Clearing browser storage removes that save.
 
+New Survival games start in the Overworld with an empty inventory and hotbar. Collected blocks and crafted equipment automatically fill available hotbar slots. Switching from Creative into Survival also starts an empty inventory in the Overworld while retaining world builds; resuming an existing Survival game keeps its earned inventory.
+
 ## Controls
 
 - WASD or arrows: move; mouse: look; Space: jump.
