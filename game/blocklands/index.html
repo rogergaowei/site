@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Blocklands | Roger Gao Wei Games</title>
+  <meta name="description" content="A block-building adventure across the Overworld, Nether, and End.">
+  <link rel="stylesheet" href="./style.css">
+  <style>.toolbar img,#close-bag img{filter:invert(1);display:block}#inventory>header{position:sticky;top:-28px;background:#172a22;z-index:1;padding:8px 0}.menu-actions{display:flex;gap:8px;margin-top:8px}.menu-actions>*{flex:1;text-align:center}.menu-actions a{padding:10px 14px;border:1px solid #779080;border-radius:4px;color:#f7fff5;text-decoration:none}@media(max-width:600px){#inventory>header{top:-20px}.actions button{padding:12px 7px;font-size:12px}}</style>
+</head>
+<body>
+  <canvas id="world" aria-label="Blocklands 3D world"></canvas>
+  <header class="toolbar">
+    <a href="/game/" title="Back to games" aria-label="Back to games"><img src="./vendor/icons/arrow-left.svg" alt="" width="20" height="20"></a>
+    <strong>BLOCKLANDS</strong>
+    <span id="dimension">Overworld</span>
+    <div class="tools">
+      <button id="bag" title="Inventory and crafting (E)" aria-label="Inventory and crafting"><img src="./vendor/icons/backpack.svg" alt="" width="20" height="20"></button>
+      <button id="save" title="Save world" aria-label="Save world"><img src="./vendor/icons/save.svg" alt="" width="20" height="20"></button>
+      <button id="pause" title="Pause" aria-label="Pause"><img src="./vendor/icons/pause.svg" alt="" width="20" height="20"></button>
+    </div>
+  </header>
+  <div class="telemetry"><span id="coords"></span><span id="health"></span><span id="tool"></span></div>
+  <div id="crosshair" aria-hidden="true">+</div>
+  <div id="target"></div><progress id="mining" max="1" value="0" hidden></progress>
+  <div id="toast" role="status"></div>
+  <button id="travel" hidden>Enter portal</button>
+  <div id="hotbar" aria-label="Hotbar"></div>
+  <div class="touch-controls">
+    <div class="dpad"><button data-move="forward" aria-label="Forward">&#9650;</button><button data-move="left" aria-label="Left">&#9664;</button><button data-move="back" aria-label="Back">&#9660;</button><button data-move="right" aria-label="Right">&#9654;</button></div>
+    <div class="actions"><button id="touch-mine">Mine</button><button id="touch-place">Place</button><button id="touch-jump">Jump</button><button id="touch-down" hidden>Down</button></div>
+  </div>
+  <dialog id="menu">
+    <p class="eyebrow">ROGER'S GAMES</p><h1>Blocklands</h1>
+    <div class="modes" role="group" aria-label="Game mode"><button data-mode="survival" class="selected">Survival</button><button data-mode="creative">Creative</button></div>
+    <label>World seed <input id="seed" type="number" value="291026" min="1" max="999999999"></label>
+    <label>View distance <select id="distance"><option value="2">Near</option><option value="3" selected>Normal</option><option value="4">Far</option></select></label>
+    <button id="play" class="primary">Play</button>
+    <button id="new">New world</button>
+    <div class="menu-actions"><button id="menu-save">Save</button><a href="/game/">Games</a></div>
+    <p id="save-status" role="status"></p>
+  </dialog>
+  <dialog id="inventory">
+    <header><h2>Inventory &amp; Crafting</h2><button id="close-bag" aria-label="Close inventory" title="Close inventory"><img src="./vendor/icons/x.svg" alt="" width="18" height="18"></button></header>
+    <div class="inventory-layout"><section><h3>Materials</h3><div id="items"></div></section><section><h3>Crafting</h3><div id="recipes"></div></section></div>
+  </dialog>
+  <script type="module" src="./game.js"></script>
+</body>
+</html>
