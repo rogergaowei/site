@@ -38,7 +38,14 @@ export class VoxelWorld {
     const n=noise(x/42,z/42,this.seed),n2=noise(x/13,z/13,this.seed+17);
     if(dimension==='end')return 16+Math.floor(n*5);
     if(dimension==='nether')return 12+Math.floor(n*9+n2*3);
-    return 14+Math.floor(n*9+n2*3);
+    return Math.floor(this.terrainLevel(x,z));
+  }
+  terrainLevel(x,z){return 14+Math.floor((noise(x/64,z/64,this.seed)*9+noise(x/32,z/32,this.seed+17)*3)*2)/2;}
+  blockHeight(x,y,z,dimension){
+    if(dimension!=='overworld'||y!==this.surface(x,z,dimension))return 1;
+    const cx=Math.floor(x/SIZE),cz=Math.floor(z/SIZE),i=x-cx*SIZE+SIZE*(z-cz*SIZE+SIZE*y);
+    if(Object.hasOwn(this.edits[`${dimension}:${cx}:${cz}`]||{},i))return 1;
+    return this.terrainLevel(x,z)%1===0 ? .5 : 1;
   }
   chunk(cx,cz,dimension){
     const key=`${dimension}:${cx}:${cz}`;if(this.chunks.has(key))return this.chunks.get(key);
@@ -47,13 +54,11 @@ export class VoxelWorld {
       const wx=cx*SIZE+x,wz=cz*SIZE+z;if(Math.abs(wx)>=LIMIT||Math.abs(wz)>=LIMIT)continue;
       const h=this.surface(wx,wz,dimension);const islands=dimension!=='end'||Math.hypot(wx,wz)<42||noise(wx/35,wz/35,this.seed+71)>.46;
       if(!islands)continue;
-      const quarry=dimension==='overworld'&&wx>=10&&wx<=20&&wz>=4&&wz<=14;
-      const top=quarry?h-9:h;
+      const top=h;
       for(let y=0;y<=Math.max(top,dimension==='nether'?15:16);y++){
         let id=0;const r=hash(wx+y*157,wz+y*43,this.seed);
         if(dimension==='overworld'){
-          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){if(r<.075)id=7;else if(r<.13)id=8;else if(y<14&&r<.19)id=9;}if(wx>=5&&wx<=9&&wz>=-8&&wz<=-4&&y===top)id=11;if(wx>=-12&&wx<=-7&&wz>=-5&&wz<=0&&y>=top-1)id=10;}else if(y<=16&&!quarry)id=14;
-          if(quarry&&y===top)id=[7,8,9][Math.abs(wx+wz)%3];
+          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){if(y<=5&&r<.018)id=9;else if(y<=12&&y<=top-6&&r<.06)id=8;else if(r<.105)id=7;}if(wx>=5&&wx<=9&&wz>=-8&&wz<=-4&&y===top)id=11;if(wx>=-12&&wx<=-7&&wz>=-5&&wz<=0&&y>=top-1)id=10;}else if(y<=16)id=14;
         }else if(dimension==='nether'){
           if(y===0)id=21;else if(y<=h)id=r<.05?18:r<.13?28:y<h-3?16:15;else if(y<=15)id=17;
           if(wx>=5&&wx<=12&&wz>=3&&wz<=8&&y===h)id=26;
@@ -64,7 +69,7 @@ export class VoxelWorld {
     }
     if(dimension==='overworld')for(let x=2;x<14;x++)for(let z=2;z<14;z++){
       const wx=cx*SIZE+x,wz=cz*SIZE+z,h=this.surface(wx,wz,dimension);
-      if(h<17||((hash(wx,wz,this.seed+9)>.014)&&!(wx===6&&wz===4))||Math.hypot(wx,wz)<5||wx>=10&&wx<=20&&wz>=4&&wz<=14)continue;
+      if(h<17||((hash(wx,wz,this.seed+9)>.014)&&!(wx===6&&wz===4))||Math.hypot(wx,wz)<5||this.blockHeight(wx,h,wz,dimension)<1)continue;
       for(let y=h+1;y<=h+5;y++)put(x,y,z,5);
       for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++)for(let dy=3;dy<=6;dy++)if(Math.abs(dx)+Math.abs(dz)+(dy===6?1:0)<4&&(dx||dz||dy===6))put(x+dx,h+dy,z+dz,6);
     }

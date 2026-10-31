@@ -4,6 +4,28 @@ import {freshHotbar,ownedHotbar,hasGroundContact} from '../game/blocklands/playe
 import * as CANNON from '../game/blocklands/vendor/cannon-es.js';
 
 const world=new VoxelWorld(291026),bag={},unlocks={};
+assert.deepEqual(new VoxelWorld(123).chunk(0,0,'overworld'),new VoxelWorld(123).chunk(0,0,'overworld'),'Generation repeats for a saved seed');
+assert.notDeepEqual(new VoxelWorld(123).chunk(0,0,'overworld'),new VoxelWorld(456).chunk(0,0,'overworld'),'Different seeds randomize terrain and resources');
+for(const seed of [291026,123,98765]){
+  const terrain=new VoxelWorld(seed);let iron=0,diamond=0,halves=0;
+  for(let x=-40;x<=40;x++)for(let z=-40;z<=40;z++){
+    const h=terrain.surface(x,z),height=h+terrain.blockHeight(x,h,z,'overworld');
+    if(height%1)halves++;
+    for(const [dx,dz] of [[1,0],[0,1]]){
+      const nh=terrain.surface(x+dx,z+dz);
+      assert.ok(Math.abs(height-nh-terrain.blockHeight(x+dx,nh,z+dz,'overworld'))<=.5,'Natural steps are at most half a block');
+    }
+    for(let y=1;y<=h;y++){
+      const id=terrain.get(x,y,z,'overworld');
+      assert.ok(id!==0,'No underground sinkholes');
+      if(id===8){iron++;assert.ok(y<=12&&y<=h-6,'Iron stays underground');}
+      if(id===9){diamond++;assert.ok(y<=5,'Diamonds stay near bedrock');}
+    }
+  }
+  assert.ok(iron>20&&diamond>20&&halves>100,'Seeds retain deep resources and half steps');
+  const h=terrain.surface(0,0);terrain.set(0,h,0,3,'overworld');
+  assert.equal(terrain.blockHeight(0,h,0,'overworld'),1,'Placed blocks retain full height');
+}
 function gather(id,count,dimension='overworld'){
   assert.ok(toolLevel(bag)>=requiredTool(id),`Tool can mine block ${id}`);
   let found=0;
@@ -45,3 +67,4 @@ assert.ok(player.position.y>floorY+1,'Survival jump clears a one-block ledge');
 assert.equal(hasGroundContact(player,physics.contacts),false,'Airborne player cannot jump again');
 console.log('Passed: Survival crafting reaches both portals with generated resources; spawn floors; negative-coordinate edits; deterministic terrain; world boundary.');
 console.log('Passed: empty Survival hotbar, old-save placeholder cleanup, grounded contact detection, jump height and airborne rejection.');
+console.log('Passed: half-block natural steps across three seeds, solid ground without sinkholes, deep iron and diamonds, full-sized placed blocks.');

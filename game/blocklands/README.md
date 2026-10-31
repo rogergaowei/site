@@ -21,6 +21,6 @@ Logs -> planks -> sticks and workbench -> wooden pickaxe -> stone pickaxe and fu
 
 In the Nether, blaze crystals drop blaze rods, and pearl ore drops ender pearls. Six rods yield twelve powder; combine twelve powder and twelve pearls into twelve Eyes of Ender. Twelve Eyes and twelve stone craft an End portal kit. Destination dimensions provide a return portal.
 
-The quarry east of Overworld spawn exposes coal, iron, and diamond ores. Obsidian lies west of spawn and gravel to the north. Nether pearl ore is east of its spawn, and blaze crystals southwest. Resources also occur throughout the world.
+Overworld hills use half-block steps that Survival players can walk up without jumping. Placed blocks remain full-sized. Natural terrain has no artificial quarry or sinkholes. Ore locations vary with the world seed: iron occurs at Y 1-12, at least six blocks below the surface; diamonds occur only at Y 1-5. Coal is more widely available underground. Obsidian lies west of spawn and gravel to the north. Nether pearl ore is east of its spawn, and blaze crystals southwest.
 
 Run the progression checks with `node scripts/test-blocklands.mjs` from the repository root. Serve the site with a static HTTP server to play; JavaScript modules require HTTP.

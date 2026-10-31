@@ -53,12 +53,15 @@ function buildChunk(cx,cz){
   const groups=[{p:[],n:[],u:[],c:[]},{p:[],n:[],u:[],c:[]}],data=world.chunk(cx,cz,dimension);
   for(let y=0;y<HEIGHT;y++)for(let z=0;z<SIZE;z++)for(let x=0;x<SIZE;x++){
     const id=data[x+SIZE*(z+SIZE*y)];if(!id)continue;const wx=cx*SIZE+x,wz=cz*SIZE+z;
+    const height=world.blockHeight(wx,y,wz,dimension);
     for(const face of faces){
       const neighbor=world.get(wx+face.n[0],y+face.n[1],wz+face.n[2],dimension);
-      if(neighbor&&neighbor!==13&&neighbor!==14&&neighbor!==17||neighbor===id)continue;
+      const covered=neighbor&&neighbor!==13&&neighbor!==14&&neighbor!==17||neighbor===id;
+      const neighborHeight=world.blockHeight(wx+face.n[0],y+face.n[1],wz+face.n[2],dimension);
+      if(covered&&!(face.n[1]===0&&neighborHeight<height)&&!(face.n[1]===1&&height<1))continue;
       const g=groups[id===13?1:0],tile=id===1&&face.n[1]===0?29:id===5&&face.n[1]!==0?30:id;
       const brightness=[17,18,20,25,26].includes(id)?1:face.s,uv=[[.03,.03],[.03,.97],[.97,.97],[.97,.03]];
-      for(const i of [0,1,2,0,2,3]){const v=face.v[i];g.p.push(wx+v[0],y+v[1],wz+v[2]);g.n.push(...face.n);g.u.push((tile+uv[i][0])/32,uv[i][1]);g.c.push(brightness,brightness,brightness);}
+      for(const i of [0,1,2,0,2,3]){const v=face.v[i],bottom=covered&&face.n[1]===0?neighborHeight:0;g.p.push(wx+v[0],y+(v[1]?height:bottom),wz+v[2]);g.n.push(...face.n);g.u.push((tile+uv[i][0])/32,uv[i][1]);g.c.push(brightness,brightness,brightness);}
     }
   }
   const group=new THREE.Group();
@@ -79,10 +82,22 @@ function changed(x,z){const cx=Math.floor(x/SIZE),cz=Math.floor(z/SIZE);for(cons
 const physics=new CANNON.World({gravity:new CANNON.Vec3(0,-24,0)});physics.broadphase=new CANNON.SAPBroadphase(physics);physics.defaultContactMaterial.friction=0;
 const player=new CANNON.Body({mass:1,shape:new CANNON.Box(new CANNON.Vec3(.3,.85,.3)),fixedRotation:true,linearDamping:0,collisionFilterGroup:2});
 player.position.set(...(stored?.position||world.landing(dimension)));physics.addBody(player);
+// Older saves may place the player inside the now-filled spawn quarry.
+if(stored?.position){
+  for(let i=0;i<HEIGHT;i++){
+    let blocked=false;
+    for(const dx of [-.3,.3])for(const dz of [-.3,.3])for(let y=Math.floor(player.position.y-.84);y<=Math.floor(player.position.y+.84);y++){
+      const x=Math.floor(player.position.x+dx),z=Math.floor(player.position.z+dz);
+      if(solid(world.get(x,y,z,dimension))&&y+world.blockHeight(x,y,z,dimension)>player.position.y-.84)blocked=true;
+    }
+    if(!blocked)break;player.position.y+=.5;
+  }
+}
 const blockShape=new CANNON.Box(new CANNON.Vec3(.5,.5,.5));
+const halfBlockShape=new CANNON.Box(new CANNON.Vec3(.5,.25,.5));
 function updateColliders(){
   const px=Math.floor(player.position.x),py=Math.floor(player.position.y),pz=Math.floor(player.position.z),anchor=`${px}:${py}:${pz}`;if(anchor===collisionAnchor)return;collisionAnchor=anchor;const needed=new Set();
-  for(let x=px-2;x<=px+2;x++)for(let z=pz-2;z<=pz+2;z++)for(let y=py-3;y<=py+2;y++)if(solid(world.get(x,y,z,dimension))){const key=`${x}:${y}:${z}`;needed.add(key);if(!colliders.has(key)){const body=new CANNON.Body({mass:0,shape:blockShape,position:new CANNON.Vec3(x+.5,y+.5,z+.5),collisionFilterGroup:1});physics.addBody(body);colliders.set(key,body);}}
+  for(let x=px-2;x<=px+2;x++)for(let z=pz-2;z<=pz+2;z++)for(let y=py-3;y<=py+2;y++)if(solid(world.get(x,y,z,dimension))){const height=world.blockHeight(x,y,z,dimension),key=`${x}:${y}:${z}:${height}`;needed.add(key);if(!colliders.has(key)){const body=new CANNON.Body({mass:0,shape:height===.5?halfBlockShape:blockShape,position:new CANNON.Vec3(x+.5,y+height/2,z+.5),collisionFilterGroup:1});physics.addBody(body);colliders.set(key,body);}}
   for(const [key,body] of colliders)if(!needed.has(key)){physics.removeBody(body);colliders.delete(key);}
 }
 function grounded(){return hasGroundContact(player,physics.contacts);}
@@ -178,7 +193,7 @@ function updateTarget(){
   raycaster.setFromCamera(new THREE.Vector2(0,0),camera);const objects=[];meshes.forEach(g=>objects.push(...g.children));const intersection=raycaster.intersectObjects(objects,false)[0];
   if(!intersection){hit=null;outline.visible=false;$('target').textContent='';return;}
   const n=intersection.face.normal,p=intersection.point.clone().addScaledVector(n,-.005);hit={x:Math.floor(p.x),y:Math.floor(p.y),z:Math.floor(p.z),normal:n};hit.id=world.get(hit.x,hit.y,hit.z,dimension);
-  outline.visible=true;outline.position.set(hit.x+.5,hit.y+.5,hit.z+.5);$('target').textContent=BLOCKS[hit.id]?.name||'';
+  const height=world.blockHeight(hit.x,hit.y,hit.z,dimension);outline.scale.y=height;outline.visible=true;outline.position.set(hit.x+.5,hit.y+height/2,hit.z+.5);$('target').textContent=BLOCKS[hit.id]?.name||'';
 }
 function mine(dt){
   if(!mining||!hit||!active||inventory.open){mineTime=0;mineTarget='';$('mining').hidden=true;return;}
@@ -242,6 +257,18 @@ function frame(now){
     player.velocity.x=(strafe*Math.cos(yaw)-forward*Math.sin(yaw))*speed/length;player.velocity.z=(-strafe*Math.sin(yaw)-forward*Math.cos(yaw))*speed/length;
     physics.gravity.y=mode==='creative'?0:-24;if(mode==='creative')player.velocity.y=(Number(keys.has('Space'))-Number(keys.has('ShiftLeft')))*8;
     updateColliders();groundGrace=grounded() ? .1 : Math.max(0,groundGrace-dt);jumpBuffer=Math.max(0,jumpBuffer-dt);
+    if(mode!=='creative'&&groundGrace>0&&player.velocity.y<=.5&&jumpBuffer===0){
+      const feet=player.position.y-.85,nx=player.position.x+player.velocity.x*dt,nz=player.position.z+player.velocity.z*dt;
+      let rise=0,clear=true;
+      for(const dx of [-.3,.3])for(const dz of [-.3,.3]){
+        const x=Math.floor(nx+dx),z=Math.floor(nz+dz);
+        for(let y=Math.floor(feet);y<=Math.floor(feet+2.2);y++)if(solid(world.get(x,y,z,dimension))){
+          const top=y+world.blockHeight(x,y,z,dimension),step=top-feet;
+          if(step>.02&&step<=.52)rise=Math.max(rise,step);else if(step>.52&&y<feet+2.2)clear=false;
+        }
+      }
+      if(clear&&rise>0){player.position.y+=rise+.002;player.velocity.y=0;updateColliders();}
+    }
     if(mode!=='creative'&&jumpBuffer>0&&groundGrace>0&&player.velocity.y<=.5){player.velocity.y=8.5;jumpBuffer=0;groundGrace=0;}
     const oldY=player.velocity.y;physics.step(1/60,dt,4);
     player.position.x=Math.max(-LIMIT+1,Math.min(LIMIT-1,player.position.x));player.position.z=Math.max(-LIMIT+1,Math.min(LIMIT-1,player.position.z));
