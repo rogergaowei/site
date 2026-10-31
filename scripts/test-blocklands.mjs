@@ -1,11 +1,39 @@
 import assert from 'node:assert/strict';
-import {VoxelWorld,RECIPES,craft,toolLevel,requiredTool,drop,HEIGHT,LIMIT} from '../game/blocklands/world.js';
+import {VoxelWorld,RECIPES,craft,toolLevel,requiredTool,drop,HEIGHT,LIMIT,PICK_DURABILITY,wearPickaxe} from '../game/blocklands/world.js';
 import {freshHotbar,ownedHotbar,hasGroundContact} from '../game/blocklands/player.js';
 import * as CANNON from '../game/blocklands/vendor/cannon-es.js';
 
 const world=new VoxelWorld(291026),bag={},unlocks={};
 assert.deepEqual(new VoxelWorld(123).chunk(0,0,'overworld'),new VoxelWorld(123).chunk(0,0,'overworld'),'Generation repeats for a saved seed');
 assert.notDeepEqual(new VoxelWorld(123).chunk(0,0,'overworld'),new VoxelWorld(456).chunk(0,0,'overworld'),'Different seeds randomize terrain and resources');
+for(const [id,max] of Object.entries(PICK_DURABILITY)){
+  const tools={[id]:2,woodPick:id==='woodPick'?2:1},durability={};
+  for(let i=0;i<max-1;i++)assert.equal(wearPickaxe(tools,durability),null);
+  assert.equal(durability[id],1);
+  const saved=JSON.parse(JSON.stringify(durability));
+  assert.equal(wearPickaxe(tools,saved),id,'Pickaxe breaks at its exact limit');
+  assert.equal(tools[id],1,'Only one pickaxe breaks');
+  assert.equal(wearPickaxe(tools,saved),null,'Spare starts at full durability');
+  assert.equal(saved[id],max-1);
+}
+assert.equal(wearPickaxe({},{}),null,'Hands do not wear out');
+for(const dimension of ['overworld','nether']){
+  const terrain=new VoxelWorld(291026),ores=new Map(),visited=new Set();let largest=0;
+  for(let x=-20;x<20;x++)for(let z=-20;z<20;z++)for(let y=1;y<32;y++){
+    const id=terrain.get(x,y,z,dimension);if([7,8,9,18,25,26,28].includes(id))ores.set(`${x},${y},${z}`,id);
+  }
+  for(const [key,id] of ores){
+    if(visited.has(key))continue;const queue=[key];visited.add(key);let count=0;
+    while(queue.length){const p=queue.pop().split(',').map(Number);count++;
+      for(const [dx,dy,dz] of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]){
+        const next=`${p[0]+dx},${p[1]+dy},${p[2]+dz}`;
+        if(ores.get(next)===id&&!visited.has(next)){visited.add(next);queue.push(next);}
+      }
+    }
+    assert.ok(count<=6,`${dimension} ore vein contains at most six blocks`);largest=Math.max(largest,count);
+  }
+  assert.equal(largest,6,`${dimension} includes six-block veins`);
+}
 for(const seed of [291026,123,98765]){
   const terrain=new VoxelWorld(seed);let iron=0,diamond=0,halves=0;
   for(let x=-40;x<=40;x++)for(let z=-40;z<=40;z++){
@@ -68,3 +96,4 @@ assert.equal(hasGroundContact(player,physics.contacts),false,'Airborne player ca
 console.log('Passed: Survival crafting reaches both portals with generated resources; spawn floors; negative-coordinate edits; deterministic terrain; world boundary.');
 console.log('Passed: empty Survival hotbar, old-save placeholder cleanup, grounded contact detection, jump height and airborne rejection.');
 console.log('Passed: half-block natural steps across three seeds, solid ground without sinkholes, deep iron and diamonds, full-sized placed blocks.');
+console.log('Passed: connected ore veins capped at six in both mining dimensions; all pickaxe lifetimes, breakage, spares and saved durability.');

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import * as CANNON from './vendor/cannon-es.js';
-import {VoxelWorld,BLOCKS,ITEMS,RECIPES,SIZE,HEIGHT,LIMIT,solid,drop,toolLevel,requiredTool,canCraft,craft} from './world.js';
+import {VoxelWorld,BLOCKS,ITEMS,RECIPES,SIZE,HEIGHT,LIMIT,solid,drop,toolLevel,requiredTool,canCraft,craft,PICK_DURABILITY,wearPickaxe} from './world.js';
 import {freshHotbar,ownedHotbar,hasGroundContact} from './player.js';
 
 const $=id=>document.getElementById(id),canvas=$('world'),menu=$('menu'),inventory=$('inventory');
@@ -10,6 +10,7 @@ function captureMouse(){if(!TOUCH)canvas.requestPointerLock?.()?.catch(()=>{});}
 let stored=null;try{stored=JSON.parse(localStorage.getItem(STORAGE));if(stored?.version!==1)stored=null;}catch{}
 let seed=stored?.seed||291026,mode=stored?.mode||'survival',dimension=stored?.dimension||'overworld';
 let world=new VoxelWorld(seed,stored?.edits||{}),bag=stored?.bag||{},unlocks=stored?.unlocks||{},portals=stored?.portals||[];
+let durability=stored?.durability||{};
 let hotbar=ownedHotbar(stored?.hotbar||freshHotbar(mode),bag,mode),selected=0;
 let yaw=stored?.yaw??-2.2,pitch=stored?.pitch??-.12,health=stored?.health||20,viewDistance=3;
 let active=false,started=false,last=0,lastSave=0,toastUntil=0,portalCooldown=0,damageTimer=0,collisionAnchor='',chunkAnchor='';
@@ -142,13 +143,13 @@ function enterPortal(){
 
 function toast(message){$('toast').textContent=message;$('toast').classList.add('visible');toastUntil=performance.now()+3000;}
 function saveWorld(notify=true){
-  try{localStorage.setItem(STORAGE,JSON.stringify({version:1,seed,mode,dimension,bag,unlocks,portals,hotbar,edits:world.edits,position:player.position.toArray(),yaw,pitch,health}));$('save-status').textContent=`Saved ${new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;if(notify)toast('World saved');}
+  try{localStorage.setItem(STORAGE,JSON.stringify({version:1,seed,mode,dimension,bag,unlocks,portals,hotbar,durability,edits:world.edits,position:player.position.toArray(),yaw,pitch,health}));$('save-status').textContent=`Saved ${new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`;if(notify)toast('World saved');}
   catch{toast('Storage is full or unavailable. This world cannot be saved.');}
 }
 function renderHotbar(){
   hotbar=ownedHotbar(hotbar,bag,mode);
   $('hotbar').replaceChildren(...hotbar.map((id,i)=>{const button=document.createElement('button');button.className=`slot${i===selected?' active':''}`;button.title=`${ITEMS[id]?.name||'Empty'} (${i+1})`;button.setAttribute('aria-label',button.title);button.setAttribute('aria-pressed',String(i===selected));button.innerHTML=`<kbd>${i+1}</kbd>${id?`<span class="swatch" style="background:${ITEMS[id].color}"></span><small>${mode==='creative'?'∞':bag[id]}</small>`:''}`;button.onclick=()=>{selected=i;renderHotbar();};return button;}));
-  const level=toolLevel(bag);$('tool').textContent=mode==='creative'?'Creative':level?ITEMS[['','woodPick','stonePick','ironPick','diamondPick'][level]].name:'Hands';
+  const level=toolLevel(bag),pick=['','woodPick','stonePick','ironPick','diamondPick'][level];$('tool').textContent=mode==='creative'?'Creative':level?`${ITEMS[pick].name} · ${durability[pick]??PICK_DURABILITY[pick]}/${PICK_DURABILITY[pick]}`:'Hands';
   $('touch-jump').textContent=mode==='creative'?'Up':'Jump';$('touch-down').hidden=mode!=='creative';
 }
 function offerHotbarItem(id){
@@ -160,7 +161,7 @@ function offerHotbarItem(id){
 }
 function renderInventory(){
   $('items').replaceChildren(...Object.entries(ITEMS).filter(([id])=>Number(id)!==21&&(mode==='creative'||bag[id]>0&&Number(id)!==14&&Number(id)!==17)).map(([id,item])=>{
-    const button=document.createElement('button');button.className=`item${hotbar[selected]===id?' active':''}`;button.innerHTML=`<span class="swatch" style="background:${item.color}"></span>${item.name}<br>${mode==='creative'?'∞':bag[id]||0}`;
+    const button=document.createElement('button');button.className=`item${hotbar[selected]===id?' active':''}`;button.innerHTML=`<span class="swatch" style="background:${item.color}"></span>${item.name}<br>${mode==='creative'?'∞':bag[id]||0}${mode!=='creative'&&PICK_DURABILITY[id]?` · ${durability[id]??PICK_DURABILITY[id]}/${PICK_DURABILITY[id]}`:''}`;
     button.title=`Select ${item.name}`;button.onclick=()=>{hotbar[selected]=id;renderHotbar();renderInventory();};return button;
   }));
   if(!$('items').childElementCount)$('items').textContent='Empty inventory';
@@ -175,7 +176,7 @@ function openInventory(){mining=false;keys.clear();inventory.showModal();documen
 function resume(){
   const nextMode=document.querySelector('[data-mode].selected').dataset.mode;
   if(nextMode!==mode){
-    hotbar=freshHotbar(nextMode);selected=0;
+    hotbar=freshHotbar(nextMode);selected=0;durability={};
     if(nextMode==='survival'){
       bag={};unlocks={};dimension='overworld';health=20;player.position.set(...world.landing(dimension));player.velocity.setZero();
       meshes.forEach(disposeChunk);meshes.clear();colliders.forEach(b=>physics.removeBody(b));colliders.clear();chunkAnchor='';collisionAnchor='';refreshPortals();
@@ -186,7 +187,7 @@ function resume(){
 function pause(){active=false;mining=false;keys.clear();if(inventory.open)inventory.close();if(!menu.open)menu.showModal();$('play').textContent=started?'Resume':'Play';$('seed').disabled=started||!!stored;document.exitPointerLock?.();saveWorld(false);}
 function reset(){
   if($('new').dataset.confirm!=='yes'){ $('new').dataset.confirm='yes';$('new').textContent='Replace saved world?';$('seed').disabled=false;return; }
-  seed=Math.max(1,Math.min(999999999,Number($('seed').value)||291026));world=new VoxelWorld(seed);bag={};unlocks={};portals=[];dimension='overworld';health=20;mode=document.querySelector('[data-mode].selected').dataset.mode;hotbar=freshHotbar(mode);selected=0;
+  seed=Math.max(1,Math.min(999999999,Number($('seed').value)||291026));world=new VoxelWorld(seed);bag={};durability={};unlocks={};portals=[];dimension='overworld';health=20;mode=document.querySelector('[data-mode].selected').dataset.mode;hotbar=freshHotbar(mode);selected=0;
   meshes.forEach(disposeChunk);meshes.clear();colliders.forEach(b=>physics.removeBody(b));colliders.clear();player.position.set(...world.landing(dimension));player.velocity.setZero();stored=null;chunkAnchor='';collisionAnchor='';yaw=-2.2;pitch=-.12;refreshPortals();started=false;$('seed').disabled=false;$('new').dataset.confirm='';$('new').textContent='New world';setAtmosphere();updateChunks(true);renderHotbar();saveWorld(false);resume();
 }
 function updateTarget(){
@@ -202,7 +203,7 @@ function mine(dt){
   if(hit.id===21||hit.id===14||hit.id===17||level<required){$('target').textContent=hit.id===21?'Bedrock':level<required?`${BLOCKS[hit.id].name} · ${['Hands','Wooden','Stone','Iron','Diamond'][required]} pickaxe required`:BLOCKS[hit.id].name;return;}
   mineTime+=dt;const duration=mode==='creative'?.12:hit.id===10?1.5:required?Math.max(.22,.85-level*.13):.35;
   $('mining').hidden=false;$('mining').value=mineTime/duration;
-  if(mineTime>=duration){const id=drop(hit.id);bag[id]=(bag[id]||0)+1;offerHotbarItem(id);world.set(hit.x,hit.y,hit.z,0,dimension);changed(hit.x,hit.z);renderHotbar();mineTime=0;}
+  if(mineTime>=duration){const id=drop(hit.id);bag[id]=(bag[id]||0)+1;offerHotbarItem(id);world.set(hit.x,hit.y,hit.z,0,dimension);if(mode!=='creative'){const broken=wearPickaxe(bag,durability);if(broken)toast(`${ITEMS[broken].name} broke`);}changed(hit.x,hit.z);renderHotbar();mineTime=0;}
 }
 function place(){
   if(!active||inventory.open||menu.open)return;const id=hotbar[selected];if(!id){toast('Empty slot');return;}if(mode!=='creative'&&!(bag[id]>0)){toast(`No ${ITEMS[id].name}`);return;}

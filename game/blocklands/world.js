@@ -26,6 +26,14 @@ export const RECIPES = [
 export const solid = id => id!==0 && id!==14 && id!==17;
 export const drop = id => ({1:'2',7:'coal',8:'ironOre',9:'diamond',11:'flint',25:'rod',26:'pearl'}[id]||String(id));
 export function toolLevel(bag){return bag.diamondPick?4:bag.ironPick?3:bag.stonePick?2:bag.woodPick?1:0;}
+export const PICK_DURABILITY={woodPick:59,stonePick:131,ironPick:250,diamondPick:1561};
+export function wearPickaxe(bag,durability){
+  const id=['','woodPick','stonePick','ironPick','diamondPick'][toolLevel(bag)];
+  if(!id)return null;
+  durability[id]=(durability[id]??PICK_DURABILITY[id])-1;
+  if(durability[id]>0)return null;
+  bag[id]--;delete durability[id];return id;
+}
 export function requiredTool(id){return id===10?4:id===9||id===25||id===26?3:id===8?2:[3,7,16,18,19,23,28].includes(id)?1:0;}
 export function canCraft(recipe,bag,unlocks){return (!recipe.station||unlocks[recipe.station])&&Object.entries(recipe.cost).every(([id,n])=>(bag[id]||0)>=n);}
 export function craft(recipe,bag,unlocks){if(!canCraft(recipe,bag,unlocks))return false;for(const [id,n] of Object.entries(recipe.cost))bag[id]-=n;bag[recipe.item]=(bag[recipe.item]||0)+recipe.count;if(recipe.item==='22')unlocks.workbench=true;if(recipe.item==='23')unlocks.furnace=true;return true;}
@@ -33,7 +41,29 @@ function hash(x,z,seed){let n=Math.imul(x,374761393)^Math.imul(z,668265263)^seed
 function smooth(t){return t*t*(3-2*t);}
 function noise(x,z,seed){const a=Math.floor(x),b=Math.floor(z),u=smooth(x-a),v=smooth(z-b);return (hash(a,b,seed)*(1-u)+hash(a+1,b,seed)*u)*(1-v)+(hash(a,b+1,seed)*(1-u)+hash(a+1,b+1,seed)*u)*v;}
 export class VoxelWorld {
-  constructor(seed=291026,edits={}){this.seed=seed;this.edits=edits;this.chunks=new Map();}
+  constructor(seed=291026,edits={}){this.seed=seed;this.edits=edits;this.chunks=new Map();this.veins=new Map();}
+  oreAt(x,y,z,dimension){
+    const a=Math.floor(x/5),b=Math.floor(y/5),c=Math.floor(z/5),key=`${dimension}:${a}:${b}:${c}`;
+    if([x-a*5,y-b*5,z-c*5].some(v=>v<1||v>3))return 0;
+    if(!this.veins.has(key)){
+      const seed=this.seed^(dimension==='nether'?7919:0),r=hash(a+b*157,c+b*43,seed);
+      const id=dimension==='nether'?[25,26,28,18][Math.min(3,Math.floor(r*4))]:b===0?(r<.4?9:7):b<=2?(r<.55?8:7):7;
+      const points=[],count=Math.min(6,1+Math.floor(hash(a+b*79,c,seed+11)*6));
+      if(r<.9){
+        points.push([1+Math.min(2,Math.floor(hash(a,b+c,seed+3)*3)),1+Math.min(2,Math.floor(hash(b,c+a,seed+5)*3)),1+Math.min(2,Math.floor(hash(c,a+b,seed+7)*3))]);
+        for(let i=0;points.length<count&&i<100;i++){
+          const p=[...points[Math.min(points.length-1,Math.floor(hash(a+i,b+c,seed+13)*points.length))]],axis=Math.min(2,Math.floor(hash(a,b+i+c,seed+19)*3));
+          p[axis]+=hash(a+i,c+b,seed+23)<.5?-1:1;
+          if(p.every(v=>v>=1&&v<=3)&&!points.some(q=>q.every((v,j)=>v===p[j])))points.push(p);
+        }
+      }
+      // A stone border between cells prevents separate veins merging beyond six blocks.
+      if(this.veins.size>4096)this.veins.clear();
+      this.veins.set(key,{id,points});
+    }
+    const vein=this.veins.get(key);
+    return vein.points.some(p=>p[0]===x-a*5&&p[1]===y-b*5&&p[2]===z-c*5)?vein.id:0;
+  }
   surface(x,z,dimension='overworld'){
     const n=noise(x/42,z/42,this.seed),n2=noise(x/13,z/13,this.seed+17);
     if(dimension==='end')return 16+Math.floor(n*5);
@@ -58,11 +88,9 @@ export class VoxelWorld {
       for(let y=0;y<=Math.max(top,dimension==='nether'?15:16);y++){
         let id=0;const r=hash(wx+y*157,wz+y*43,this.seed);
         if(dimension==='overworld'){
-          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){if(y<=5&&r<.018)id=9;else if(y<=12&&y<=top-6&&r<.06)id=8;else if(r<.105)id=7;}if(wx>=5&&wx<=9&&wz>=-8&&wz<=-4&&y===top)id=11;if(wx>=-12&&wx<=-7&&wz>=-5&&wz<=0&&y>=top-1)id=10;}else if(y<=16)id=14;
+          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){const ore=this.oreAt(wx,y,wz,dimension);if(ore===7||ore===8&&y<=12&&y<=top-6||ore===9&&y<=5)id=ore;}if(wx>=5&&wx<=9&&wz>=-8&&wz<=-4&&y===top)id=11;if(wx>=-12&&wx<=-7&&wz>=-5&&wz<=0&&y>=top-1)id=10;}else if(y<=16)id=14;
         }else if(dimension==='nether'){
-          if(y===0)id=21;else if(y<=h)id=r<.05?18:r<.13?28:y<h-3?16:15;else if(y<=15)id=17;
-          if(wx>=5&&wx<=12&&wz>=3&&wz<=8&&y===h)id=26;
-          if(wx>=-12&&wx<=-5&&wz>=6&&wz<=11&&y===h)id=25;
+          if(y===0)id=21;else if(y<=h)id=this.oreAt(wx,y,wz,dimension)||(y<h-3?16:15);else if(y<=15)id=17;
         }else if(y>=h-7&&y<=h)id=(y===h&&r<.035)?20:19;
         put(x,y,z,id);
       }
