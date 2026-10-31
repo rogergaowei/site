@@ -212,9 +212,14 @@ function place(){
     if(Math.abs(x)>LIMIT-7||Math.abs(z)>LIMIT-7){toast('World boundary');return;}
     createPortal(id==='endPortal'?'end':dimension==='nether'?'overworld':'nether',x,z);if(mode!=='creative')bag[id]--;renderHotbar();toast('Portal opened');return;
   }
-  if(!hit||!ITEMS[id]?.block)return;const x=hit.x+hit.normal.x,y=hit.y+hit.normal.y,z=hit.z+hit.normal.z;
-  const p=player.position;if(Math.abs(x+.5-p.x)<.8&&Math.abs(z+.5-p.z)<.8&&Math.abs(y+.5-p.y)<1.35)return;
+  if(!ITEMS[id]?.block){toast('Select a block to place');return;}
+  if(!hit){toast('Aim at a nearby block face');return;}
+  const x=hit.x+hit.normal.x,y=hit.y+hit.normal.y,z=hit.z+hit.normal.z;
+  const p=player.position;
+  if(Math.abs(x+.5-p.x)<.799&&Math.abs(z+.5-p.z)<.799&&Math.abs(y+.5-p.y)<1.349){toast('Step back: this spot overlaps your character');return;}
+  if(solid(world.get(x,y,z,dimension))){toast('That spot already contains a block');return;}
   if(world.set(x,y,z,Number(id),dimension)){if(mode!=='creative')bag[id]--;changed(x,z);renderHotbar();}
+  else toast('Cannot place beyond the world boundary');
 }
 
 $('play').onclick=()=>{if(!started&&!stored){const chosen=Number($('seed').value)||291026;if(chosen!==seed){seed=chosen;world=new VoxelWorld(seed);meshes.forEach(disposeChunk);meshes.clear();colliders.forEach(b=>physics.removeBody(b));colliders.clear();collisionAnchor='';player.position.set(...world.landing(dimension));}}resume();};
