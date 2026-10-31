@@ -18,6 +18,16 @@ for(const [id,max] of Object.entries(PICK_DURABILITY)){
 }
 assert.equal(wearPickaxe({},{}),null,'Hands do not wear out');
 for(const seed of [291026,123,98765]){
+  const terrain=new VoxelWorld(seed),counts={25:0,26:0,other:0};
+  for(let x=-24;x<=24;x++)for(let z=-24;z<=24;z++)for(let y=1;y<=terrain.surface(x,z,'nether');y++){
+    const id=terrain.get(x,y,z,'nether');
+    if(id===25||id===26){counts[id]++;assert.ok(y<=8&&y<=terrain.surface(x,z,'nether')-6,'Blaze and pearl deposits stay deep underground');}
+    else if(id===18||id===28)counts.other++;
+  }
+  assert.ok(counts[25]>=6&&counts[26]>=12,'Deep Nether resources still support End progression');
+  assert.ok(counts[25]+counts[26]<counts.other/2,'Blaze and pearl ore are substantially less dense');
+}
+for(const seed of [291026,123,98765]){
   const terrain=new VoxelWorld(seed);let obsidianPatches=0,gravelPatches=0;const shapes=new Set();
   for(let cx=-2;cx<=2;cx++)for(let cz=-2;cz<=2;cz++)for(const id of [10,11]){
     const points=[];

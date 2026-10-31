@@ -49,7 +49,8 @@ export class VoxelWorld {
       const seed=this.seed^(dimension==='nether'?7919:0),r=hash(a+b*157,c+b*43,seed);
       const id=dimension==='nether'?[25,26,28,18][Math.min(3,Math.floor(r*4))]:b===0?(r<.4?9:7):b<=2?(r<.55?8:7):7;
       const points=[],count=Math.min(6,1+Math.floor(hash(a+b*79,c,seed+11)*6));
-      if(r<.9){
+      const rareNether=dimension==='nether'&&(id===25||id===26);
+      if(r<.9&&(!rareNether||hash(a+b*197,c+b*61,seed+101)<.4)){
         points.push([1+Math.min(2,Math.floor(hash(a,b+c,seed+3)*3)),1+Math.min(2,Math.floor(hash(b,c+a,seed+5)*3)),1+Math.min(2,Math.floor(hash(c,a+b,seed+7)*3))]);
         for(let i=0;points.length<count&&i<100;i++){
           const p=[...points[Math.min(points.length-1,Math.floor(hash(a+i,b+c,seed+13)*points.length))]],axis=Math.min(2,Math.floor(hash(a,b+i+c,seed+19)*3));
@@ -112,7 +113,7 @@ export class VoxelWorld {
         if(dimension==='overworld'){
           if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){const ore=this.oreAt(wx,y,wz,dimension);if(ore===7||ore===8&&y<=12&&y<=top-6||ore===9&&y<=5)id=ore;}if(y===top&&this.depositAt(wx,wz,11))id=11;if(y===5&&this.depositAt(wx,wz,10))id=10;}else if(y<=16)id=14;
         }else if(dimension==='nether'){
-          if(y===0)id=21;else if(y<=h)id=this.oreAt(wx,y,wz,dimension)||(y<h-3?16:15);else if(y<=15)id=17;
+          if(y===0)id=21;else if(y<=h){let ore=this.oreAt(wx,y,wz,dimension);if((ore===25||ore===26)&&(y>8||y>h-6))ore=0;id=ore||(y<h-3?16:15);}else if(y<=15)id=17;
         }else if(y>=h-7&&y<=h)id=(y===h&&r<.035)?20:19;
         put(x,y,z,id);
       }

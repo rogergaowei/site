@@ -23,6 +23,8 @@ In the Nether, blaze crystals drop blaze rods, and pearl ore drops ender pearls.
 
 Overworld hills use half-block steps that Survival players can walk up without jumping. Placed blocks remain full-sized. Natural terrain has no artificial quarry or sinkholes. Ores generate in seeded, connected veins of one to six blocks, separated so neighboring veins cannot merge. Iron occurs at Y 1-12, at least six blocks below the surface; diamonds occur only at Y 1-5. Coal is more widely available underground. Obsidian generates in randomly shaped five-block deposits at Y=5. Gravel forms randomly shaped ten-block patches on dry Overworld surfaces, following the terrain. These deposits replace the old fixed patches near spawn. Nether pearl ore, blaze crystals, quartz and glowstone occur in randomized veins throughout its terrain.
 
+Nether blaze crystal and pearl ore occur only at Y 1-8, at least six blocks below the local surface. Only 40% of their formerly eligible veins remain, making them substantially rarer. Quartz and glowstone generation is unchanged.
+
 Survival automatically uses the best owned pickaxe. Each successfully mined block uses one durability: wood 59, stone 131, iron 250, diamond 1,561. The tool indicator and inventory show remaining uses. Broken picks disappear; a spare of the same type starts with full durability, otherwise mining falls back to the next available tool. Remaining durability is saved with the world. Older saves start existing tools at full durability; Creative tools do not wear out.
 
 Run the progression checks with `node scripts/test-blocklands.mjs` from the repository root. Serve the site with a static HTTP server to play; JavaScript modules require HTTP.
