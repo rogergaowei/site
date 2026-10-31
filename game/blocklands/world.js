@@ -64,6 +64,28 @@ export class VoxelWorld {
     const vein=this.veins.get(key);
     return vein.points.some(p=>p[0]===x-a*5&&p[1]===y-b*5&&p[2]===z-c*5)?vein.id:0;
   }
+  depositAt(x,z,id){
+    const a=Math.floor(x/16),b=Math.floor(z/16),key=`deposit:${id}:${a}:${b}`;
+    if(!this.veins.has(key)){
+      const seed=this.seed+id*997,points=[];
+      if(hash(a,b,seed)<.75){
+        points.push([3+Math.min(9,Math.floor(hash(a,b,seed+1)*10)),3+Math.min(9,Math.floor(hash(a,b,seed+2)*10))]);
+        const count=id===10?5:10;
+        while(points.length<count){
+          const candidates=[];
+          for(const [px,pz] of points)for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){
+            const p=[px+dx,pz+dz];
+            if(p.every(v=>v>=1&&v<=14)&&!points.some(q=>q[0]===p[0]&&q[1]===p[1]))candidates.push(p);
+          }
+          points.push(candidates[Math.min(candidates.length-1,Math.floor(hash(a+points.length,b,seed+3)*candidates.length))]);
+        }
+        if(id===11&&points.some(([px,pz])=>this.surface(a*16+px,b*16+pz)<17))points.length=0;
+      }
+      if(this.veins.size>4096)this.veins.clear();
+      this.veins.set(key,{points});
+    }
+    return this.veins.get(key).points.some(([px,pz])=>px===x-a*16&&pz===z-b*16);
+  }
   surface(x,z,dimension='overworld'){
     const n=noise(x/42,z/42,this.seed),n2=noise(x/13,z/13,this.seed+17);
     if(dimension==='end')return 16+Math.floor(n*5);
@@ -88,7 +110,7 @@ export class VoxelWorld {
       for(let y=0;y<=Math.max(top,dimension==='nether'?15:16);y++){
         let id=0;const r=hash(wx+y*157,wz+y*43,this.seed);
         if(dimension==='overworld'){
-          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){const ore=this.oreAt(wx,y,wz,dimension);if(ore===7||ore===8&&y<=12&&y<=top-6||ore===9&&y<=5)id=ore;}if(wx>=5&&wx<=9&&wz>=-8&&wz<=-4&&y===top)id=11;if(wx>=-12&&wx<=-7&&wz>=-5&&wz<=0&&y>=top-1)id=10;}else if(y<=16)id=14;
+          if(y===0)id=21;else if(y<=top){id=y===top?(h<17?4:1):y>top-3?2:3;if(id===3){const ore=this.oreAt(wx,y,wz,dimension);if(ore===7||ore===8&&y<=12&&y<=top-6||ore===9&&y<=5)id=ore;}if(y===top&&this.depositAt(wx,wz,11))id=11;if(y===5&&this.depositAt(wx,wz,10))id=10;}else if(y<=16)id=14;
         }else if(dimension==='nether'){
           if(y===0)id=21;else if(y<=h)id=this.oreAt(wx,y,wz,dimension)||(y<h-3?16:15);else if(y<=15)id=17;
         }else if(y>=h-7&&y<=h)id=(y===h&&r<.035)?20:19;
@@ -97,7 +119,7 @@ export class VoxelWorld {
     }
     if(dimension==='overworld')for(let x=2;x<14;x++)for(let z=2;z<14;z++){
       const wx=cx*SIZE+x,wz=cz*SIZE+z,h=this.surface(wx,wz,dimension);
-      if(h<17||((hash(wx,wz,this.seed+9)>.014)&&!(wx===6&&wz===4))||Math.hypot(wx,wz)<5||this.blockHeight(wx,h,wz,dimension)<1)continue;
+      if(h<17||((hash(wx,wz,this.seed+9)>.014)&&!(wx===6&&wz===4))||Math.hypot(wx,wz)<5||this.blockHeight(wx,h,wz,dimension)<1||this.depositAt(wx,wz,11))continue;
       for(let y=h+1;y<=h+5;y++)put(x,y,z,5);
       for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++)for(let dy=3;dy<=6;dy++)if(Math.abs(dx)+Math.abs(dz)+(dy===6?1:0)<4&&(dx||dz||dy===6))put(x+dx,h+dy,z+dz,6);
     }

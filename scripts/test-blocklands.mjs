@@ -17,6 +17,26 @@ for(const [id,max] of Object.entries(PICK_DURABILITY)){
   assert.equal(saved[id],max-1);
 }
 assert.equal(wearPickaxe({},{}),null,'Hands do not wear out');
+for(const seed of [291026,123,98765]){
+  const terrain=new VoxelWorld(seed);let obsidianPatches=0,gravelPatches=0;const shapes=new Set();
+  for(let cx=-2;cx<=2;cx++)for(let cz=-2;cz<=2;cz++)for(const id of [10,11]){
+    const points=[];
+    for(let x=cx*16;x<(cx+1)*16;x++)for(let z=cz*16;z<(cz+1)*16;z++){
+      const y=id===10?5:terrain.surface(x,z);
+      if(terrain.get(x,y,z,'overworld')===id)points.push([x,z]);
+      if(id===10)assert.notEqual(terrain.get(x,terrain.surface(x,z),z,'overworld'),10,'No surface obsidian');
+    }
+    if(!points.length)continue;
+    assert.equal(points.length,id===10?5:10,'Deposits have the requested block count');
+    const seen=new Set(),queue=[points[0]],all=new Set(points.map(p=>p.join(',')));
+    while(queue.length){const [x,z]=queue.pop(),key=`${x},${z}`;if(seen.has(key))continue;seen.add(key);
+      for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]])if(all.has(`${x+dx},${z+dz}`))queue.push([x+dx,z+dz]);
+    }
+    assert.equal(seen.size,points.length,'Deposit footprint is connected');
+    if(id===10)obsidianPatches++;else{gravelPatches++;const minX=Math.min(...points.map(p=>p[0])),minZ=Math.min(...points.map(p=>p[1]));shapes.add(points.map(([x,z])=>`${x-minX},${z-minZ}`).sort().join(';'));}
+  }
+  assert.ok(obsidianPatches>0&&gravelPatches>0&&shapes.size>1,'Seeds provide obsidian and varied gravel shapes');
+}
 for(const dimension of ['overworld','nether']){
   const terrain=new VoxelWorld(291026),ores=new Map(),visited=new Set();let largest=0;
   for(let x=-20;x<20;x++)for(let z=-20;z<20;z++)for(let y=1;y<32;y++){
@@ -97,3 +117,4 @@ console.log('Passed: Survival crafting reaches both portals with generated resou
 console.log('Passed: empty Survival hotbar, old-save placeholder cleanup, grounded contact detection, jump height and airborne rejection.');
 console.log('Passed: half-block natural steps across three seeds, solid ground without sinkholes, deep iron and diamonds, full-sized placed blocks.');
 console.log('Passed: connected ore veins capped at six in both mining dimensions; all pickaxe lifetimes, breakage, spares and saved durability.');
+console.log('Passed: five-block obsidian deposits at Y=5 and varied ten-block gravel surface patches across three seeds.');
