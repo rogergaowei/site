@@ -252,9 +252,10 @@ function frame(now){
   requestAnimationFrame(frame);const dt=Math.min((now-last)/1000||.016,.05);last=now;
   if(queue.length){const [x,z]=queue.shift();buildChunk(x,z);}
   if(active&&!inventory.open&&!menu.open){
-    const forward=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
+    const forward=Number(keys.has('ArrowUp'))-Number(keys.has('ArrowDown'));
     const strafe=Number(keys.has('ArrowRight'))-Number(keys.has('ArrowLeft'));
     yaw+=(Number(keys.has('KeyA'))-Number(keys.has('KeyD')))*1.8*dt;
+    pitch=Math.max(-1.5,Math.min(1.5,pitch+(Number(keys.has('KeyS'))-Number(keys.has('KeyW')))*1.8*dt));
     const speed=mode==='creative'?10:keys.has('ShiftLeft')?9:5.5,length=Math.hypot(forward,strafe)||1;
     player.velocity.x=(strafe*Math.cos(yaw)-forward*Math.sin(yaw))*speed/length;player.velocity.z=(-strafe*Math.sin(yaw)-forward*Math.cos(yaw))*speed/length;
     physics.gravity.y=mode==='creative'?0:-24;if(mode==='creative')player.velocity.y=(Number(keys.has('Space'))-Number(keys.has('ShiftLeft')))*8;

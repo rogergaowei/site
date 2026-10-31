@@ -8,7 +8,7 @@ New Survival games start in the Overworld with an empty inventory and hotbar. Co
 
 ## Controls
 
-- Arrow keys: move; W/S: forward/back; A/D: turn left/right; mouse: look; Space: jump.
+- Arrow keys: move; W/S: look up/down; A/D: turn left/right; mouse: look; Space: jump.
 - Left mouse: mine; right mouse or Return/Enter: place; 1-9 or wheel: hotbar.
 - E: inventory/crafting; click a material to assign it to the current hotbar slot.
 - F or the portal button: enter a nearby portal.
