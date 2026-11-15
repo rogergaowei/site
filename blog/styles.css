@@ -849,6 +849,13 @@ figcaption,
   object-fit: cover;
 }
 
+.trip-photo-gallery img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
 .puzzle {
   margin: 26px 0;
   padding: 18px 20px;
