@@ -1,5 +1,14 @@
 [
   {
+    "title": "The Starship Launch",
+    "author": "Roger",
+    "slug": "the-starship-launch",
+    "date": "November 2026",
+    "sortDate": "2026-11-14",
+    "summary": "A two-day trip with Dad to watch Starship, explore South Padre Island, and build a sand fortress against the waves.",
+    "status": "published"
+  },
+  {
     "title": "Digging Ginseng (人参)",
     "author": "Roger",
     "slug": "digging-ginseng",
